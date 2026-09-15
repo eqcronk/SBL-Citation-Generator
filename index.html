@@ -1,136 +1,273 @@
-
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBL Citation Generator Widget</title>
-    <style>
-        :root {
-            --primary: #2b4c7e;
-            --bg: #f8fafc;
-            --card: #ffffff;
-            --text: #1e293b;
-            --border: #e2e8f0;
-        }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            padding: 16px;
-        }
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: var(--card);
-            padding: 24px;
-            border-radius: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        h2 { margin-top: 0; color: var(--primary); font-size: 1.5rem; }
-        .form-group { margin-bottom: 16px; }
-        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem; }
-        input, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-        .output-box {
-            margin-top: 24px;
-            padding: 16px;
-            background: #f1f5f9;
-            border-left: 4px solid var(--primary);
-            border-radius: 4px;
-        }
-        .output-title { font-weight: bold; font-size: 0.85rem; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
-        .citation { font-family: Georgia, serif; font-size: 1.05rem; margin-bottom: 16px; line-height: 1.5; }
-        .citation i { font-style: italic; }
-    </style>
-</head>
-<body>
-
-<div class="container">
+<!-- ==========================================
+     SBL Citation Generator (Complete Widget)
+     ========================================== -->
+<div class="sbl-widget-container">
     <h2>SBL Citation Generator</h2>
     
-    <div class="form-group">
-        <label for="author">Author (First Last)</label>
-        <input type="text" id="author" placeholder="e.g. John Doe" oninput="generateCitation()">
-    </div>
-    
-    <div class="form-group">
-        <label for="title">Book Title</label>
-        <input type="text" id="title" placeholder="e.g. The Meaning of the Text" oninput="generateCitation()">
-    </div>
-    
-    <div class="form-group">
-        <label for="city">City of Publication</label>
-        <input type="text" id="city" placeholder="e.g. Atlanta" oninput="generateCitation()">
-    </div>
-    
-    <div class="form-group">
-        <label for="publisher">Publisher</label>
-        <input type="text" id="publisher" placeholder="e.g. SBL Press" oninput="generateCitation()">
-    </div>
-    
-    <div class="form-group">
-        <label for="year">Year</label>
-        <input type="text" id="year" placeholder="e.g. 2026" oninput="generateCitation()">
+    <!-- Source Type Selector -->
+    <div class="sbl-form-group">
+        <label for="sbl-type">Source Type</label>
+        <select id="sbl-type">
+            <option value="book">Book</option>
+            <option value="article">Journal Article</option>
+        </select>
     </div>
 
-    <div class="form-group">
-        <label for="pages">Pages (For Note/Footnote)</label>
-        <input type="text" id="pages" placeholder="e.g. 45" oninput="generateCitation()">
+    <!-- Shared Fields -->
+    <div class="sbl-form-group">
+        <label for="sbl-author">Author (First Last)</label>
+        <input type="text" id="sbl-author" placeholder="e.g. John Doe">
+    </div>
+    
+    <div class="sbl-row">
+        <div class="sbl-form-group sbl-col">
+            <label for="sbl-title" id="lbl-title">Book Title</label>
+            <input type="text" id="sbl-title" placeholder="e.g. The Meaning of the Text">
+        </div>
+        <div class="sbl-form-group sbl-col">
+            <label for="sbl-short-title" id="lbl-short-title">Short Title (For Subsequent Notes)</label>
+            <input type="text" id="sbl-short-title" placeholder="e.g. Meaning of the Text">
+        </div>
     </div>
 
-    <div class="output-box">
-        <div class="output-title">SBL Note (Footnote)</div>
-        <div id="noteOutput" class="citation">Fill in fields to see footnote...</div>
+    <!-- Article-Specific Fields (Hidden by default) -->
+    <div class="sbl-form-group sbl-conditional" id="grp-journal" style="display: none;">
+        <label for="sbl-journal">Journal Title</label>
+        <input type="text" id="sbl-journal" placeholder="e.g. Journal of Biblical Literature">
+    </div>
+
+    <div class="sbl-row sbl-conditional" id="grp-volume-issue" style="display: none;">
+        <div class="sbl-form-group sbl-col">
+            <label for="sbl-volume">Volume</label>
+            <input type="text" id="sbl-volume" placeholder="e.g. 142">
+        </div>
+        <div class="sbl-form-group sbl-col">
+            <label for="sbl-issue">Issue (Optional)</label>
+            <input type="text" id="sbl-issue" placeholder="e.g. 3">
+        </div>
+    </div>
+
+    <!-- Book-Specific Fields (Visible by default) -->
+    <div class="sbl-row" id="grp-book-meta">
+        <div class="sbl-form-group sbl-col">
+            <label for="sbl-city">City of Publication</label>
+            <input type="text" id="sbl-city" placeholder="e.g. Atlanta">
+        </div>
+        <div class="sbl-form-group sbl-col">
+            <label for="sbl-publisher">Publisher</label>
+            <input type="text" id="sbl-publisher" placeholder="e.g. SBL Press">
+        </div>
+    </div>
+
+    <!-- Shared Footprint Fields -->
+    <div class="sbl-row">
+        <div class="sbl-form-group sbl-col">
+            <label for="sbl-year">Year</label>
+            <input type="text" id="sbl-year" placeholder="e.g. 2026">
+        </div>
+        <div class="sbl-form-group sbl-col">
+            <label for="sbl-pages" id="lbl-pages">Pages (For Note)</label>
+            <input type="text" id="sbl-pages" placeholder="e.g. 45">
+        </div>
+    </div>
+
+    <!-- Article Overall Page Range (Hidden by default) -->
+    <div class="sbl-form-group sbl-conditional" id="grp-range" style="display: none;">
+        <label for="sbl-range">Full Article Page Range (For Bibliography)</label>
+        <input type="text" id="sbl-range" placeholder="e.g. 210–235">
+    </div>
+
+    <!-- Output Box -->
+    <div class="sbl-output-box">
+        <div class="sbl-output-header">
+            <div class="sbl-output-title">SBL First Footnote</div>
+            <button class="sbl-copy-btn" onclick="copyCitation('sbl-noteOutput', this)">Copy</button>
+        </div>
+        <div id="sbl-noteOutput" class="sbl-citation">Fill in fields to see footnote...</div>
         
-        <div class="output-title">SBL Bibliography</div>
-        <div id="bibOutput" class="citation">Fill in fields to see bibliography...</div>
+        <div class="sbl-output-header">
+            <div class="sbl-output-title">SBL Subsequent Footnote (Short Form)</div>
+            <button class="sbl-copy-btn" onclick="copyCitation('sbl-subnoteOutput', this)">Copy</button>
+        </div>
+        <div id="sbl-subnoteOutput" class="sbl-citation">Fill in fields to see subsequent note...</div>
+        
+        <div class="sbl-output-header">
+            <div class="sbl-output-title">SBL Bibliography</div>
+            <button class="sbl-copy-btn" onclick="copyCitation('sbl-bibOutput', this)">Copy</button>
+        </div>
+        <div id="sbl-bibOutput" class="sbl-citation">Fill in fields to see bibliography...</div>
     </div>
 </div>
 
+<!-- ==========================================
+     Scoped Widget Styling 
+     ========================================== -->
+<style>
+    .sbl-widget-container {
+        max-width: 600px;
+        margin: 20px auto;
+        background: #ffffff;
+        padding: 24px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border: 1px solid #e2e8f0;
+        box-sizing: border-box;
+    }
+    .sbl-widget-container h2 { 
+        margin-top: 0; 
+        color: #2b4c7e; 
+        font-size: 1.5rem; 
+        margin-bottom: 20px;
+    }
+    .sbl-form-group { 
+        margin-bottom: 16px; 
+    }
+    .sbl-row {
+        display: flex;
+        gap: 16px;
+    }
+    .sbl-col {
+        flex: 1;
+    }
+    .sbl-widget-container label { 
+        display: block; 
+        font-weight: 600; 
+        margin-bottom: 6px; 
+        font-size: 0.875rem; 
+        color: #1e293b;
+    }
+    .sbl-widget-container input, .sbl-widget-container select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        box-sizing: border-box;
+        font-size: 1rem;
+        color: #1e293b;
+        background-color: #fff;
+    }
+    .sbl-widget-container input:focus, .sbl-widget-container select:focus {
+        outline: none;
+        border-color: #2b4c7e;
+        box-shadow: 0 0 0 3px rgba(43, 76, 126, 0.1);
+    }
+    .sbl-output-box {
+        margin-top: 24px;
+        padding: 16px;
+        background: #f1f5f9;
+        border-left: 4px solid #2b4c7e;
+        border-radius: 4px;
+    }
+    .sbl-output-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 6px;
+    }
+    .sbl-output-title { 
+        font-weight: bold; 
+        font-size: 0.75rem; 
+        color: #64748b; 
+        text-transform: uppercase; 
+        letter-spacing: 0.05em;
+    }
+    .sbl-copy-btn {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        padding: 2px 8px;
+        font-size: 0.75rem;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #475569;
+        font-weight: 500;
+        transition: all 0.2s ease;
+    }
+    .sbl-copy-btn:hover {
+        background: #2b4c7e;
+        color: #ffffff;
+        border-color: #2b4c7e;
+    }
+    .sbl-citation { 
+        font-family: Georgia, serif; 
+        font-size: 1.05rem; 
+        margin-bottom: 20px; 
+        line-height: 1.5; 
+        color: #0f172a;
+        word-break: break-word;
+    }
+    .sbl-citation:last-child {
+        margin-bottom: 0;
+    }
+    .sbl-citation i { 
+        font-style: italic; 
+    }
+</style>
+
+<!-- ==========================================
+     Widget Logic Script
+     ========================================== -->
 <script>
-function generateCitation() {
-    // Get values
-    const author = document.getElementById('author').value.trim();
-    const title = document.getElementById('title').value.trim();
-    const city = document.getElementById('city').value.trim();
-    const publisher = document.getElementById('publisher').value.trim();
-    const year = document.getElementById('year').value.trim();
-    const pages = document.getElementById('pages').value.trim();
+(function() {
+    const fields = ['sbl-type', 'sbl-author', 'sbl-title', 'sbl-short-title', 'sbl-city', 'sbl-publisher', 'sbl-year', 'sbl-pages', 'sbl-journal', 'sbl-volume', 'sbl-issue', 'sbl-range'];
+    
+    fields.forEach(id => {
+        const el = document.getElementById(id);
+        if(el) {
+            if(id === 'sbl-type') {
+                el.addEventListener('change', handleTypeChange);
+            } else {
+                el.addEventListener('input', generateSBLCitation);
+            }
+        }
+    });
 
-    // Fallbacks for empty states
-    const a = author || "[Author]";
-    const t = title ? `<i>${title}</i>` : "[Title]";
-    const c = city || "[City]";
-    const p = publisher || "[Publisher]";
-    const y = year || "[Year]";
-    const pg = pages || "[Page]";
+    function handleTypeChange() {
+        const type = document.getElementById('sbl-type').value;
+        const lblTitle = document.getElementById('lbl-title');
+        const txtTitle = document.getElementById('sbl-title');
+        const lblPages = document.getElementById('lbl-pages');
 
-    // Parse Author for Bibliography (Last, First)
-    let bibAuthor = a;
-    if (author && author.includes(" ")) {
-        const names = author.split(" ");
-        const last = names.pop();
-        const first = names.join(" ");
-        bibAuthor = `${last}, ${first}`;
+        if(type === 'book') {
+            lblTitle.textContent = "Book Title";
+            txtTitle.placeholder = "e.g. The Meaning of the Text";
+            lblPages.textContent = "Pages (For Note)";
+            document.getElementById('grp-book-meta').style.display = 'flex';
+            document.getElementById('grp-journal').style.display = 'none';
+            document.getElementById('grp-volume-issue').style.display = 'none';
+            document.getElementById('grp-range').style.display = 'none';
+        } else {
+            lblTitle.textContent = "Article Title";
+            txtTitle.placeholder = "e.g. Rhetoric and Meaning in Genesis";
+            lblPages.textContent = "Specific Page Cited (For Note)";
+            document.getElementById('grp-book-meta').style.display = 'none';
+            document.getElementById('grp-journal').style.display = 'block';
+            document.getElementById('grp-volume-issue').style.display = 'flex';
+            document.getElementById('grp-range').style.display = 'block';
+        }
+        generateSBLCitation();
     }
 
-    // Format SBL Note
-    // Pattern: Author, Title (City: Publisher, Year), Pages.
-    document.getElementById('noteOutput').innerHTML = `${a}, ${t} (${c}: ${p}, ${y}), ${pg}.`;
+    function generateSBLCitation() {
+        const type = document.getElementById('sbl-type').value;
+        const author = document.getElementById('sbl-author').value.trim();
+        const title = document.getElementById('sbl-title').value.trim();
+        const shortTitle = document.getElementById('sbl-short-title').value.trim();
+        const year = document.getElementById('sbl-year').value.trim();
+        const pages = document.getElementById('sbl-pages').value.trim();
 
-    // Format SBL Bibliography
-    // Pattern: Author Last, First. Title. City: Publisher, Year.
-    document.getElementById('bibOutput').innerHTML = `${bibAuthor}. ${t}. ${c}: ${p}, ${y}.`;
-}
-</script>
+        // Fallbacks
+        const a = author || "[Author]";
+        const y = year || "[Year]";
+        const pg = pages || "[Page]";
 
-</body>
-</html>
+        // Parse Author Names (Full & Surname Only)
+        let bibAuthor = a;
+        let surName = a;
+        if (author && author.includes(" ")) {
+            const names = author.split(" ");
+            surName = names[names.length - 1]; 
+            const last = names.pop();
+            const first = names.join(" ");
+            bibAuthor = `${last}, ${first}`;
+        }
+
