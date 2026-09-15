@@ -1,4 +1,6 @@
-
+<!-- ==========================================
+     SBL Citation Generator (Two-Name Inputs)
+     ========================================== -->
 <div class="sbl-widget-container">
     <h2>SBL Citation Generator</h2>
     
@@ -11,12 +13,19 @@
         </select>
     </div>
 
-    <!-- Shared Fields -->
-    <div class="sbl-form-group">
-        <label for="sbl-author">Author (First Last)</label>
-        <input type="text" id="sbl-author" placeholder="e.g. John Doe">
+    <!-- Author Split Fields -->
+    <div class="sbl-row">
+        <div class="sbl-form-group sbl-col">
+            <label for="sbl-first-name">Author First Name(s)</label>
+            <input type="text" id="sbl-first-name" placeholder="e.g. John">
+        </div>
+        <div class="sbl-form-group sbl-col">
+            <label for="sbl-last-name">Author Last Name</label>
+            <input type="text" id="sbl-last-name" placeholder="e.g. Doe">
+        </div>
     </div>
     
+    <!-- Title Fields -->
     <div class="sbl-row">
         <div class="sbl-form-group sbl-col">
             <label for="sbl-title" id="lbl-title">Book Title</label>
@@ -206,7 +215,7 @@
      ========================================== -->
 <script>
 (function() {
-    const fields = ['sbl-type', 'sbl-author', 'sbl-title', 'sbl-short-title', 'sbl-city', 'sbl-publisher', 'sbl-year', 'sbl-pages', 'sbl-journal', 'sbl-volume', 'sbl-issue', 'sbl-range'];
+    const fields = ['sbl-type', 'sbl-first-name', 'sbl-last-name', 'sbl-title', 'sbl-short-title', 'sbl-city', 'sbl-publisher', 'sbl-year', 'sbl-pages', 'sbl-journal', 'sbl-volume', 'sbl-issue', 'sbl-range'];
     
     fields.forEach(id => {
         const el = document.getElementById(id);
@@ -247,25 +256,12 @@
 
     function generateSBLCitation() {
         const type = document.getElementById('sbl-type').value;
-        const author = document.getElementById('sbl-author').value.trim();
+        const firstName = document.getElementById('sbl-first-name').value.trim();
+        const lastName = document.getElementById('sbl-last-name').value.trim();
         const title = document.getElementById('sbl-title').value.trim();
         const shortTitle = document.getElementById('sbl-short-title').value.trim();
         const year = document.getElementById('sbl-year').value.trim();
         const pages = document.getElementById('sbl-pages').value.trim();
 
-        // Fallbacks
-        const a = author || "[Author]";
-        const y = year || "[Year]";
-        const pg = pages || "[Page]";
-
-        // Parse Author Names (Full & Surname Only)
-        let bibAuthor = a;
-        let surName = a;
-        if (author && author.includes(" ")) {
-            const names = author.split(" ");
-            surName = names[names.length - 1]; 
-            const last = names.pop();
-            const first = names.join(" ");
-            bibAuthor = `${last}, ${first}`;
-        }
-let noteOutput = "";let subnoteOutput = "";let bibOutput = "";if (type === 'book') {const city = document.getElementById('sbl-city').value.trim() || "[City]";const publisher = document.getElementById('sbl-publisher').value.trim() || "[Publisher]";const t = title ? <i>${title}</i> : "[Book Title]";const st = shortTitle ? <i>${shortTitle}</i> : (title ? <i>${title}</i> : "[Short Title]");noteOutput = ${a}, ${t} (${city}: ${publisher}, ${y}), ${pg}.;subnoteOutput = ${surName}, ${st}, ${pg}.;bibOutput = ${bibAuthor}. ${t}. ${city}: ${publisher}, ${y}.;} else {const journal = document.getElementById('sbl-journal').value.trim() || "[Journal]";const volume = document.getElementById('sbl-volume').value.trim() || "[Vol]";const issue = document.getElementById('sbl-issue').value.trim();const range = document.getElementById('sbl-range').value.trim() || "[Page Range]";const t = title ? "${title}" : '"[Article Title]"';const st = shortTitle ? "${shortTitle}" : (title ? "${title}" : '"[Short Title]"');const j = <i>${journal}</i>;const volIssue = issue ? ${volume}, no. ${issue} : volume;noteOutput = ${a}, ${t}, ${j} ${volume} (${y}): ${pg}.;subnoteOutput = ${surName}, ${st}, ${pg}.;bibOutput = ${bibAuthor}. ${t}. ${j} ${volIssue} (${y}): ${range}.;}document.getElementById('sbl-noteOutput').innerHTML = noteOutput;document.getElementById('sbl-subnoteOutput').innerHTML = subnoteOutput;document.getElementById('sbl-bibOutput').innerHTML = bibOutput;}// Global copy functionwindow.copyCitation = function(elementId, btn) {const textToCopy = document.getElementById(elementId).innerText;navigator.clipboard.writeText(textToCopy).then(() => {const originalText = btn.textContent;btn.textContent = "Copied!";btn.style.background = "#10b981";btn.style.borderColor = "#10b981";btn.style.color = "#ffffff";setTimeout(() => {btn.textContent = originalText;btn.style.background = "#ffffff";btn.style.borderColor = "#cbd5e1";btn.style.color = "#475569";}, 1500);});}})();
+        // Construct names cleanly based on explicit user split fields
+const displayAuthor = (firstName && lastName) ? ${firstName} ${lastName} : (lastName || firstName || "[Author]");const bibAuthor = (firstName && lastName) ? ${lastName}, ${firstName} : (lastName || firstName || "[Author]");const surName = lastName || firstName || "[Author]";const y = year || "[Year]";const pg = pages || "[Page]";let noteOutput = "";let subnoteOutput = "";let bibOutput = "";if (type === 'book') {const city = document.getElementById('sbl-city').value.trim() || "[City]";const publisher = document.getElementById('sbl-publisher').value.trim() || "[Publisher]";const t = title ? <i>${title}</i> : "[Book Title]";const st = shortTitle ? <i>${shortTitle}</i> : (title ? <i>${title}</i> : "[Short Title]");noteOutput = ${displayAuthor}, ${t} (${city}: ${publisher}, ${y}), ${pg}.;subnoteOutput = ${surName}, ${st}, ${pg}.;bibOutput = ${bibAuthor}. ${t}. ${city}: ${publisher}, ${y}.;} else {const journal = document.getElementById('sbl-journal').value.trim() || "[Journal]";const volume = document.getElementById('sbl-volume').value.trim() || "[Vol]";const issue = document.getElementById('sbl-issue').value.trim();const range = document.getElementById('sbl-range').value.trim() || "[Page Range]";const t = title ? "${title}" : '"[Article Title]"';const st = shortTitle ? "${shortTitle}" : (title ? "${title}" : '"[Short Title]"');const j = <i>${journal}</i>;const volIssue = issue ? ${volume}, no. ${issue} : volume;noteOutput = ${displayAuthor}, ${t}, ${j} ${volume} (${y}): ${pg}.;subnoteOutput = ${surName}, ${st}, ${pg}.;bibOutput = ${bibAuthor}. ${t}. ${j} ${volIssue} (${y}): ${range}.;}document.getElementById('sbl-noteOutput').innerHTML = noteOutput;document.getElementById('sbl-subnoteOutput').innerHTML = subnoteOutput;document.getElementById('sbl-bibOutput').innerHTML = bibOutput;}// Global copy functionwindow.copyCitation = function(elementId, btn) {const textToCopy = document.getElementById(elementId).innerText;navigator.clipboard.writeText(textToCopy).then(() => {const originalText = btn.textContent;btn.textContent = "Copied!";btn.style.background = "#10b981";btn.style.borderColor = "#10b981";btn.style.color = "#ffffff";setTimeout(() => {btn.textContent = originalText;btn.style.background = "#ffffff";btn.style.borderColor = "#cbd5e1";btn.style.color = "#475569";}, 1500);});}})();
