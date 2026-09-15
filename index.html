@@ -1,1 +1,136 @@
 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SBL Citation Generator Widget</title>
+    <style>
+        :root {
+            --primary: #2b4c7e;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            padding: 16px;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--card);
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        h2 { margin-top: 0; color: var(--primary); font-size: 1.5rem; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; font-weight: 600; margin-bottom: 6px; font-size: 0.875rem; }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+        .output-box {
+            margin-top: 24px;
+            padding: 16px;
+            background: #f1f5f9;
+            border-left: 4px solid var(--primary);
+            border-radius: 4px;
+        }
+        .output-title { font-weight: bold; font-size: 0.85rem; color: #64748b; text-transform: uppercase; margin-bottom: 4px; }
+        .citation { font-family: Georgia, serif; font-size: 1.05rem; margin-bottom: 16px; line-height: 1.5; }
+        .citation i { font-style: italic; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>SBL Citation Generator</h2>
+    
+    <div class="form-group">
+        <label for="author">Author (First Last)</label>
+        <input type="text" id="author" placeholder="e.g. John Doe" oninput="generateCitation()">
+    </div>
+    
+    <div class="form-group">
+        <label for="title">Book Title</label>
+        <input type="text" id="title" placeholder="e.g. The Meaning of the Text" oninput="generateCitation()">
+    </div>
+    
+    <div class="form-group">
+        <label for="city">City of Publication</label>
+        <input type="text" id="city" placeholder="e.g. Atlanta" oninput="generateCitation()">
+    </div>
+    
+    <div class="form-group">
+        <label for="publisher">Publisher</label>
+        <input type="text" id="publisher" placeholder="e.g. SBL Press" oninput="generateCitation()">
+    </div>
+    
+    <div class="form-group">
+        <label for="year">Year</label>
+        <input type="text" id="year" placeholder="e.g. 2026" oninput="generateCitation()">
+    </div>
+
+    <div class="form-group">
+        <label for="pages">Pages (For Note/Footnote)</label>
+        <input type="text" id="pages" placeholder="e.g. 45" oninput="generateCitation()">
+    </div>
+
+    <div class="output-box">
+        <div class="output-title">SBL Note (Footnote)</div>
+        <div id="noteOutput" class="citation">Fill in fields to see footnote...</div>
+        
+        <div class="output-title">SBL Bibliography</div>
+        <div id="bibOutput" class="citation">Fill in fields to see bibliography...</div>
+    </div>
+</div>
+
+<script>
+function generateCitation() {
+    // Get values
+    const author = document.getElementById('author').value.trim();
+    const title = document.getElementById('title').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const publisher = document.getElementById('publisher').value.trim();
+    const year = document.getElementById('year').value.trim();
+    const pages = document.getElementById('pages').value.trim();
+
+    // Fallbacks for empty states
+    const a = author || "[Author]";
+    const t = title ? `<i>${title}</i>` : "[Title]";
+    const c = city || "[City]";
+    const p = publisher || "[Publisher]";
+    const y = year || "[Year]";
+    const pg = pages || "[Page]";
+
+    // Parse Author for Bibliography (Last, First)
+    let bibAuthor = a;
+    if (author && author.includes(" ")) {
+        const names = author.split(" ");
+        const last = names.pop();
+        const first = names.join(" ");
+        bibAuthor = `${last}, ${first}`;
+    }
+
+    // Format SBL Note
+    // Pattern: Author, Title (City: Publisher, Year), Pages.
+    document.getElementById('noteOutput').innerHTML = `${a}, ${t} (${c}: ${p}, ${y}), ${pg}.`;
+
+    // Format SBL Bibliography
+    // Pattern: Author Last, First. Title. City: Publisher, Year.
+    document.getElementById('bibOutput').innerHTML = `${bibAuthor}. ${t}. ${c}: ${p}, ${y}.`;
+}
+</script>
+
+</body>
+</html>
