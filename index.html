@@ -607,16 +607,26 @@
     "use strict";
 
     w.generateSBLCitation = function() {
-        // 1. GATHER AUTHORS DYNAMICALLY FROM CLASS GROUPS
+        // Find which author track option is picked
+        var authorType = "standard";
+        if (document.getElementById("type-author-corporate")?.checked) authorType = "corporate";
+        if (document.getElementById("type-author-none")?.checked) authorType = "none";
+
+        // 1. GATHER AUTHORS DYNAMICALLY BASED ON TYPE SELECTION
         var authors = [];
-        var firsts = document.querySelectorAll(".sbl-author-first");
-        var lasts = document.querySelectorAll(".sbl-author-last");
+        var corporateName = document.getElementById("sbl-corporate-name")?.value.trim() || "";
         
-        firsts.forEach(function(input, idx) {
-            var f = input.value.trim();
-            var l = lasts[idx] ? lasts[idx].value.trim() : "";
-            if (f && l) authors.push({ first: f, last: l });
-        });
+        if (authorType === "standard") {
+            var firsts = document.querySelectorAll(".sbl-author-first");
+            var lasts = document.querySelectorAll(".sbl-author-last");
+            firsts.forEach(function(input, idx) {
+                var f = input.value.trim();
+                var l = lasts[idx] ? lasts[idx].value.trim() : "";
+                if (f || l) { // Grab the row if at least one field has text
+                    authors.push({ first: f, last: l });
+                }
+            });
+        }
 
         var fourOrMore = document.getElementById("sbl-four-or-more")?.checked;
 
@@ -630,7 +640,6 @@
             title = document.getElementById("sbl-title")?.value.trim() || "";
         }
         
-        // Target your form's master pages input box
         var pages = document.getElementById("sbl-pages")?.value.trim() || "";
         var city = document.getElementById("sbl-city")?.value.trim() || "";
         var publisher = document.getElementById("sbl-publisher")?.value.trim() || "";
@@ -641,31 +650,42 @@
         var chapRange = document.getElementById("sbl-chapter-range")?.value.trim() || "";
         var rangeDisplay = chapRange ? chapRange : "##-##";
 
-        // 3. GENERATE AUTHOR STRINGS FOR BIB VS FOOTNOTES
+        // 3. GENERATE AUTHOR STRINGS BASED ON TRACK SELECTION
         var bibAuthorStr = "";
         var noteAuthorStr = "";
         var subAuthorStr = ""; 
 
-        if (authors.length > 0) {
-            var f1 = authors[0].first;
-            var l1 = authors[0].last;
-            subAuthorStr = l1; 
+        if (authorType === "corporate" && corporateName) {
+            bibAuthorStr = corporateName + ".";
+            noteAuthorStr = corporateName;
+            subAuthorStr = corporateName;
+        } 
+        else if (authorType === "standard" && authors.length > 0) {
+            var f1 = authors[0].first || "";
+            var l1 = authors[0].last || "";
+            subAuthorStr = l1 || f1; 
 
             if (fourOrMore) {
-                bibAuthorStr = l1 + ", " + f1 + ", et al.";
+                bibAuthorStr = (l1 && f1) ? (l1 + ", " + f1 + ", et al.") : ((l1 || f1) + ", et al.");
                 noteAuthorStr = f1 + " " + l1 + " et al.";
-                subAuthorStr = l1 + " et al.";
+                subAuthorStr = (l1 || f1) + " et al.";
             } else if (authors.length === 1) {
-                bibAuthorStr = l1 + ", " + f1 + ".";
+                bibAuthorStr = (l1 && f1) ? (l1 + ", " + f1 + ".") : ((l1 || f1) + ".");
                 noteAuthorStr = f1 + " " + l1;
             } else if (authors.length === 2) {
-                bibAuthorStr = l1 + ", " + f1 + ", and " + authors[1].first + " " + authors[1].last + ".";
-                noteAuthorStr = f1 + " " + l1 + " and " + authors[1].first + " " + authors[1].last;
-                subAuthorStr = l1 + " and " + authors[1].last;
+                var f2 = authors[1].first || "";
+                var l2 = authors[1].last || "";
+                bibAuthorStr = l1 + ", " + f1 + ", and " + f2 + " " + l2 + ".";
+                noteAuthorStr = f1 + " " + l1 + " and " + f2 + " " + l2;
+                subAuthorStr = l1 + " and " + l2;
             } else if (authors.length === 3) {
-                bibAuthorStr = l1 + ", " + f1 + ", " + authors[1].first + " " + authors[1].last + ", and " + authors[2].first + " " + authors[2].last + ".";
-                noteAuthorStr = f1 + " " + l1 + ", " + authors[1].first + " " + authors[1].last + ", and " + authors[2].first + " " + authors[2].last;
-                subAuthorStr = l1 + ", " + authors[1].last + ", and " + authors[2].last;
+                var f2 = authors[1].first || "";
+                var l2 = authors[1].last || "";
+                var f3 = authors[2].first || "";
+                var l3 = authors[2].last || "";
+                bibAuthorStr = l1 + ", " + f1 + ", " + f2 + " " + l2 + ", and " + f3 + " " + l3 + ".";
+                noteAuthorStr = f1 + " " + l1 + ", " + f2 + " " + l2 + ", and " + f3 + " " + l3;
+                subAuthorStr = l1 + ", " + l2 + ", and " + l3;
             } else {
                 bibAuthorStr = l1 + ", " + f1 + ", et al.";
                 noteAuthorStr = f1 + " " + l1 + " et al.";
@@ -673,7 +693,7 @@
             }
         }
 
-        // 4. GATHER CONTRIBUTORS
+        // 4. GATHER CONTRIBUTORS (EDITORS, TRANSLATORS, COMPILERS)
         function collectRole(containerId, firstClass, lastClass, bibLabel, noteLabel) {
             var list = [];
             var container = document.getElementById(containerId);
@@ -685,7 +705,7 @@
             firsts.forEach(function(input, idx) {
                 var f = input.value.trim();
                 var l = lasts[idx] ? lasts[idx].value.trim() : "";
-                if (f && l) list.push(f + " " + l);
+                if (f || l) list.push(f + " " + l);
             });
 
             if (list.length === 0) return { bib: "", note: "" };
@@ -713,6 +733,7 @@
             bibCitation += chapterTitle ? '"' + chapterTitle + '."' : '"[Chapter Title]."';
             bibCitation += title ? " In <em>" + title + "</em>." : " In <em>[Book Title]</em>.";
         } else {
+            // SBL No-Author Rule: If there's no author string, the title drops straight to the front of the bibliography
             bibCitation += title ? "<em>" + title + "</em>." : "<em>[Title]</em>.";
         }
 
@@ -743,7 +764,9 @@
 
         // 7. FORMULATE OUTPUT C: SUBSEQUENT FOOTNOTE
         var subCitation = "";
-        if (subAuthorStr) subCitation += subAuthorStr + ", ";
+        if (subAuthorStr) {
+            subCitation += subAuthorStr + ", ";
+        }
         
         if (currentSourceType === "chapter") {
             subCitation += chapterTitle ? '"' + chapterTitle + '"' : '"[Chapter Title]"';
@@ -752,16 +775,35 @@
         }
         subCitation += ", " + pDisplay + ".";
 
-        // 8. RENDER FIELDS IMMEDIATELY
+        // 8. RENDER PREVIEWS IMMEDIATELY
         var bibBox = document.getElementById("sbl-bib-output");
         var n1Box = document.getElementById("sbl-n1-output");
         var n2Box = document.getElementById("sbl-n2-output");
 
-        var inputCheck = authors.length > 0 || title || city || publisher || year || chapterTitle;
+        var inputCheck = authors.length > 0 || corporateName || (authorType === "none") || title || city || publisher || year || chapterTitle;
         
         if (bibBox && n1Box && n2Box) {
             if (!inputCheck) {
                 bibBox.innerHTML = "<em>Fill out fields above to build bibliography preview...</em>";
                 n1Box.innerHTML = "<em>Fill out fields above to build full footnote preview...</em>";
                 n2Box.innerHTML = "<em>Fill out fields above to build short footnote preview...</em>";
+            } else {
+                bibBox.innerHTML = bibCitation;
+                n1Box.innerHTML = noteCitation;
+                n2Box.innerHTML = subCitation;
+            }
+        }
+    };
+
+    // 9. EVENT REGISTRATION LOOP
+    document.addEventListener("DOMContentLoaded", function() {
+        var formArea = document.getElementById("sbl-step-2");
+        if (formArea) {
+            formArea.addEventListener("input", function() { w.generateSBLCitation(); });
+            formArea.addEventListener("change", function() { w.generateSBLCitation(); });
+        }
+        w.generateSBLCitation();
+    });
+})(window);
+</script>
 
