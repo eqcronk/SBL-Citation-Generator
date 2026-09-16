@@ -136,30 +136,26 @@
     <div id="sbl-toggled-fields-wrapper">
         
         <!-- DYNAMIC EDITORS -->
+<!-- DYNAMIC EDITORS SECTION -->
 <div class="sbl-row" id="row-editor" style="display: none; margin-bottom: 20px;">
-            <div class="sbl-row" style="align-items: center; margin-bottom: 10px;">
-                <h3 style="margin: 0; flex: 1;">Editors</h3>
-                <div class="sbl-form-group sbl-col-short" style="margin: 0;">
-                    <select id="sbl-ed-type">
-                        <option value="secondary">Secondary (Book has Author)</option>
-                        <option value="primary">Primary (No Primary Author)</option>
-                    </select>
-                </div>
+    <div class="sbl-row" style="align-items: center; margin-bottom: 10px; width: 100%;">
+        <h3 style="margin: 0; flex: 1;">Editors</h3>
+    </div>
+    <div id="sbl-editors-container" style="width: 100%;">
+        <div class="sbl-row sbl-name-row">
+            <div class="sbl-form-group sbl-col">
+                <label>Editor 1 First Name(s)</label>
+                <input type="text" class="sbl-editor-first" placeholder="e.g. Thomas">
             </div>
-            <div id="sbl-editors-container">
-                <div class="sbl-row sbl-name-row">
-                    <div class="sbl-form-group sbl-col">
-                        <label>Editor 1 First Name(s)</label>
-                        <input type="text" class="sbl-editor-first" placeholder="e.g. Thomas">
-                    </div>
-                    <div class="sbl-form-group sbl-col">
-                        <label>Editor 1 Last Name</label>
-                        <input type="text" class="sbl-editor-last" placeholder="e.g. Williams">
-                    </div>
-                </div>
+            <div class="sbl-form-group sbl-col">
+                <label>Editor 1 Last Name</label>
+                <input type="text" class="sbl-editor-last" placeholder="e.g. Williams">
             </div>
-            <button type="button" class="sbl-btn-add" id="btn-add-editor" style="margin-top: 10px;">+ Add Another Editor</button>
         </div>
+    </div>
+    <button type="button" class="sbl-btn-add" id="btn-add-editor" style="margin-top: 10px;">+ Add Another Editor</button>
+</div>
+
 
         <!-- DYNAMIC TRANSLATORS -->
         <div class="sbl-contributor-section sbl-sub-input-row" id="row-translator" style="display: none; margin-bottom: 20px;">
