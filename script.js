@@ -73,7 +73,7 @@
         }
     }
 
-    /* ==========================================
+       /* ==========================================
        CONTRIBUTOR TOGGLES
        ========================================== */
 
@@ -82,10 +82,10 @@
         const rowTrans = document.getElementById("row-translator");
         const rowComp = document.getElementById("row-compiler");
 
-        // FIX: Using empty string "" allows elements to safely fall back to their native CSS layout properties (e.g. flex) instead of forcing flat block breaks
-        if (rowEd) rowEd.style.display = getChecked("sbl-has-editor") ? "" : "none";
-        if (rowTrans) rowTrans.style.display = getChecked("sbl-has-translator") ? "" : "none";
-        if (rowComp) rowComp.style.display = getChecked("sbl-has-compiler") ? "" : "none";
+        // Force "block" explicitly to override the hardcoded HTML hidden state
+        if (rowEd) rowEd.style.display = getChecked("sbl-has-editor") ? "block" : "none";
+        if (rowTrans) rowTrans.style.display = getChecked("sbl-has-translator") ? "block" : "none";
+        if (rowComp) rowComp.style.display = getChecked("sbl-has-compiler") ? "block" : "none";
 
         if (typeof window.generateSBLCitation === "function") {
             window.generateSBLCitation();
