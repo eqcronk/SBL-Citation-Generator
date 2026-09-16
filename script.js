@@ -165,7 +165,7 @@
             if (rowMainTitle) rowMainTitle.style.display = "none";
             if (grpSubtitle) grpSubtitle.style.display = "none";
             if (rowJournalMeta) rowJournalMeta.style.display = "flex";
-            if (rowBookSeriesMeta) rowBookSeriesMeta.style.display = "none";
+                       if (rowBookSeriesMeta) rowBookSeriesMeta.style.display = "none";
             if (rowImprint) rowImprint.style.display = "none";
             if (grpRangeField) grpRangeField.style.display = "block";
         }
@@ -207,20 +207,22 @@
         if (cbCompiler) cbCompiler.addEventListener("change", handleContributorToggles);
 
         /* Dynamic Repeating Sections Hooked to Contributors Only */
-            setupDynamicRows('btn-add-editor', 'sbl-editors-container', 'Editor');
-            setupDynamicRows('btn-add-translator', 'sbl-translators-container', 'Translator');  
-            setupDynamicRows('btn-add-compiler', 'sbl-compilers-container', 'Compiler');
-       
-       /* Real-time Rendering Listeners for All Form Fields */
-       const inputs = document.querySelectorAll('#sbl-step-2 input, #sbl-step-2 select');
-       inputs.forEach(input => {
-         input.addEventListener('input', function() {
-      if (typeof window.generateSBLCitation === "function") {
-         window.generateSBLCitation();
-            }
+        setupDynamicRows('btn-add-editor', 'sbl-editors-container', 'Editor');
+        setupDynamicRows('btn-add-translator', 'sbl-translators-container', 'Translator');
+        setupDynamicRows('btn-add-compiler', 'sbl-compilers-container', 'Compiler');
+
+        /* Real-time Rendering Listeners for All Form Fields */
+        const inputs = document.querySelectorAll('#sbl-step-2 input, #sbl-step-2 select');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                if (typeof window.generateSBLCitation === "function") {
+                    window.generateSBLCitation();
+                }
             });
-         });
-       // Initialize state view configurations
-       handleContributorToggles();
+        });
+
+        // Initialize state view configurations
+        handleContributorToggles();
     });
+
 })();
