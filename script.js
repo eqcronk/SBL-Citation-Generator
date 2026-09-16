@@ -82,9 +82,10 @@
         const rowTrans = document.getElementById("row-translator");
         const rowComp = document.getElementById("row-compiler");
 
-        if (rowEd) rowEd.style.display = getChecked("sbl-has-editor") ? "block" : "none";
-        if (rowTrans) rowTrans.style.display = getChecked("sbl-has-translator") ? "block" : "none";
-        if (rowComp) rowComp.style.display = getChecked("sbl-has-compiler") ? "block" : "none";
+        // FIX: Using empty string "" allows elements to safely fall back to their native CSS layout properties (e.g. flex) instead of forcing flat block breaks
+        if (rowEd) rowEd.style.display = getChecked("sbl-has-editor") ? "" : "none";
+        if (rowTrans) rowTrans.style.display = getChecked("sbl-has-translator") ? "" : "none";
+        if (rowComp) rowComp.style.display = getChecked("sbl-has-compiler") ? "" : "none";
 
         if (typeof window.generateSBLCitation === "function") {
             window.generateSBLCitation();
@@ -165,7 +166,7 @@
             if (rowMainTitle) rowMainTitle.style.display = "none";
             if (grpSubtitle) grpSubtitle.style.display = "none";
             if (rowJournalMeta) rowJournalMeta.style.display = "flex";
-                       if (rowBookSeriesMeta) rowBookSeriesMeta.style.display = "none";
+            if (rowBookSeriesMeta) rowBookSeriesMeta.style.display = "none";
             if (rowImprint) rowImprint.style.display = "none";
             if (grpRangeField) grpRangeField.style.display = "block";
         }
