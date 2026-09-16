@@ -232,3 +232,17 @@
     });
 
 })();
+// Global bypass function that forces the layout elements to show up
+window.forceToggleContributors = function() {
+    var hasEd = document.getElementById("sbl-has-editor");
+    var hasTrans = document.getElementById("sbl-has-translator");
+    var hasComp = document.getElementById("sbl-has-compiler");
+
+    var rowEd = document.getElementById("row-editor");
+    var rowTrans = document.getElementById("row-translator");
+    var rowComp = document.getElementById("row-compiler");
+
+    if (rowEd && hasEd) rowEd.style.display = hasEd.checked ? "block" : "none";
+    if (rowTrans && hasTrans) rowTrans.style.display = hasTrans.checked ? "block" : "none";
+    if (rowComp && hasComp) rowComp.style.display = hasComp.checked ? "block" : "none";
+};
