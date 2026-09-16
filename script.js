@@ -21,6 +21,58 @@
         return element ? element.checked : false;
     }
 
+    /**
+     * Helper to set up dynamic "Add Another" rows safely for Contributors
+     */
+    function setupDynamicRows(buttonId, containerId, role) {
+        const button = document.getElementById(buttonId);
+        const container = document.getElementById(containerId);
+
+        if (button && container) {
+            button.addEventListener('click', function() {
+                // Determine current row number count
+                const currentRows = container.querySelectorAll('.sbl-name-row').length + 1;
+                
+                // Create a dynamic row container
+                const row = document.createElement('div');
+                row.className = 'sbl-row sbl-name-row';
+                row.style.marginTop = '10px';
+
+                // Inject internal layout with dynamic indexing
+                row.innerHTML = `
+                    <div class="sbl-form-group sbl-col">
+                        <label>Additional ${role} ${currentRows} First Name(s)</label>
+                        <input type="text" class="sbl-${role.toLowerCase()}-first">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label>Additional ${role} ${currentRows} Last Name</label>
+                        <input type="text" class="sbl-${role.toLowerCase()}-last">
+                    </div>
+                    <button type="button" class="sbl-btn-remove" style="margin-top: 24px; color: red; background: none; border: none; cursor: pointer; font-size: 16px;">✕</button>
+                `;
+
+                // Add deletion listener to the removal button
+                row.querySelector('.sbl-btn-remove').addEventListener('click', function() {
+                    row.remove();
+                    if (typeof window.generateSBLCitation === "function") {
+                        window.generateSBLCitation();
+                    }
+                });
+
+                container.appendChild(row);
+
+                // Add real-time event triggers for rendering engine updates if present
+                row.querySelectorAll('input').forEach(input => {
+                    input.addEventListener('input', function() {
+                        if (typeof window.generateSBLCitation === "function") {
+                            window.generateSBLCitation();
+                        }
+                    });
+                });
+            });
+        }
+    }
+
     /* ==========================================
        CONTRIBUTOR TOGGLES
        ========================================== */
@@ -30,9 +82,9 @@
         const rowTrans = document.getElementById("row-translator");
         const rowComp = document.getElementById("row-compiler");
 
-        if (rowEd) rowEd.style.display = getChecked("sbl-has-editor") ? "flex" : "none";
-        if (rowTrans) rowTrans.style.display = getChecked("sbl-has-translator") ? "flex" : "none";
-        if (rowComp) rowComp.style.display = getChecked("sbl-has-compiler") ? "flex" : "none";
+        if (rowEd) rowEd.style.display = getChecked("sbl-has-editor") ? "block" : "none";
+        if (rowTrans) rowTrans.style.display = getChecked("sbl-has-translator") ? "block" : "none";
+        if (rowComp) rowComp.style.display = getChecked("sbl-has-compiler") ? "block" : "none";
 
         if (typeof window.generateSBLCitation === "function") {
             window.generateSBLCitation();
@@ -154,18 +206,21 @@
         if (cbTranslator) cbTranslator.addEventListener("change", handleContributorToggles);
         if (cbCompiler) cbCompiler.addEventListener("change", handleContributorToggles);
 
-        /* Real-time Rendering Listeners for All Form Fields */
-        const inputs = document.querySelectorAll('#sbl-step-2 input, #sbl-step-2 select');
-        inputs.forEach(input => {
-            input.addEventListener('input', function() {
-                if (typeof window.generateSBLCitation === "function") {
-                    window.generateSBLCitation();
-                }
+        /* Dynamic Repeating Sections Hooked to Contributors Only */
+            setupDynamicRows('btn-add-editor', 'sbl-editors-container', 'Editor');
+            setupDynamicRows('btn-add-translator', 'sbl-translators-container', 'Translator');  
+            setupDynamicRows('btn-add-compiler', 'sbl-compilers-container', 'Compiler');
+       
+       /* Real-time Rendering Listeners for All Form Fields */
+       const inputs = document.querySelectorAll('#sbl-step-2 input, #sbl-step-2 select');
+       inputs.forEach(input => {
+         input.addEventListener('input', function() {
+      if (typeof window.generateSBLCitation === "function") {
+         window.generateSBLCitation();
+            }
             });
-        });
-
-        // Initialize state view configurations
-        handleContributorToggles();
+         });
+       // Initialize state view configurations
+       handleContributorToggles();
     });
-
 })();
