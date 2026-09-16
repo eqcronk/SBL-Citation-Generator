@@ -70,6 +70,7 @@
 <fieldset class="sbl-fieldset">
     <legend>Authors &amp; Contributors</legend>
 
+    <!-- ─── FIXED AUTHORS SECTION ─── -->
     <!-- Primary Required Author -->
     <div class="sbl-row">
         <div class="sbl-form-group sbl-col">
@@ -114,7 +115,7 @@
         </label>
     </div>
 
-    <!-- Contributor Toggles -->
+    <!-- ─── CONTRIBUTOR TOGGLES ─── -->
     <div id="grp-contributors">
         <div class="sbl-form-toggle-group" style="margin-bottom: 15px;">
             <label><input type="checkbox" id="sbl-has-editor"> Has Editor(s)</label>
@@ -122,47 +123,66 @@
             <label><input type="checkbox" id="sbl-has-compiler"> Has Compiler(s)</label>
         </div>
 
-        <!-- Editor Row -->
-        <div class="sbl-row sbl-sub-input-row" id="row-editor" style="display: none;">
-            <div class="sbl-form-group sbl-col">
-                <label for="sbl-ed-first">Editor First Name(s)</label>
-                <input type="text" id="sbl-ed-first" placeholder="e.g. Thomas">
+        <!-- DYNAMIC EDITORS SECTION -->
+        <div class="sbl-contributor-section sbl-sub-input-row" id="row-editor" style="display: none; margin-bottom: 20px;">
+            <div class="sbl-row" style="align-items: center; margin-bottom: 10px;">
+                <h3 style="margin: 0; flex: 1;">Editors</h3>
+                <div class="sbl-form-group sbl-col-short" style="margin: 0;">
+                    <select id="sbl-ed-type">
+                        <option value="secondary">Secondary (Book has Author)</option>
+                        <option value="primary">Primary (No Primary Author)</option>
+                    </select>
+                </div>
             </div>
-            <div class="sbl-form-group sbl-col">
-                <label for="sbl-ed-last">Editor Last Name</label>
-                <input type="text" id="sbl-ed-last" placeholder="e.g. Williams">
+            <div id="sbl-editors-container">
+                <div class="sbl-row sbl-name-row">
+                    <div class="sbl-form-group sbl-col">
+                        <label>Editor 1 First Name(s)</label>
+                        <input type="text" class="sbl-editor-first" placeholder="e.g. Thomas">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label>Editor 1 Last Name</label>
+                        <input type="text" class="sbl-editor-last" placeholder="e.g. Williams">
+                    </div>
+                </div>
             </div>
-            <div class="sbl-form-group sbl-col-short">
-                <label for="sbl-ed-type">Role Assignment</label>
-                <select id="sbl-ed-type">
-                    <option value="secondary">Secondary (Book has Author)</option>
-                    <option value="primary">Primary (No Primary Author)</option>
-                </select>
-            </div>
+            <button type="button" class="sbl-btn-add" id="btn-add-editor" style="margin-top: 10px;">+ Add Another Editor</button>
         </div>
 
-        <!-- Translator Row -->
-        <div class="sbl-row sbl-sub-input-row" id="row-translator" style="display: none;">
-            <div class="sbl-form-group sbl-col">
-                <label for="sbl-trans-first">Translator First Name(s)</label>
-                <input type="text" id="sbl-trans-first" placeholder="e.g. Peter">
+        <!-- DYNAMIC TRANSLATORS SECTION -->
+        <div class="sbl-contributor-section sbl-sub-input-row" id="row-translator" style="display: none; margin-bottom: 20px;">
+            <h3>Translators</h3>
+            <div id="sbl-translators-container">
+                <div class="sbl-row sbl-name-row">
+                    <div class="sbl-form-group sbl-col">
+                        <label>Translator 1 First Name(s)</label>
+                        <input type="text" class="sbl-translator-first" placeholder="e.g. Peter">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label>Translator 1 Last Name</label>
+                        <input type="text" class="sbl-translator-last" placeholder="e.g. Heinegg">
+                    </div>
+                </div>
             </div>
-            <div class="sbl-form-group sbl-col">
-                <label for="sbl-trans-last">Translator Last Name</label>
-                <input type="text" id="sbl-trans-last" placeholder="e.g. Heinegg">
-            </div>
+            <button type="button" class="sbl-btn-add" id="btn-add-translator" style="margin-top: 10px;">+ Add Another Translator</button>
         </div>
 
-        <!-- Compiler Row -->
-        <div class="sbl-row sbl-sub-input-row" id="row-compiler" style="display: none;">
-            <div class="sbl-form-group sbl-col">
-                <label for="sbl-comp-first">Compiler First Name(s)</label>
-                <input type="text" id="sbl-comp-first" placeholder="e.g. David">
+        <!-- DYNAMIC COMPILERS SECTION -->
+        <div class="sbl-contributor-section sbl-sub-input-row" id="row-compiler" style="display: none; margin-bottom: 20px;">
+            <h3>Compilers</h3>
+            <div id="sbl-compilers-container">
+                <div class="sbl-row sbl-name-row">
+                    <div class="sbl-form-group sbl-col">
+                        <label>Compiler 1 First Name(s)</label>
+                        <input type="text" class="sbl-compiler-first" placeholder="e.g. David">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label>Compiler 1 Last Name</label>
+                        <input type="text" class="sbl-compiler-last" placeholder="e.g. Tombs">
+                    </div>
+                </div>
             </div>
-            <div class="sbl-form-group sbl-col">
-                <label for="sbl-comp-last">Compiler Last Name</label>
-                <input type="text" id="sbl-comp-last" placeholder="e.g. Tombs">
-            </div>
+            <button type="button" class="sbl-btn-add" id="btn-add-compiler" style="margin-top: 10px;">+ Add Another Compiler</button>
         </div>
     </div>
 </fieldset>
