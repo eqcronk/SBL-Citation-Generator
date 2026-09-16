@@ -539,7 +539,7 @@
         </fieldset>
 
 
- <!-- ==========================================
+<!-- ==========================================
      SBL THREE-WAY LIVE PREVIEW OUTPUT SECTION
      ========================================== -->
 <div class="sbl-output-wrapper" style="margin-top: 35px; padding: 20px; border-left: 5px solid #1a365d; background-color: #f7fafc; border-radius: 4px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);">
@@ -597,13 +597,26 @@
 
         var fourOrMore = document.getElementById("sbl-four-or-more")?.checked;
 
-        // 2. GATHER CORE TEXT ENTRY BOOK DATA
-        var title = document.getElementById("sbl-title")?.value.trim() || "";
+        // 2. GATHER CORE TEXT ENTRY DATA ACCORDING TO CURRENT SOURCE MODE
+        var currentSourceType = document.getElementById("sbl-type")?.value || "book";
+        
+        var title = "";
+        if (currentSourceType === "chapter") {
+            title = document.getElementById("sbl-title-chap")?.value.trim() || "";
+        } else {
+            title = document.getElementById("sbl-title")?.value.trim() || "";
+        }
+        
+        // Target your form's master pages input box
+        var pages = document.getElementById("sbl-pages")?.value.trim() || "";
         var city = document.getElementById("sbl-city")?.value.trim() || "";
         var publisher = document.getElementById("sbl-publisher")?.value.trim() || "";
         var year = document.getElementById("sbl-year")?.value.trim() || "";
-        var pages = document.getElementById("sbl-pages")?.value.trim() || "";
         var pDisplay = pages ? pages : "##";
+
+        var chapterTitle = document.getElementById("sbl-inner-title")?.value.trim() || "";
+        var chapRange = document.getElementById("sbl-chapter-range")?.value.trim() || "";
+        var rangeDisplay = chapRange ? chapRange : "##-##";
 
         // 3. GENERATE AUTHOR STRINGS FOR BIB VS FOOTNOTES
         var bibAuthorStr = "";
@@ -631,7 +644,6 @@
                 noteAuthorStr = f1 + " " + l1 + ", " + authors[1].first + " " + authors[1].last + ", and " + authors[2].first + " " + authors[2].last;
                 subAuthorStr = l1 + ", " + authors[1].last + ", and " + authors[2].last;
             } else {
-                // If more than 3 are added but checkbox isn't ticked yet, default safe layout
                 bibAuthorStr = l1 + ", " + f1 + ", et al.";
                 noteAuthorStr = f1 + " " + l1 + " et al.";
                 subAuthorStr = l1 + " et al.";
@@ -673,16 +685,34 @@
         // 5. FORMULATE OUTPUT A: BIBLIOGRAPHY
         var bibCitation = "";
         if (bibAuthorStr) bibCitation += bibAuthorStr + " ";
-        bibCitation += title ? "<em>" + title + "</em>." : "<em>[Title]</em>.";
+        
+        if (currentSourceType === "chapter") {
+            bibCitation += chapterTitle ? '"' + chapterTitle + '."' : '"[Chapter Title]."';
+            bibCitation += title ? " In <em>" + title + "</em>." : " In <em>[Book Title]</em>.";
+        } else {
+            bibCitation += title ? "<em>" + title + "</em>." : "<em>[Title]</em>.";
+        }
+
         if (ed.bib) bibCitation += ed.bib;
         if (trans.bib) bibCitation += trans.bib;
         if (comp.bib) bibCitation += comp.bib;
+        
         bibCitation += " " + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + ".";
+        if (currentSourceType === "chapter") {
+            bibCitation += " " + rangeDisplay + ".";
+        }
 
         // 6. FORMULATE OUTPUT B: FIRST FOOTNOTE
         var noteCitation = "";
         if (noteAuthorStr) noteCitation += noteAuthorStr + ", ";
-        noteCitation += title ? "<em>" + title + "</em>" : "<em>[Title]</em>";
+        
+        if (currentSourceType === "chapter") {
+            noteCitation += chapterTitle ? '"' + chapterTitle + '," in ' : '"[Chapter Title]," in ';
+            noteCitation += title ? "<em>" + title + "</em>" : "<em>[Book Title]</em>";
+        } else {
+            noteCitation += title ? "<em>" + title + "</em>" : "<em>[Title]</em>";
+        }
+
         if (ed.note) noteCitation += ed.note;
         if (trans.note) noteCitation += trans.note;
         if (comp.note) noteCitation += comp.note;
@@ -691,7 +721,12 @@
         // 7. FORMULATE OUTPUT C: SUBSEQUENT FOOTNOTE
         var subCitation = "";
         if (subAuthorStr) subCitation += subAuthorStr + ", ";
-        subCitation += title ? "<em>" + title + "</em>" : "<em>[Title]</em>";
+        
+        if (currentSourceType === "chapter") {
+            subCitation += chapterTitle ? '"' + chapterTitle + '"' : '"[Chapter Title]"';
+        } else {
+            subCitation += title ? "<em>" + title + "</em>" : "<em>[Title]</em>";
+        }
         subCitation += ", " + pDisplay + ".";
 
         // 8. RENDER FIELDS IMMEDIATELY
@@ -699,29 +734,11 @@
         var n1Box = document.getElementById("sbl-n1-output");
         var n2Box = document.getElementById("sbl-n2-output");
 
-        var inputCheck = authors.length > 0 || title || city || publisher || year;
+        var inputCheck = authors.length > 0 || title || city || publisher || year || chapterTitle;
         
         if (bibBox && n1Box && n2Box) {
             if (!inputCheck) {
                 bibBox.innerHTML = "<em>Fill out fields above to build bibliography preview...</em>";
                 n1Box.innerHTML = "<em>Fill out fields above to build full footnote preview...</em>";
                 n2Box.innerHTML = "<em>Fill out fields above to build short footnote preview...</em>";
-            } else {
-                bibBox.innerHTML = bibCitation;
-                n1Box.innerHTML = noteCitation;
-                n2Box.innerHTML = subCitation;
-            }
-        }
-    };
 
-    // 9. EVENT REGISTRATION LOOP (Listens to the entire Step 2 panel wrapper dynamically)
-    document.addEventListener("DOMContentLoaded", function() {
-        var formArea = document.getElementById("sbl-step-2");
-        if (formArea) {
-            formArea.addEventListener("input", function() { w.generateSBLCitation(); });
-            formArea.addEventListener("change", function() { w.generateSBLCitation(); });
-        }
-        w.generateSBLCitation();
-    });
-})(window);
-</script>
