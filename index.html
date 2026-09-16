@@ -31,40 +31,32 @@
             ← Change Source Type
         </button>
 <script>
-  const btnContinue = document.getElementById('sbl-btn-continue');
-  const btnBack = document.getElementById('sbl-btn-back');
-  const formGroup = document.querySelector('.sbl-form-group');
-  const step2 = document.getElementById('sbl-step-2');
-  const sourceSelect = document.getElementById('sbl-type');
-
-  btnContinue.addEventListener('click', function() {
-    const selectedSource = sourceSelect.value;
-    
-    formGroup.style.display = 'none';
-    btnContinue.style.display = 'none';
-    step2.style.display = 'block';
-    
-    const bookContainer = document.getElementById('sbl-book-metadata-container');
+     const bookContainer = document.getElementById('sbl-book-metadata-container');
     const chapContainer = document.getElementById('sbl-chapter-metadata-container');
+    const commContainer = document.getElementById('sbl-commentary-metadata-container');
+    const thesisContainer = document.getElementById('sbl-thesis-metadata-container');
+    const bibleContainer = document.getElementById('sbl-bible-metadata-container');
 
+    // Hide all containers first to keep them from overlapping
+    if (bookContainer) bookContainer.style.setProperty('display', 'none', 'important');
+    if (chapContainer) chapContainer.style.setProperty('display', 'none', 'important');
+    if (commContainer) commContainer.style.setProperty('display', 'none', 'important');
+    if (thesisContainer) thesisContainer.style.setProperty('display', 'none', 'important');
+    if (bibleContainer) bibleContainer.style.setProperty('display', 'none', 'important');
+
+    // Switch open the chosen container layer dynamically
     if (selectedSource === 'chapter') {
-        // Hide standard book fields, show dedicated Chapter fields
-        if (bookContainer) bookContainer.style.setProperty('display', 'none', 'important');
         if (chapContainer) chapContainer.style.setProperty('display', 'block', 'important');
-    } else {
-        // Show standard book fields, hide Chapter fields
+    } else if (selectedSource === 'commentary') {
+        if (commContainer) commContainer.style.setProperty('display', 'block', 'important');
+    } else if (selectedSource === 'thesis') {
+        if (thesisContainer) thesisContainer.style.setProperty('display', 'block', 'important');
+    } else if (selectedSource === 'bible') {
+        if (bibleContainer) bibleContainer.style.setProperty('display', 'block', 'important');
+    } else if (selectedSource === 'book') {
         if (bookContainer) bookContainer.style.setProperty('display', 'block', 'important');
-        if (chapContainer) chapContainer.style.setProperty('display', 'none', 'important');
     }
-    
-    console.log("User selected: " + selectedSource);
-  });
 
-  btnBack.addEventListener('click', function() {
-    step2.style.display = 'none';
-    formGroup.style.display = 'block';
-    btnContinue.style.display = 'inline-block';
-  });
 </script>
 
 
@@ -244,7 +236,98 @@
         </div>
     </fieldset>
 </div>
+<!-- ==========================================
+     2C. BIBLE COMMENTARY SPECIFIC FIELDS
+     ========================================== -->
+<div id="sbl-commentary-metadata-container" style="display: none;">
+    <fieldset class="sbl-fieldset" style="margin-top: 20px;">
+        <legend>Commentary Series Info</legend>
+        <div class="sbl-row" style="margin-bottom: 10px;">
+            <div class="sbl-form-group sbl-col">
+                <label for="sbl-comm-title">Commentary Volume Title *</label>
+                <input type="text" id="sbl-comm-title" placeholder="e.g. The Gospel according to John I-XII">
+            </div>
+        </div>
+        <div class="sbl-row">
+            <div class="sbl-form-group sbl-col">
+                <label for="sbl-comm-series">Commentary Series Name *</label>
+                <input type="text" id="sbl-comm-series" placeholder="e.g. Anchor Bible (or abbreviation like AB)">
+            </div>
+            <div class="sbl-form-group sbl-col-short">
+                <label for="sbl-comm-vol">Volume # *</label>
+                <input type="text" id="sbl-comm-vol" placeholder="e.g. 29A">
+            </div>
+        </div>
+    </fieldset>
+</div>
 
+<!-- ==========================================
+     2D. DISSERTATION / THESIS SPECIFIC FIELDS
+     ========================================== -->
+<div id="sbl-thesis-metadata-container" style="display: none;">
+    <fieldset class="sbl-fieldset" style="margin-top: 20px;">
+        <legend>Academic Thesis Info</legend>
+        <div class="sbl-row" style="margin-bottom: 10px;">
+            <div class="sbl-form-group sbl-col">
+                <label for="sbl-thesis-title">Dissertation/Thesis Title *</label>
+                <input type="text" id="sbl-thesis-title" placeholder="e.g. The Rhetoric of Righteousness in Paul">
+            </div>
+        </div>
+        <div class="sbl-row">
+            <div class="sbl-form-group sbl-col">
+                <label for="sbl-thesis-type">Degree Type *</label>
+                <select id="sbl-thesis-type">
+                    <option value="PhD diss.">PhD Dissertation</option>
+                    <option value="ThM thesis">ThM Thesis</option>
+                    <option value="MA thesis">MA Thesis</option>
+                </select>
+            </div>
+            <div class="sbl-form-group sbl-col">
+                <label for="sbl-thesis-school">Institution/University *</label>
+                <input type="text" id="sbl-thesis-school" placeholder="e.g. Harvard University">
+            </div>
+        </div>
+    </fieldset>
+</div>
+
+<!-- ==========================================
+     2E. BIBLICAL TEXT CITATION FIELDS
+     ========================================== -->
+<div id="sbl-bible-metadata-container" style="display: none;">
+    <fieldset class="sbl-fieldset" style="margin-top: 20px;">
+        <legend>Scripture Citation Info</legend>
+        <div class="sbl-row">
+            <div class="sbl-form-group sbl-col">
+                <label for="sbl-bible-book">Bible Book *</label>
+                <select id="sbl-bible-book">
+                    <option value="Gen">Genesis (Gen)</option>
+                    <option value="Exod">Exodus (Exod)</option>
+                    <option value="Lev">Leviticus (Lev)</option>
+                    <option value="Num">Numbers (Num)</option>
+                    <option value="Deut">Deuteronomy (Deut)</option>
+                    <option value="Ps">Psalms (Ps)</option>
+                    <option value="Isa">Isaiah (Isa)</option>
+                    <option value="Matt">Matthew (Matt)</option>
+                    <option value="Mark">Mark (Mark)</option>
+                    <option value="Luke">Luke (Luke)</option>
+                    <option value="John">John (John)</option>
+                    <option value="Acts">Acts (Acts)</option>
+                    <option value="Rom">Romans (Rom)</option>
+                    <option value="1 Cor">1 Corinthians (1 Cor)</option>
+                    <option value="Rev">Revelation (Rev)</option>
+                </select>
+            </div>
+            <div class="sbl-form-group sbl-col">
+                <label for="sbl-bible-passage">Chapter &amp; Verse *</label>
+                <input type="text" id="sbl-bible-passage" placeholder="e.g. 3:16">
+            </div>
+            <div class="sbl-form-group sbl-col-short">
+                <label for="sbl-bible-version">Version *</label>
+                <input type="text" id="sbl-bible-version" placeholder="e.g. NRSV">
+            </div>
+        </div>
+    </fieldset>
+</div>
 
         <!-- ==========================================
              3. VOLUME / SERIES / JOURNAL
