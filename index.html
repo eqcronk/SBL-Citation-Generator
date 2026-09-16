@@ -1,195 +1,686 @@
 <!-- ==========================================
-     SBL Citation Generator (Complete & Fixed)
+     SBL Citation Generator
      ========================================== -->
+
 <div class="sbl-widget-container">
     <h2>SBL Citation Generator</h2>
-    
-    <!-- STEP 1: INITIAL SOURCE SELECTOR SCREEN -->
+
+    <!-- STEP 1: SOURCE TYPE -->
     <div id="sbl-step-1" class="sbl-wizard-step">
+
         <div class="sbl-form-group">
-            <label for="sbl-type" style="font-size: 1.1rem; text-align: center; margin-bottom: 12px;">What type of source are you citing?</label>
-            <select id="sbl-type" style="font-size: 1.1rem; padding: 12px;">
+            <label for="sbl-type" class="sbl-source-question">
+                What type of source are you citing?
+            </label>
+
+            <select id="sbl-type" class="sbl-source-select">
                 <option value="book">Whole Book</option>
                 <option value="chapter">Chapter or Essay in an Edited Book</option>
                 <option value="article">Journal Article</option>
             </select>
         </div>
-        <button type="button" id="sbl-btn-continue" class="sbl-primary-btn">Select & Continue →</button>
+
+        <button type="button" id="sbl-btn-continue" class="sbl-primary-btn">
+            Select &amp; Continue →
+        </button>
+
     </div>
 
-    <!-- STEP 2: DYNAMIC FORM CONTAINER -->
+
+    <!-- STEP 2: CITATION FORM -->
     <div id="sbl-step-2" class="sbl-wizard-step" style="display: none;">
-        <button type="button" id="sbl-btn-back" class="sbl-back-link">← Change Source Type</button>
-        
-        <!-- 1. AUTHOR & CONTRIBUTOR SECTION -->
+
+        <button type="button" id="sbl-btn-back" class="sbl-back-link">
+            ← Change Source Type
+        </button>
+
+
+        <!-- ==========================================
+             1. AUTHORS & CONTRIBUTORS
+             ========================================== -->
+
         <fieldset class="sbl-fieldset">
-            <legend>Authors & Contributors</legend>
+            <legend>Authors &amp; Contributors</legend>
+
             <div class="sbl-row">
+
                 <div class="sbl-form-group sbl-col">
-                    <label for="sbl-first-name">Author First Name(s)</label>
-                    <input type="text" id="sbl-first-name" placeholder="e.g. Charles H.">
+                    <label for="sbl-first-name">
+                        Author First Name(s)
+                    </label>
+                    <input
+                        type="text"
+                        id="sbl-first-name"
+                        placeholder="e.g. Charles H."
+                    >
                 </div>
+
                 <div class="sbl-form-group sbl-col">
-                    <label for="sbl-last-name">Author Last Name</label>
-                    <input type="text" id="sbl-last-name" placeholder="e.g. Talbert">
+                    <label for="sbl-last-name">
+                        Author Last Name
+                    </label>
+                    <input
+                        type="text"
+                        id="sbl-last-name"
+                        placeholder="e.g. Talbert"
+                    >
                 </div>
+
             </div>
 
-            <!-- Book/Chapter Contributors Toggles -->
+
+            <!-- Contributors -->
             <div id="grp-contributors">
+
                 <div class="sbl-form-toggle-group">
-                    <label><input type="checkbox" id="sbl-has-editor"> Has Editor(s)</label>
-                    <label><input type="checkbox" id="sbl-has-translator"> Has Translator(s)</label>
-                    <label><input type="checkbox" id="sbl-has-compiler"> Has Compiler(s)</label>
+
+                    <label>
+                        <input type="checkbox" id="sbl-has-editor">
+                        Has Editor(s)
+                    </label>
+
+                    <label>
+                        <input type="checkbox" id="sbl-has-translator">
+                        Has Translator(s)
+                    </label>
+
+                    <label>
+                        <input type="checkbox" id="sbl-has-compiler">
+                        Has Compiler(s)
+                    </label>
+
                 </div>
 
-                <!-- Editor Entry Row -->
-                <div class="sbl-row sbl-sub-input-row" id="row-editor" style="display: none;">
+
+                <!-- Editor -->
+                <div
+                    class="sbl-row sbl-sub-input-row"
+                    id="row-editor"
+                    style="display: none;"
+                >
+
                     <div class="sbl-form-group sbl-col">
-                        <label for="sbl-ed-name">Editor Name(s) <span class="sbl-instruct">(First Last order)</span></label>
-                        <input type="text" id="sbl-ed-name" placeholder="e.g. Thomas Williams">
+
+                        <label for="sbl-ed-name">
+                            Editor Name(s)
+                            <span class="sbl-instruct">
+                                First Last order
+                            </span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="sbl-ed-name"
+                            placeholder="e.g. Thomas Williams"
+                        >
+
                     </div>
+
                     <div class="sbl-form-group sbl-col-short">
-                        <label for="sbl-ed-type">Role Assignment</label>
+
+                        <label for="sbl-ed-type">
+                            Role Assignment
+                        </label>
+
                         <select id="sbl-ed-type">
-                            <option value="secondary">Secondary (Book has Author)</option>
-                            <option value="primary">Primary (No Primary Author)</option>
+
+                            <option value="secondary">
+                                Secondary (Book has Author)
+                            </option>
+
+                            <option value="primary">
+                                Primary (No Primary Author)
+                            </option>
+
                         </select>
+
                     </div>
+
                 </div>
 
-                <!-- Translator Entry Row -->
-                <div class="sbl-form-group sbl-sub-input-row" id="row-translator" style="display: none;">
-                    <label for="sbl-trans-name">Translator Name(s) <span class="sbl-instruct">(First Last order)</span></label>
-                    <input type="text" id="sbl-trans-name" placeholder="e.g. Peter Heinegg">
+
+                <!-- Translator -->
+                <div
+                    class="sbl-form-group sbl-sub-input-row"
+                    id="row-translator"
+                    style="display: none;"
+                >
+
+                    <label for="sbl-trans-name">
+                        Translator Name(s)
+                        <span class="sbl-instruct">
+                            First Last order
+                        </span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sbl-trans-name"
+                        placeholder="e.g. Peter Heinegg"
+                    >
+
                 </div>
 
-                <!-- Compiler Entry Row -->
-                <div class="sbl-form-group sbl-sub-input-row" id="row-compiler" style="display: none;">
-                    <label for="sbl-comp-name">Compiler Name(s) <span class="sbl-instruct">(First Last order)</span></label>
-                    <input type="text" id="sbl-comp-name" placeholder="e.g. David Tombs">
+
+                <!-- Compiler -->
+                <div
+                    class="sbl-form-group sbl-sub-input-row"
+                    id="row-compiler"
+                    style="display: none;"
+                >
+
+                    <label for="sbl-comp-name">
+                        Compiler Name(s)
+                        <span class="sbl-instruct">
+                            First Last order
+                        </span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sbl-comp-name"
+                        placeholder="e.g. David Tombs"
+                    >
+
                 </div>
+
             </div>
+
         </fieldset>
 
-        <!-- 2. TITLE FIELDSET -->
+
+        <!-- ==========================================
+             2. TITLE INFORMATION
+             ========================================== -->
+
         <fieldset class="sbl-fieldset">
+
             <legend>Title Information</legend>
-            
-            <!-- Nested Chapter/Article Title -->
-            <div class="sbl-form-group" id="grp-inner-title" style="display: none;">
-                <label for="sbl-inner-title" id="lbl-inner-title">Chapter / Article Title</label>
-                <input type="text" id="sbl-inner-title" placeholder="e.g. John Chrysostom on the Gaze">
+
+
+            <!-- Chapter / Article Title -->
+            <div
+                class="sbl-form-group"
+                id="grp-inner-title"
+                style="display: none;"
+            >
+
+                <label for="sbl-inner-title" id="lbl-inner-title">
+                    Chapter / Article Title
+                </label>
+
+                <input
+                    type="text"
+                    id="sbl-inner-title"
+                    placeholder=""
+                >
+
             </div>
 
-            <!-- Overarching Work Title -->
+
+            <!-- Main Book Title -->
             <div class="sbl-row" id="row-main-title">
+
                 <div class="sbl-form-group sbl-col-60">
-                    <label for="sbl-title" id="lbl-title">Book Title</label>
-                    <input type="text" id="sbl-title" placeholder="e.g. Reading John">
+
+                    <label for="sbl-title" id="lbl-title">
+                        Book Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sbl-title"
+                        placeholder="e.g. Reading John"
+                    >
+
                 </div>
-                <div class="sbl-form-group sbl-col" id="grp-subtitle">
-                    <label for="sbl-subtitle">Subtitle <span class="sbl-optional">(Optional)</span></label>
-                    <input type="text" id="sbl-subtitle" placeholder="e.g. A Literary and Theological Commentary">
+
+
+                <!-- Subtitle -->
+                <div
+                    class="sbl-form-group sbl-col"
+                    id="grp-subtitle"
+                >
+
+                    <label for="sbl-subtitle">
+                        Subtitle
+                        <span class="sbl-optional">
+                            Optional
+                        </span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sbl-subtitle"
+                        placeholder="e.g. A Literary and Theological Commentary"
+                    >
+
                 </div>
+
             </div>
-            
+
+
             <!-- Short Title -->
             <div class="sbl-form-group">
-                <label for="sbl-short-title">Short Title <span class="sbl-instruct">(For Short Subsequent Footnotes)</span></label>
-                <input type="text" id="sbl-short-title" placeholder="e.g. Reading John">
+
+                <label for="sbl-short-title">
+                    Short Title
+                    <span class="sbl-instruct">
+                        For Short Subsequent Footnotes
+                    </span>
+                </label>
+
+                <input
+                    type="text"
+                    id="sbl-short-title"
+                    placeholder="e.g. Reading John"
+                >
+
             </div>
+
         </fieldset>
 
-        <!-- 3. VOLUMES, EDITIONS, & SERIES -->
+
+        <!-- ==========================================
+             3. VOLUME / SERIES / JOURNAL
+             ========================================== -->
+
         <fieldset class="sbl-fieldset" id="grp-serial-metadata">
-            <legend id="lbl-serial-legend">Volume & Series Info</legend>
-            
-            <!-- Journal Serial Metadata Grid -->
-            <div class="sbl-row" id="row-journal-meta" style="display: none;">
+
+            <legend id="lbl-serial-legend">
+                Volume &amp; Series Info
+            </legend>
+
+
+            <!-- JOURNAL INFORMATION -->
+            <div
+                class="sbl-row"
+                id="row-journal-meta"
+                style="display: none;"
+            >
+
                 <div class="sbl-form-group sbl-col-60">
-                    <label for="sbl-journal">Journal Abbreviation or Title</label>
-                    <input type="text" id="sbl-journal" placeholder="e.g. JECS or Journal of Early Christian Studies">
+
+                    <label for="sbl-journal">
+                        Journal Abbreviation or Title
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sbl-journal"
+                        placeholder="e.g. JECS or Journal of Early Christian Studies"
+                    >
+
                 </div>
+
                 <div class="sbl-form-group sbl-col">
-                    <label for="sbl-volume">Volume</label>
-                    <input type="text" id="sbl-volume" placeholder="e.g. 1">
+
+                    <label for="sbl-volume">
+                        Volume
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sbl-volume"
+                        placeholder="e.g. 42"
+                    >
+
                 </div>
+
                 <div class="sbl-form-group sbl-col">
-                    <label for="sbl-issue">Issue <span class="sbl-optional">(Optional)</span></label>
-                    <input type="text" id="sbl-issue" placeholder="e.g. 3">
+
+                    <label for="sbl-issue">
+                        Issue
+                        <span class="sbl-optional">
+                            Optional
+                        </span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sbl-issue"
+                        placeholder="e.g. 3"
+                    >
+
                 </div>
+
             </div>
 
-            <!-- Monograph Volume and Edition Grid -->
+
+            <!-- BOOK VOLUME / SERIES -->
             <div id="row-book-series-meta">
+
                 <div class="sbl-row">
+
                     <div class="sbl-form-group sbl-col">
-                        <label for="sbl-edition">Edition <span class="sbl-optional">(e.g., 2nd ed.)</span></label>
-                        <input type="text" id="sbl-edition" placeholder="e.g. 2nd ed.">
+
+                        <label for="sbl-edition">
+                            Edition
+                            <span class="sbl-optional">
+                                e.g. 2nd ed.
+                            </span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="sbl-edition"
+                            placeholder="e.g. 2nd ed."
+                        >
+
                     </div>
+
+
                     <div class="sbl-form-group sbl-col">
-                        <label for="sbl-vol-num">Vol. Number <span class="sbl-optional">(e.g., 2)</span></label>
-                        <input type="text" id="sbl-vol-num" placeholder="e.g. 2">
+
+                        <label for="sbl-vol-num">
+                            Vol. Number
+                            <span class="sbl-optional">
+                                e.g. 2
+                            </span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="sbl-vol-num"
+                            placeholder="e.g. 2"
+                        >
+
                     </div>
+
+
                     <div class="sbl-form-group sbl-col">
-                        <label for="sbl-total-vols">Total Volumes <span class="sbl-optional">(Whole set)</span></label>
-                        <input type="text" id="sbl-total-vols" placeholder="e.g. 4 vols.">
+
+                        <label for="sbl-total-vols">
+                            Total Volumes
+                            <span class="sbl-optional">
+                                Whole set
+                            </span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="sbl-total-vols"
+                            placeholder="e.g. 4 vols."
+                        >
+
                     </div>
+
                 </div>
+
+
                 <div class="sbl-row">
+
                     <div class="sbl-form-group sbl-col-60">
-                        <label for="sbl-series-title">Series Title / Abbreviation</label>
-                        <input type="text" id="sbl-series-title" placeholder="e.g. SBLDS or WBC">
+
+                        <label for="sbl-series-title">
+                            Series Title / Abbreviation
+                        </label>
+
+                        <input
+                            type="text"
+                            id="sbl-series-title"
+                            placeholder="e.g. SBLDS or WBC"
+                        >
+
                     </div>
+
+
                     <div class="sbl-form-group sbl-col">
-                        <label for="sbl-series-num">Series No.</label>
-                        <input type="text" id="sbl-series-num" placeholder="e.g. 42">
+
+                        <label for="sbl-series-num">
+                            Series No.
+                        </label>
+
+                        <input
+                            type="text"
+                            id="sbl-series-num"
+                            placeholder="e.g. 42"
+                        >
+
                     </div>
+
                 </div>
-                <div class="sbl-form-group" id="grp-vol-distinct-title">
-                    <label for="sbl-vol-title">Individual Volume Title <span class="sbl-optional">(If distinct)</span></label>
-                    <input type="text" id="sbl-vol-title" placeholder="e.g. The Historical-Critical Method">
+
+
+                <div
+                    class="sbl-form-group"
+                    id="grp-vol-distinct-title"
+                >
+
+                    <label for="sbl-vol-title">
+                        Individual Volume Title
+                        <span class="sbl-optional">
+                            If distinct
+                        </span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sbl-vol-title"
+                        placeholder="e.g. The Historical-Critical Method"
+                    >
+
                 </div>
+
             </div>
+
         </fieldset>
 
-        <!-- 4. IMPRINT LOGISTICS & ACCESS LOCATORS -->
+
+        <!-- ==========================================
+             4. PUBLICATION & ACCESS
+             ========================================== -->
+
         <fieldset class="sbl-fieldset">
-            <legend>Publication Details & Access</legend>
+
+            <legend>Publication Details &amp; Access</legend>
+
+
+            <!-- City / Publisher -->
             <div class="sbl-row" id="row-imprint">
+
                 <div class="sbl-form-group sbl-col">
-                    <label for="sbl-city">Publication City</label>
-                    <input type="text" id="sbl-city" placeholder="e.g. New York or Winona Lake, IN">
+
+                    <label for="sbl-city">
+                        Publication City
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sbl-city"
+                        placeholder="e.g. New York or Winona Lake, IN"
+                    >
+
                 </div>
+
+
                 <div class="sbl-form-group sbl-col">
-                    <label for="sbl-publisher">Publisher</label>
-                    <input type="text" id="sbl-publisher" placeholder="e.g. Crossroad">
+
+                    <label for="sbl-publisher">
+                        Publisher
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sbl-publisher"
+                        placeholder="e.g. Crossroad"
+                    >
+
                 </div>
+
             </div>
-            
+
+
+            <!-- Year / Pages Cited -->
             <div class="sbl-row">
+
                 <div class="sbl-form-group sbl-col">
-                    <label for="sbl-year">Year Published</label>
-                    <input type="text" id="sbl-year" placeholder="e.g. 1992">
+
+                    <label for="sbl-year">
+                        Year Published
+                    </label>
+
+                    <input
+                        type="text"
+                        id="sbl-year"
+                        placeholder="e.g. 2024"
+                    >
+
                 </div>
+
+
                 <div class="sbl-form-group sbl-col" id="grp-pages-field">
-                    <label for="sbl-pages">Pages Cited</label>
-                         <span class="sbl-instruction">
-                           Enter the specific page(s) you are citing.
-                         </span>
-                         <input type="text" id="sbl-pages" placeholder="e.g., 151">
-                                              </div>
-                 <label for="sbl-range">Full Page Range</label>
-               <span class="sbl-instruction">
-                 Enter the complete page range of the chapter or article.
-               </span>
-               <input type="text" id="sbl-range" placeholder="e.g., 145–162">
-               
-               <label for="sbl-url">DOI or URL</label>
-               <span class="sbl-instruction">
-                 For an online source, enter the DOI or direct URL.
-               </span>
-               <input type="text" id="sbl-url" placeholder="Optional">
-                <div class="sbl-form-group sbl-col" id="grp-range-field" style="display: none;">
-                     Full Page Range (For Bib)URL or DOI (For Electronic Media - Optional)SBL First FootnoteCopyFill in fields above to display first footnote.SBL Subsequent Footnote (Short Form)CopyFill in fields above to display short footnote.SBL BibliographyCopyFill in fields above to display bibliography..sbl-widget-container {max-width: 650px;margin: 20px auto;background: #ffffff;padding: 24px;border-radius: 8px;box-shadow: 0 4px 12px rgba(0,0,0,0.06);border: 1px solid #e2e8f0;box-sizing: border-box;}.sbl-widget-container h2 {margin-top: 0;color: #2b4c7e;font-size: 1.6rem;margin-bottom: 24px;text-align: center;border-bottom: 2px solid #f1f5f9;padding-bottom: 12px;}.sbl-wizard-step {animation: fadeIn 0.3s ease-in-out;}.sbl-primary-btn {display: block;width: 100%;background: #2b4c7e;color: white;border: none;padding: 12px;font-size: 1rem;font-weight: 600;border-radius: 6px;cursor: pointer;margin-top: 16px;transition: background 0.2s ease;}.sbl-primary-btn:hover { background: #1e355b; }.sbl-back-link {background: none;border: none;color: #2b4c7e;font-weight: 600;cursor: pointer;padding: 0;margin-bottom: 16px;font-size: 0.9rem;}.sbl-back-link:hover { text-decoration: underline; }.sbl-fieldset {border: 1px solid #e2e8f0;border-radius: 6px;padding: 16px;margin-bottom: 20px;background: #fafafa;}.sbl-fieldset legend {font-weight: 700;color: #2b4c7e;padding: 0 8px;font-size: 0.9rem;text-transform: uppercase;letter-spacing: 0.02em;}.sbl-form-group { margin-bottom: 14px; }.sbl-form-toggle-group {display: flex;gap: 16px;margin-bottom: 12px;background: #f1f5f9;padding: 8px 12px;border-radius: 4px;}.sbl-form-toggle-group label {display: flex !important;align-items: center;gap: 6px;cursor: pointer;font-weight: 500 !important;}.sbl-sub-input-row {background: #fff;border: 1px dashed #cbd5e1;padding: 10px;border-radius: 4px;margin-bottom: 10px;}.sbl-row { display: flex; gap: 14px; }.sbl-col { flex: 1; min-width: 0; }.sbl-col-60 { flex: 1.6; min-width: 0; }.sbl-col-short { width: 150px; }.sbl-widget-container label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem; color: #334155; }.sbl-instruct { font-weight: normal; color: #64748b; font-size: 0.75rem; }.sbl-optional { font-weight: normal; color: #94a3b8; font-size: 0.75rem; }.sbl-widget-container input, .sbl-widget-container select {width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; color: #1e293b; background-color: #fff;}.sbl-widget-container input:focus, .sbl-widget-container select:focus { outline: none; border-color: #2b4c7e; box-shadow: 0 0 0 3px rgba(43, 76, 126, 0.1); }.sbl-output-box { margin-top: 28px; padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-left: 5px solid #2b4c7e; border-radius: 6px; }.sbl-output-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 4px; }.sbl-output-title { font-weight: 700; font-size: 0.75rem; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; }.sbl-copy-btn { background: #ffffff; border: 1px solid #cbd5e1; padding: 3px 10px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; color: #475569; font-weight: 600; transition: all 0.15s ease; }.sbl-copy-btn:hover { background: #2b4c7e; color: #ffffff; border-color: #2b4c7e; }.sbl-citation { font-family: Georgia, serif; font-size: 1.05rem; margin-bottom: 24px; line-height: 1.6; color: #0f172a; word-break: break-word; padding-left: 8px; }.sbl-citation:last-child { margin-bottom: 0; }.sbl-citation i { font-style: italic; }@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }(function() {const fields = ['sbl-first-name', 'sbl-last-name', 'sbl-has-editor', 'sbl-has-translator', 'sbl-has-compiler','sbl-ed-name', 'sbl-ed-type', 'sbl-trans-name', 'sbl-comp-name', 'sbl-title', 'sbl-subtitle', 'sbl-short-title','sbl-journal', 'sbl-volume', 'sbl-issue', 'sbl-edition', 'sbl-vol-num', 'sbl-total-vols','sbl-series-title', 'sbl-series-num', 'sbl-vol-title', 'sbl-city', 'sbl-publisher', 'sbl-year', 'sbl-pages', 'sbl-range', 'sbl-url'];// Step Navigation Event Observersdocument.getElementById('sbl-btn-continue').addEventListener('click', function() {document.getElementById('sbl-step-1').style.display = 'none';document.getElementById('sbl-step-2').style.display = 'block';applyFormLayoutRules();});document.getElementById('sbl-btn-back').addEventListener('click', function() {document.getElementById('sbl-step-2').style.display = 'none';document.getElementById('sbl-step-1').style.display = 'block';});fields.forEach(id => {const el = document.getElementById(id);if(el) {if(['sbl-has-editor', 'sbl-has-translator', 'sbl-has-compiler'].includes(id)) {el.addEventListener('change', handleCheckboxToggles);} else {el.addEventListener('input', generateSBLCitation);}}});function handleCheckboxToggles() {document.getElementById('row-editor').style.display = document.getElementById('sbl-has-editor').checked ? 'flex' : 'none';document.getElementById('row-translator').style.display = document.getElementById('sbl-has-translator').checked ? 'block' : 'none';document.getElementById('row-compiler').style.display = document.getElementById('sbl-has-compiler').checked ? 'block' : 'none';generateSBLCitation();}function applyFormLayoutRules() {const type = document.getElementById('sbl-type').value;const lblTitle = document.getElementById('lbl-title');const txtTitle = document.getElementById('sbl-title');const lblPages = document.getElementById('lbl-pages');const grpInnerTitle = document.getElementById('grp-inner-title');const grpContributors = document.getElementById('grp-contributors');const rowMainTitle = document.getElementById('row-main-title');const grpSubtitle = document.getElementById('grp-subtitle');const rowJournalMeta = document.getElementById('row-journal-meta');const rowBookSeriesMeta = document.getElementById('row-book-series-meta');const rowImprint = document.getElementById('row-imprint');const grpRangeField = document.getElementById('grp-range-field');const grpVolDistinctTitle = document.getElementById('grp-vol-distinct-title');const lblSerialLegend = document.getElementById('lbl-serial-legend');if(type === 'book') {lblTitle.textContent = "Book Title";txtTitle.placeholder = "e.g. Reading John";lblPages.textContent = "Page(s) Cited (For Note)";grpInnerTitle.style.display = 'none';grpContributors.style.display = 'block';rowMainTitle.style.display = 'flex';grpSubtitle.style.display = 'block';rowJournalMeta.style.display = 'none';rowBookSeriesMeta.style.display = 'block';rowImprint.style.display = 'flex';grpRangeField.style.display = 'none';grpVolDistinctTitle.style.display = 'block';lblSerialLegend.textContent = "Volume & Series Info";} else if (type === 'chapter') {lblTitle.textContent = "Overarching Book Title";txtTitle.placeholder = "e.g. Approaches to New Testament Study";lblPages.textContent = "Specific Page Cited (For Note)";grpInnerTitle.style.display = 'block';document.getElementById('lbl-inner-title').textContent = "Chapter / Essay Title";document.getElementById('sbl-inner-title').placeholder = "e.g. Canonical Criticism";grpContributors.style.display = 'block';rowMainTitle.style.display = 'flex';grpSubtitle.style.display = 'block';rowJournalMeta.style.display = 'none';rowBookSeriesMeta.style.display = 'block';rowImprint.style.display = 'flex';grpRangeField.style.display = 'block';grpVolDistinctTitle.style.display = 'block';lblSerialLegend.textContent = "Volume & Series Info";} else if (type === 'article') {lblTitle.textContent = "N/A";lblPages.textContent = "Specific Page Cited (For Note)";grpInnerTitle.style.display = 'block';document.getElementById('lbl-inner-title').textContent = "Article Title";document.getElementById('sbl-inner-title').placeholder = "e.g. John Chrysostom on the Gaze";grpContributors.style.display = 'none';rowMainTitle.style.display = 'none';grpSubtitle.style.display = 'none';rowJournalMeta.style.display = 'flex';rowBookSeriesMeta.style.display = 'none';rowImprint.style.display = 'none';grpRangeField.style.display = 'block';grpVolDistinctTitle.style.display = 'none';lblSerialLegend.textContent = "Journal Specifications";}generateSBLCitation();}function helperInvertName(fullName) {if(!fullName) return "";const parts = fullName.trim().split(/\s+/);if(parts.length > 1) { const last = parts.pop(); return ${last}, ${parts.join(" ")}; }return fullName;}function generateSBLCitation() {const type = document.getElementById('sbl-type').value;const firstName = document.getElementById('sbl-first-name').value.trim();const lastName = document.getElementById('sbl-last-name').value.trim();const mainTitle = document.getElementById('sbl-title').value.trim();const subTitle = document.getElementById('sbl-subtitle').value.trim();const shortTitle = document.getElementById('sbl-short-title').value.trim();const year = document.getElementById('sbl-year').value.trim();const pages = document.getElementById('sbl-pages').value.trim();const urlField = document.getElementById('sbl-url').value.trim();const hasEd = document.getElementById('sbl-has-editor').checked;const hasTrans = document.getElementById('sbl-has-translator').checked;const hasComp = document.getElementById('sbl-has-compiler').checked;const edName = document.getElementById('sbl-ed-name').value.trim();const edType = document.getElementById('sbl-ed-type').value;const transName = document.getElementById('sbl-trans-name').value.trim();const compName = document.getElementById('sbl-comp-name').value.trim();let noteAuth = (firstName && lastName) ? ${firstName} ${lastName} : (lastName || firstName || "[Author]");let bibAuth = (firstName && lastName) ? ${lastName}, ${firstName} : (lastName || firstName || "[Author]");let subAuth = lastName || firstName || "[Author]";if(type === 'book' && hasEd && edType === 'primary' && !firstName && !lastName) {noteAuth = edName ? ${edName}, ed. : "[Editor], ed.";bibAuth = edName ? ${helperInvertName(edName)}, ed. : "[Editor], ed.";subAuth = edName ? edName.split(/\s+/).pop() : "[Editor]";}let fullTitleText = mainTitle || "[Title]";if(subTitle && type !== 'article') fullTitleText += : ${subTitle};let itTitle = <i>${fullTitleText}</i>;let itShortTitle = shortTitle ? <i>${shortTitle}</i> : (mainTitle ? <i>${mainTitle}</i> : "[Short Title]");const y = year || "[Year]";const pg = pages || "[Page]";const electronAccess = urlField ? , ${urlField} : "";let noteOutput = "";let subnoteOutput = "";let bibOutput = "";if (type === 'book') {const city = document.getElementById('sbl-city').value.trim() || "[City]";const publisher = document.getElementById('sbl-publisher').value.trim() || "[Publisher]";const edition = document.getElementById('sbl-edition').value.trim();const volNum = document.getElementById('sbl-vol-num').value.trim();const totalVols = document.getElementById('sbl-total-vols').value.trim();const seriesTitle = document.getElementById('sbl-series-title').value.trim();const seriesNum = document.getElementById('sbl-series-num').value.trim();const volDistinctTitle = document.getElementById('sbl-vol-title').value.trim();let edStrNote = edition ? , ${edition} : "";let edStrBib = edition ? . ${edition} : "";let volSeriesStrNote = ""; let volSeriesStrBib = "";if(volNum) {let vText = volDistinctTitle ? Vol. ${volNum}: <i>${volDistinctTitle}</i> : Vol. ${volNum};volSeriesStrNote += , ${vText}; volSeriesStrBib += . ${vText};}if(seriesTitle) {let sText = seriesNum ? ${seriesTitle} ${seriesNum} : seriesTitle;volSeriesStrNote += , ${sText}; volSeriesStrBib += . ${sText};}if(totalVols && !volNum) { volSeriesStrNote += , ${totalVols}; volSeriesStrBib += . ${totalVols}; }let roleNote = ""; let roleBib = "";if(hasEd && edType === 'secondary' && edName) { roleNote += , ed. ${edName}; roleBib += , ed. ${edName}; }if(hasTrans && transName) { roleNote += , trans. ${transName}; roleBib += , trans. ${transName}; }if(hasComp && compName) { roleNote += , comp. ${compName}; roleBib += , comp. ${compName}; }if(roleBib) roleBib = .${roleBib};noteOutput = ${noteAuth}, ${itTitle}${roleNote}${edStrNote}${volSeriesStrNote} (${city}: ${publisher}, ${y}), ${pg}${electronAccess}.;subnoteOutput = ${subAuth}, ${itShortTitle}, ${pg}.;bibOutput = ${bibAuthor}. ${itTitle}${roleBib}${edStrBib}${volSeriesStrBib}. ${city}: ${publisher}, ${y}${electronAccess}.;} else if (type === 'chapter') {const innerTitle = document.getElementById('sbl-inner-title').value.trim() || "[Chapter Title]";const city = document.getElementById('sbl-city').value.trim() || "[City]";const publisher = document.getElementById('sbl-publisher').value.trim() || "[Publisher]";const chRange = document.getElementById('sbl-range').value.trim() || "[Page Range]";const seriesTitle = document.getElementById('sbl-series-title').value.trim();const seriesNum = document.getElementById('sbl-series-num').value.trim();let sText = seriesTitle ? (seriesNum ? , ${seriesTitle} ${seriesNum} : , ${seriesTitle}) : "";let sTextBib = seriesTitle ? (seriesNum ? . ${seriesTitle} ${seriesNum} : . ${seriesTitle}) : "";let chEdStrNote = (hasEd && edName) ? , ed. ${edName} : "";let chEdStrBib = (hasEd && edName) ? . Edited by ${edName} : "";noteOutput = ${noteAuth}, “${innerTitle},” in ${itTitle}${chEdStrNote}${sText} (${city}: ${publisher}, ${y}), ${pg}${electronAccess}.;subnoteOutput = ${subAuth}, “${innerTitle},” ${pg}.;bibOutput = ${bibAuthor}. “${innerTitle}.” Pages ${chRange} in ${itTitle}${chEdStrBib}${sTextBib}. ${city}: ${publisher}, ${y}${electronAccess}.;} else if (type === 'article') {const innerTitle = document.getElementById('sbl-inner-title').value.trim() || "[Article Title]";const journal = document.getElementById('sbl-journal').value.trim() || "[Journal Title/Abbreviation]";const volume = document.getElementById('sbl-volume').value.trim() || "[volume]";const issue = document.getElementById('sbl-issue').value.trim();const range = document.getElementById('sbl-range').value.trim() || "[Page Range]";const itJournal = <i>${journal}</i>;const volIssue = issue ? ${volume}, no. ${issue} : volume;const artShortTitle = shortTitle ? "${shortTitle}" : "${innerTitle}";noteOutput = ${noteAuth}, “${innerTitle},” ${itJournal} ${volIssue} (${y}): ${pg}${electronAccess}.;subnoteOutput = ${subAuth}, ${artShortTitle}, ${pg}.;bibOutput = ${bibAuthor}. “${innerTitle}.” ${itJournal} ${volIssue} (${y}): ${range}${electronAccess}.;}document.getElementById('sbl-noteOutput').innerHTML = noteOutput;document.getElementById('sbl-subnoteOutput').innerHTML = subnoteOutput;document.getElementById('sbl-bibOutput').innerHTML = bibOutput;}// Global asynchronous clipboard helperwindow.copyCitation = function(elementId, btn) {const textToCopy = document.getElementById(elementId).innerText;navigator.clipboard.writeText(textToCopy).then(() => {const originalText = btn.textContent;btn.textContent = "Copied!"; btn.style.background = "#10b981"; btn.style.borderColor = "#10b981"; btn.style.color = "#ffffff";setTimeout(() => { btn.textContent = originalText; btn.style.background = "#ffffff"; btn.style.borderColor = "#cbd5e1"; btn.style.color = "#475569"; }, 1200);});}})();
+
+                    <label for="sbl-pages" id="lbl-pages">
+                        Pages Cited
+                    </label>
+
+                    <span class="sbl-help-text">
+                        Enter the specific page(s) you are citing.
+                    </span>
+
+                    <input
+                        type="text"
+                        id="sbl-pages"
+                        placeholder="e.g. 127"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- Full Page Range -->
+            <div
+                class="sbl-form-group"
+                id="grp-range-field"
+                style="display: none;"
+            >
+
+                <label for="sbl-range">
+                    Full Page Range
+                </label>
+
+                <span class="sbl-help-text">
+                    Enter the complete page range of the chapter or article.
+                </span>
+
+                <input
+                    type="text"
+                    id="sbl-range"
+                    placeholder="e.g. 145–162"
+                >
+
+            </div>
+
+
+            <!-- DOI / URL -->
+            <div class="sbl-form-group">
+
+                <label for="sbl-url">
+                    DOI or URL
+                    <span class="sbl-optional">
+                        Optional
+                    </span>
+                </label>
+
+                <span class="sbl-help-text">
+                    For an online source, enter the DOI or direct URL.
+                </span>
+
+                <input
+                    type="text"
+                    id="sbl-url"
+                    placeholder="e.g. https://doi.org/10.xxxx/xxxxx"
+                >
+
+            </div>
+
+        </fieldset>
+
+
+        <!-- ==========================================
+             OUTPUTS
+             ========================================== -->
+
+        <div class="sbl-output-box">
+
+            <!-- First Footnote -->
+            <div class="sbl-output-header">
+
+                <span class="sbl-output-title">
+                    SBL First Footnote
+                </span>
+
+                <button
+                    type="button"
+                    class="sbl-copy-btn"
+                    onclick="copyCitation('sbl-noteOutput', this)"
+                >
+                    Copy
+                </button>
+
+            </div>
+
+            <div
+                id="sbl-noteOutput"
+                class="sbl-citation"
+            >
+                Fill in fields above to display first footnote.
+            </div>
+
+
+            <!-- Subsequent Footnote -->
+            <div class="sbl-output-header">
+
+                <span class="sbl-output-title">
+                    SBL Subsequent Footnote (Short Form)
+                </span>
+
+                <button
+                    type="button"
+                    class="sbl-copy-btn"
+                    onclick="copyCitation('sbl-subnoteOutput', this)"
+                >
+                    Copy
+                </button>
+
+            </div>
+
+            <div
+                id="sbl-subnoteOutput"
+                class="sbl-citation"
+            >
+                Fill in fields above to display short footnote.
+            </div>
+
+
+            <!-- Bibliography -->
+            <div class="sbl-output-header">
+
+                <span class="sbl-output-title">
+                    SBL Bibliography
+                </span>
+
+                <button
+                    type="button"
+                    class="sbl-copy-btn"
+                    onclick="copyCitation('sbl-bibOutput', this)"
+                >
+                    Copy
+                </button>
+
+            </div>
+
+            <div
+                id="sbl-bibOutput"
+                class="sbl-citation"
+            >
+                Fill in fields above to display bibliography.
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
