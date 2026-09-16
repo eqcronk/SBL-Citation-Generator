@@ -51,7 +51,7 @@
     }
 
     /**
-     * Helper to set up dynamic "Add Another" rows
+     * Helper to set up dynamic "Add Another" rows safely
      */
     function setupDynamicRows(buttonId, containerId, role) {
         const button = document.getElementById(buttonId);
@@ -80,8 +80,8 @@
                 // Add deletion listener to the removal button
                 row.querySelector('.sbl-btn-remove').addEventListener('click', function() {
                     row.remove();
-                    if (typeof generateSBLCitation === "function") {
-                        generateSBLCitation();
+                    if (typeof window.generateSBLCitation === "function") {
+                        window.generateSBLCitation();
                     }
                 });
 
@@ -90,8 +90,8 @@
                 // Add real-time event triggers for rendering engine updates if present
                 row.querySelectorAll('input').forEach(input => {
                     input.addEventListener('input', function() {
-                        if (typeof generateSBLCitation === "function") {
-                            generateSBLCitation();
+                        if (typeof window.generateSBLCitation === "function") {
+                            window.generateSBLCitation();
                         }
                     });
                 });
@@ -101,79 +101,21 @@
 
 
     /* ==========================================
-       DOM REFERENCES
+       CONTRIBUTOR TOGGLES
        ========================================== */
-
-    const typeSelect = document.getElementById("sbl-type");
-
-    const stepOne = document.getElementById("sbl-step-1");
-    const stepTwo = document.getElementById("sbl-step-2");
-
-    const continueButton = document.getElementById("sbl-btn-continue");
-    const backButton = document.getElementById("sbl-btn-back");
-
-
-    /* ==========================================
-       WIZARD NAVIGATION
-       ========================================== */
-
-    continueButton.addEventListener("click", function () {
-
-        stepOne.style.display = "none";
-        stepTwo.style.display = "block";
-
-        applyFormLayoutRules();
-
-    });
-
-
-    backButton.addEventListener("click", function () {
-
-        stepTwo.style.display = "none";
-        stepOne.style.display = "block";
-
-    });
-
-
-    /* ==========================================
-       DYNAMIC INITIALIZATION & LISTENERS
-       ========================================== */
-
-    document
-        .getElementById("sbl-has-editor")
-        .addEventListener("change", handleContributorToggles);
-
-    document
-        .getElementById("sbl-has-translator")
-        .addEventListener("change", handleContributorToggles);
-
-    document
-        .getElementById("sbl-has-compiler")
-        .addEventListener("change", handleContributorToggles);
-
-    // Set up dynamic repeating sections
-    setupDynamicRows('btn-add-author', 'sbl-authors-container', 'Author');
-    setupDynamicRows('btn-add-editor', 'sbl-editors-container', 'Editor');
-    setupDynamicRows('btn-add-translator', 'sbl-translators-container', 'Translator');
-    setupDynamicRows('btn-add-compiler', 'sbl-compilers-container', 'Compiler');
-
 
     function handleContributorToggles() {
+        const rowEd = document.getElementById("row-editor");
+        const rowTrans = document.getElementById("row-translator");
+        const rowComp = document.getElementById("row-compiler");
 
-        // Changed target displays to "block" to preserve the updated flex design rows
-        document.getElementById("row-editor").style.display =
-            getChecked("sbl-has-editor") ? "block" : "none";
+        if (rowEd) rowEd.style.display = getChecked("sbl-has-editor") ? "block" : "none";
+        if (rowTrans) rowTrans.style.display = getChecked("sbl-has-translator") ? "block" : "none";
+        if (rowComp) rowComp.style.display = getChecked("sbl-has-compiler") ? "block" : "none";
 
-        document.getElementById("row-translator").style.display =
-            getChecked("sbl-has-translator") ? "block" : "none";
-
-        document.getElementById("row-compiler").style.display =
-            getChecked("sbl-has-compiler") ? "block" : "none";
-
-        if (typeof generateSBLCitation === "function") {
-            generateSBLCitation();
+        if (typeof window.generateSBLCitation === "function") {
+            window.generateSBLCitation();
         }
-
     }
 
 
@@ -182,163 +124,110 @@
        ========================================== */
 
     function applyFormLayoutRules() {
+        const typeSelect = document.getElementById("sbl-type");
+        if (!typeSelect) return;
 
         const type = typeSelect.value;
 
         const lblTitle = document.getElementById("lbl-title");
         const txtTitle = document.getElementById("sbl-title");
-
         const lblPages = document.getElementById("lbl-pages");
-
-        const grpInnerTitle =
-            document.getElementById("grp-inner-title");
-
-        const grpContributors =
-            document.getElementById("grp-contributors");
-
-        const rowMainTitle =
-            document.getElementById("row-main-title");
-
-        const grpSubtitle =
-            document.getElementById("grp-subtitle");
-
-        const rowJournalMeta =
-            document.getElementById("row-journal-meta");
-
-        const rowBookSeriesMeta =
-            document.getElementById("row-book-series-meta");
-
-        const rowImprint =
-            document.getElementById("row-imprint");
-
-        const grpRangeField =
-            document.getElementById("grp-range-field");
-
-        const grpVolDistinctTitle =
-            document.getElementById("grp-vol-distinct-title");
-
-        const lblSerialLegend =
-            document.getElementById("lbl-serial-legend");
-
+        const grpInnerTitle = document.getElementById("grp-inner-title");
+        const grpContributors = document.getElementById("grp-contributors");
+        const rowMainTitle = document.getElementById("row-main-title");
+        const grpSubtitle = document.getElementById("grp-subtitle");
+        const rowJournalMeta = document.getElementById("row-journal-meta");
+        const rowBookSeriesMeta = document.getElementById("row-book-series-meta");
+        const rowImprint = document.getElementById("row-imprint");
+        const grpRangeField = document.getElementById("grp-range-field");
+        const grpVolDistinctTitle = document.getElementById("grp-vol-distinct-title");
+        const lblSerialLegend = document.getElementById("lbl-serial-legend");
 
         /* ==========================================
            WHOLE BOOK
            ========================================== */
-
         if (type === "book") {
-
-            lblTitle.textContent = "Book Title";
-
-            txtTitle.placeholder =
-                "e.g. Reading John";
-
-            lblPages.textContent =
-                "Pages Cited";
-
-            grpInnerTitle.style.display =
-                "none";
-
-            grpContributors.style.display =
-                "block";
-
-            rowMainTitle.style.display =
-                "flex";
-
-            grpSubtitle.style.display =
-                "block";
-
-            rowJournalMeta.style.display =
-                "none";
-
-            rowBookSeriesMeta.style.display =
-                "block";
-
-            rowImprint.style.display =
-                "flex";
-
-            /*
-             * A whole book does not need
-             * a full page range.
-             */
-            grpRangeField.style.display =
-                "none";
-
-            grpVolDistinctTitle.style.display =
-                "block";
-
-            lblSerialLegend.textContent =
-                "Volume & Series Info";
+            if (lblTitle) lblTitle.textContent = "Book Title";
+            if (txtTitle) txtTitle.placeholder = "e.g. Reading John";
+            if (lblPages) lblPages.textContent = "Pages Cited";
+            if (grpInnerTitle) grpInnerTitle.style.display = "none";
+            if (grpContributors) grpContributors.style.display = "block";
+            if (rowMainTitle) rowMainTitle.style.display = "flex";
+            if (grpSubtitle) grpSubtitle.style.display = "block";
+            if (rowJournalMeta) rowJournalMeta.style.display = "none";
+            if (rowBookSeriesMeta) rowBookSeriesMeta.style.display = "block";
+            if (rowImprint) rowImprint.style.display = "flex";
+            if (grpRangeField) grpRangeField.style.display = "none";
+            if (grpVolDistinctTitle) grpVolDistinctTitle.style.display = "block";
+            if (lblSerialLegend) lblSerialLegend.textContent = "Volume & Series Info";
         }
-
 
         /* ==========================================
            CHAPTER / ESSAY
            ========================================== */
-
         else if (type === "chapter") {
+            if (lblTitle) lblTitle.textContent = "Overarching Book Title";
+            if (txtTitle) txtTitle.placeholder = "e.g. Approaches to New Testament Study";
+            if (lblPages) lblPages.textContent = "Pages Cited";
+            if (grpInnerTitle) grpInnerTitle.style.display = "block";
+            
+            const lblInner = document.getElementById("lbl-inner-title");
+            const txtInner = document.getElementById("sbl-inner-title");
+            if (lblInner) lblInner.textContent = "Chapter / Essay Title";
+            if (txtInner) txtInner.placeholder = "e.g. Canonical Criticism";
 
-            lblTitle.textContent =
-                "Overarching Book Title";
-
-            txtTitle.placeholder =
-                "e.g. Approaches to New Testament Study";
-
-            lblPages.textContent =
-                "Pages Cited";
-
-            grpInnerTitle.style.display =
-                "block";
-
-            document.getElementById(
-                "lbl-inner-title"
-            ).textContent =
-                "Chapter / Essay Title";
-
-            document.getElementById(
-                "sbl-inner-title"
-            ).placeholder =
-                "e.g. Canonical Criticism";
-
-            grpContributors.style.display =
-                "block";
-
-            rowMainTitle.style.display =
-                "flex";
-
-            grpSubtitle.style.display =
-                "block";
-
-            rowJournalMeta.style.display =
-                "none";
-
-            rowBookSeriesMeta.style.display =
-                "block";
-
-            rowImprint.style.display =
-                "flex";
-
-            /*
-             * Chapters need their complete
-             * page range for the bibliography.
-             */
-            grpRangeField.style.display =
-                "block";
-
-            grpVolDistinctTitle.style.display =
-                "block";
-
-            lblSerialLegend.textContent =
-                "Volume & Series Info";
+            if (grpContributors) grpContributors.style.display = "block";
+            if (rowMainTitle) rowMainTitle.style.display = "flex";
+            if (grpSubtitle) grpSubtitle.style.display = "block";
+            if (rowJournalMeta) rowJournalMeta.style.display = "none";
+            if (rowBookSeriesMeta) rowBookSeriesMeta.style.display = "block";
+            if (rowImprint) rowImprint.style.display = "flex";
+            if (grpRangeField) grpRangeField.style.display = "block";
+            if (grpVolDistinctTitle) grpVolDistinctTitle.style.display = "block";
+            if (lblSerialLegend) lblSerialLegend.textContent = "Volume & Series Info";
         }
-
 
         /* ==========================================
            JOURNAL ARTICLE
            ========================================== */
-
         else if (type === "article") {
+            if (lblTitle) lblTitle.textContent = "Article";
+            if (lblPages) lblPages.textContent = "Pages Cited";
+            if (grpInnerTitle) grpInnerTitle.style.display = "block";
 
-            lblTitle.textContent =
-                "Article";
+            const lblInner = document.getElementById("lbl-inner-title");
+            const txtInner = document.getElementById("sbl-inner-title");
+            if (lblInner) lblInner.textContent = "Article Title";
+            if (txtInner) txtInner.placeholder = "e.g. John Chrysostom on the Gaze";
 
-lblPages.textContent ="Pages Cited";grpInnerTitle.style.display ="block";document.getElementById("lbl-inner-title").textContent ="Article Title";document.getElementById("sbl-inner-title").placeholder ="e.g. John Chrysostom on the Gaze";grpContributors.style.display ="none";rowMainTitle.style.display ="none";grpSubtitle.style.display ="none";rowJournalMeta.style.display ="flex";rowBookSeriesMeta.style.display ="none";rowImprint.style.display ="none";/** Articles need their complete* page range.*/if (grpRangeField) grpRangeField.style.display = "block";}}})();
+            if (grpContributors) grpContributors.style.display = "none";
+            if (rowMainTitle) rowMainTitle.style.display = "none";
+            if (grpSubtitle) grpSubtitle.style.display = "none";
+            if (rowJournalMeta) rowJournalMeta.style.display = "flex";
+            if (rowBookSeriesMeta) rowBookSeriesMeta.style.display = "none";
+            if (rowImprint) rowImprint.style.display = "none";
+            if (grpRangeField) grpRangeField.style.display = "block";
+        }
+    }
+
+
+    /* ==========================================
+       INITIALIZE ON DOM LOAD
+       ========================================== */
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const stepOne = document.getElementById("sbl-step-1");
+        const stepTwo = document.getElementById("sbl-step-2");
+        const continueButton = document.getElementById("sbl-btn-continue");
+        const backButton = document.getElementById("sbl-btn-back");
+
+        /* Wizard Navigation Listeners */
+        if (continueButton && stepOne && stepTwo) {
+            continueButton.addEventListener("click", function () {
+                stepOne.style.display = "none";
+                stepTwo.style.display = "block";
+                applyFormLayoutRules();
+            });
+        }
+
+        if (backButton && stepOne && stepTwo) {backButton.addEventListener("click", function () {stepTwo.style.display = "none";stepOne.style.display = "block";});}/* Contributor Checkbox Toggles */const cbEditor = document.getElementById("sbl-has-editor");const cbTranslator = document.getElementById("sbl-has-translator");const cbCompiler = document.getElementById("sbl-has-compiler");if (cbEditor) cbEditor.addEventListener("change", handleContributorToggles);if (cbTranslator) cbTranslator.addEventListener("change", handleContributorToggles);if (cbCompiler) cbCompiler.addEventListener("change", handleContributorToggles);/* Dynamic Repeating Sections */setupDynamicRows('btn-add-author', 'sbl-authors-container', 'Author');setupDynamicRows('btn-add-editor', 'sbl-editors-container', 'Editor');setupDynamicRows('btn-add-translator', 'sbl-translators-container', 'Translator');setupDynamicRows('btn-add-compiler', 'sbl-compilers-container', 'Compiler');// Prime the display stateshandleContributorToggles();});})();
