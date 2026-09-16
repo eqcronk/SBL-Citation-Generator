@@ -42,18 +42,17 @@
     btnContinue.style.display = 'none';
     step2.style.display = 'block';
     
-    const metaContainer = document.getElementById('sbl-book-metadata-container');
-    const rowChapTitle = document.getElementById('row-chapter-title');
-    const rowChapRange = document.getElementById('row-chapter-range');
+    const bookContainer = document.getElementById('sbl-book-metadata-container');
+    const chapContainer = document.getElementById('sbl-chapter-metadata-container');
 
     if (selectedSource === 'chapter') {
-        // Hides the entire title/publication block if user picks chapter
-        if (metaContainer) metaContainer.style.setProperty('display', 'none', 'important');
+        // Hide standard book fields, show dedicated Chapter fields
+        if (bookContainer) bookContainer.style.setProperty('display', 'none', 'important');
+        if (chapContainer) chapContainer.style.setProperty('display', 'block', 'important');
     } else {
-        // Shows the complete field set cleanly if it is a whole book
-        if (metaContainer) metaContainer.style.setProperty('display', 'block', 'important');
-        if (rowChapTitle) rowChapTitle.style.setProperty('display', 'none', 'important');
-        if (rowChapRange) rowChapRange.style.setProperty('display', 'none', 'important');
+        // Show standard book fields, hide Chapter fields
+        if (bookContainer) bookContainer.style.setProperty('display', 'block', 'important');
+        if (chapContainer) chapContainer.style.setProperty('display', 'none', 'important');
     }
     
     console.log("User selected: " + selectedSource);
