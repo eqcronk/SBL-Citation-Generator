@@ -70,41 +70,29 @@
 <fieldset class="sbl-fieldset">
     <legend>Authors &amp; Contributors</legend>
 
-    <!-- ─── FIXED AUTHORS SECTION ─── -->
-    <div class="sbl-row">
-        <div class="sbl-form-group sbl-col">
-            <label for="sbl-first-name">Author 1 First Name(s) *</label>
-            <input type="text" id="sbl-first-name" placeholder="e.g. Charles H." required>
+    <!-- ─── DYNAMIC AUTHORS SECTION ─── -->
+    <div class="sbl-contributor-section" style="margin-bottom: 20px;">
+        <div id="sbl-authors-container">
+            <!-- Primary Required Author 1 -->
+            <div class="sbl-row sbl-name-row">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-first-name">Author 1 First Name(s) *</label>
+                    <input type="text" id="sbl-first-name" class="sbl-author-first" placeholder="e.g. Charles H." required>
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-last-name">Author 1 Last Name *</label>
+                    <input type="text" id="sbl-last-name" class="sbl-author-last" placeholder="e.g. Talbert" required>
+                </div>
+            </div>
         </div>
-        <div class="sbl-form-group sbl-col">
-            <label for="sbl-last-name">Author 1 Last Name *</label>
-            <input type="text" id="sbl-last-name" placeholder="e.g. Talbert" required>
-        </div>
+        
+        <!-- Add Author Button (Triggers inline script math) -->
+        <button type="button" class="sbl-btn-add" id="btn-add-author" style="margin-top: 10px;" 
+                onclick="(function(){ var c=document.getElementById('sbl-authors-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Author '+n+' First Name(s) (Optional)</label><input type=&quot;text&quot; class=&quot;sbl-author-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Author '+n+' Last Name (Optional)</label><input type=&quot;text&quot; class=&quot;sbl-author-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove(); document.getElementById(\'sbl-et-al-wrapper\').style.display=c.querySelectorAll(\'.sbl-name-row\').length>=3?\'block\':\'none\'; if(typeof window.generateSBLCitation===\'function\')window.generateSBLCitation();&quot;>✕</button>'; c.appendChild(r); document.getElementById('sbl-et-al-wrapper').style.display=n>=3?'block':'none'; })(this)">+ Add Another Author</button>
     </div>
 
-    <div class="sbl-row" style="margin-top: 10px;">
-        <div class="sbl-form-group sbl-col">
-            <label for="sbl-author2-first">Author 2 First Name(s) (Optional)</label>
-            <input type="text" id="sbl-author2-first" placeholder="e.g. John">
-        </div>
-        <div class="sbl-form-group sbl-col">
-            <label for="sbl-author2-last">Author 2 Last Name (Optional)</label>
-            <input type="text" id="sbl-author2-last" placeholder="e.g. Smith">
-        </div>
-    </div>
-
-    <div class="sbl-row" style="margin-top: 10px;">
-        <div class="sbl-form-group sbl-col">
-            <label for="sbl-author3-first">Author 3 First Name(s) (Optional)</label>
-            <input type="text" id="sbl-author3-first" placeholder="e.g. Mary">
-        </div>
-        <div class="sbl-form-group sbl-col">
-            <label for="sbl-author3-last">Author 3 Last Name (Optional)</label>
-            <input type="text" id="sbl-author3-last" placeholder="e.g. Jones">
-        </div>
-    </div>
-
-    <div class="sbl-form-toggle-group" style="margin-top: 15px; margin-bottom: 15px;">
+    <!-- Hidden SBL Shortener Checkbox (Reveals only when 3+ authors are mapped) -->
+    <div id="sbl-et-al-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; margin-bottom: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
         <label>
             <input type="checkbox" id="sbl-four-or-more"> 
             <strong>Four or More Authors</strong> (Appends "et al." to the citation)
@@ -113,53 +101,36 @@
 
     <!-- ─── CONTRIBUTOR CHECKBOX PANEL ─── -->
     <div id="grp-contributors" class="sbl-form-toggle-group" style="margin-bottom: 15px;">
-       <label>
-<label>
-    <input type="checkbox" id="sbl-has-editor" onclick="document.getElementById('row-editor').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> 
-    Has Editor(s)
-</label>
-
-<label>
-    <input type="checkbox" id="sbl-has-translator" onclick="document.getElementById('row-translator').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> 
-    Has Translator(s)
-</label>
-
-<label>
-    <input type="checkbox" id="sbl-has-compiler" onclick="document.getElementById('row-compiler').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> 
-    Has Compiler(s)
-</label>
-
-
+        <label><input type="checkbox" id="sbl-has-editor" onclick="document.getElementById('row-editor').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> Has Editor(s)</label>
+        <label><input type="checkbox" id="sbl-has-translator" onclick="document.getElementById('row-translator').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> Has Translator(s)</label>
+        <label><input type="checkbox" id="sbl-has-compiler" onclick="document.getElementById('row-compiler').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> Has Compiler(s)</label>
     </div>
 
     <!-- ─── SEPARATE SUB-INPUT FIELDS DISPLAY ARRAYS ─── -->
     <div id="sbl-toggled-fields-wrapper">
         
         <!-- DYNAMIC EDITORS -->
-<!-- DYNAMIC EDITORS SECTION -->
-<div class="sbl-row" id="row-editor" style="display: none; margin-bottom: 20px;">
-    <div class="sbl-row" style="align-items: center; margin-bottom: 10px; width: 100%;">
-        <h3 style="margin: 0; flex: 1;">Editors</h3>
-    </div>
-    <div id="sbl-editors-container" style="width: 100%;">
-        <div class="sbl-row sbl-name-row">
-            <div class="sbl-form-group sbl-col">
-                <label>Editor 1 First Name(s)</label>
-                <input type="text" class="sbl-editor-first" placeholder="e.g. Thomas">
+        <div class="sbl-row" id="row-editor" style="display: none; margin-bottom: 20px;">
+            <div class="sbl-row" style="align-items: center; margin-bottom: 10px; width: 100%;">
+                <h3 style="margin: 0; flex: 1;">Editors</h3>
             </div>
-            <div class="sbl-form-group sbl-col">
-                <label>Editor 1 Last Name</label>
-                <input type="text" class="sbl-editor-last" placeholder="e.g. Williams">
+            <div id="sbl-editors-container" style="width: 100%;">
+                <div class="sbl-row sbl-name-row">
+                    <div class="sbl-form-group sbl-col">
+                        <label>Editor 1 First Name(s)</label>
+                        <input type="text" class="sbl-editor-first" placeholder="e.g. Thomas">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label>Editor 1 Last Name</label>
+                        <input type="text" class="sbl-editor-last" placeholder="e.g. Williams">
+                    </div>
+                </div>
             </div>
+            <button type="button" class="sbl-btn-add" id="btn-add-editor" style="margin-top: 10px;" onclick="(function(b){ var c=document.getElementById('sbl-editors-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Editor '+n+' First Name(s)</label><input type=&quot;text&quot; class=&quot;sbl-editor-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Editor '+n+' Last Name</label><input type=&quot;text&quot; class=&quot;sbl-editor-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove(); if(typeof window.generateSBLCitation===\'function\')window.generateSBLCitation();&quot;>✕</button>'; c.appendChild(r); })(this)">+ Add Another Editor</button>
         </div>
-    </div>
-     <button type="button" class="sbl-btn-add" id="btn-add-editor" style="margin-top: 10px;" onclick="(function(b){ var c=document.getElementById('sbl-editors-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Editor '+n+' First Name(s)</label><input type=&quot;text&quot; class=&quot;sbl-editor-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Editor '+n+' Last Name</label><input type=&quot;text&quot; class=&quot;sbl-editor-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove();&quot;>✕</button>'; c.appendChild(r); })(this)">+ Add Another Editor</button>
-
-</div>
-
 
         <!-- DYNAMIC TRANSLATORS -->
-        <div class="sbl-contributor-section sbl-sub-input-row" id="row-translator" style="display: none; margin-bottom: 20px;">
+        <div class="sbl-row" id="row-translator" style="display: none; margin-bottom: 20px;">
             <h3>Translators</h3>
             <div id="sbl-translators-container">
                 <div class="sbl-row sbl-name-row">
@@ -173,11 +144,11 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="sbl-btn-add" id="btn-add-translator" style="margin-top: 10px;" onclick="(function(b){ var c=document.getElementById('sbl-translators-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Translator '+n+' First Name(s)</label><input type=&quot;text&quot; class=&quot;sbl-translator-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Translator '+n+' Last Name</label><input type=&quot;text&quot; class=&quot;sbl-translator-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove();&quot;>✕</button>'; c.appendChild(r); })(this)">+ Add Another Translator</button>
+            <button type="button" class="sbl-btn-add" id="btn-add-translator" style="margin-top: 10px;" onclick="(function(b){ var c=document.getElementById('sbl-translators-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Translator '+n+' First Name(s)</label><input type=&quot;text&quot; class=&quot;sbl-translator-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Translator '+n+' Last Name</label><input type=&quot;text&quot; class=&quot;sbl-translator-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove(); if(typeof window.generateSBLCitation===\'function\')window.generateSBLCitation();&quot;>✕</button>'; c.appendChild(r); })(this)">+ Add Another Translator</button>
         </div>
 
         <!-- DYNAMIC COMPILERS -->
-        <div class="sbl-contributor-section sbl-sub-input-row" id="row-compiler" style="display: none; margin-bottom: 20px;">
+        <div class="sbl-row" id="row-compiler" style="display: none; margin-bottom: 20px;">
             <h3>Compilers</h3>
             <div id="sbl-compilers-container">
                 <div class="sbl-row sbl-name-row">
@@ -191,11 +162,11 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="sbl-btn-add" id="btn-add-compiler" style="margin-top: 10px;" onclick="(function(b){ var c=document.getElementById('sbl-compilers-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Compiler '+n+' First Name(s)</label><input type=&quot;text&quot; class=&quot;sbl-compiler-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Compiler '+n+' Last Name</label><input type=&quot;text&quot; class=&quot;sbl-compiler-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove();&quot;>✕</button>'; c.appendChild(r); })(this)">+ Add Another Compiler</button>
+            <button type="button" class="sbl-btn-add" id="btn-add-compiler" style="margin-top: 10px;" onclick="(function(b){ var c=document.getElementById('sbl-compilers-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Compiler '+n+' First Name(s)</label><input type=&quot;text&quot; class=&quot;sbl-compiler-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Compiler '+n+' Last Name</label><input type=&quot;text&quot; class=&quot;sbl-compiler-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove(); if(typeof window.generateSBLCitation===\'function\')window.generateSBLCitation();&quot;>✕</button>'; c.appendChild(r); })(this)">+ Add Another Compiler</button>
         </div>
-
     </div>
 </fieldset>
+
 
 
         <!-- ==========================================
