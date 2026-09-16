@@ -608,119 +608,128 @@
         </fieldset>
 
 
-        <!-- ==========================================
-             OUTPUTS
-             ========================================== -->
-
-        <div class="sbl-output-box">
-
-            <!-- First Footnote -->
-            <div class="sbl-output-header">
-
-                <span class="sbl-output-title">
-                    SBL First Footnote
-                </span>
-
-                <button
-                    type="button"
-                    class="sbl-copy-btn"
-                    onclick="copyCitation('sbl-noteOutput', this)"
-                >
-                    Copy
-                </button>
-
-            </div>
-
-            <div
-                id="sbl-noteOutput"
-                class="sbl-citation"
-            >
-                Fill in fields above to display first footnote.
-            </div>
-
-
-            <!-- Subsequent Footnote -->
-            <div class="sbl-output-header">
-
-                <span class="sbl-output-title">
-                    SBL Subsequent Footnote (Short Form)
-                </span>
-
-                <button
-                    type="button"
-                    class="sbl-copy-btn"
-                    onclick="copyCitation('sbl-subnoteOutput', this)"
-                >
-                    Copy
-                </button>
-
-            </div>
-
-            <div
-                id="sbl-subnoteOutput"
-                class="sbl-citation"
-            >
-                Fill in fields above to display short footnote.
-            </div>
-
-
-            <!-- Bibliography -->
-            <div class="sbl-output-header">
-
-                <span class="sbl-output-title">
-                    SBL Bibliography
-                </span>
-
-                <button
-                    type="button"
-                    class="sbl-copy-btn"
-                    onclick="copyCitation('sbl-bibOutput', this)"
-                >
-                    Copy
-                </button>
-
-            </div>
-
-            <div
-                id="sbl-bibOutput"
-                class="sbl-citation"
-            >
-                Fill in fields above to display bibliography.
-            </div>
-
-        </div>
-
+      <!-- ==========================================
+     SBL LIVE CITATION PREVIEW OUTPUT SECTION
+     ========================================== -->
+<div class="sbl-output-wrapper" style="margin-top: 35px; padding: 20px; border-left: 5px solid #1a365d; background-color: #f7fafc; border-radius: 4px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);">
+    <h4 style="margin: 0 0 8px 0; color: #1a365d; font-family: sans-serif; font-size: 14px; text-transform: uppercase; letter-spacing: 0.5px;">
+        Live SBL Citation Preview:
+    </h4>
+    <div id="sbl-citation-output" style="font-size: 16px; font-family: Georgia, serif; min-height: 26px; color: #2d3748; line-height: 1.5; word-break: break-word;">
+        <em>Fill out the form fields above to preview your citation...</em>
     </div>
-
 </div>
+
+<!-- ==========================================
+     LIVE CALCULATION LOGIC ENGINE ENGINE
+     ========================================== -->
 <script>
 (function(w) {
-    w.addSBLNameRow = function(containerId, role) {
-        var container = document.getElementById(containerId);
-        if (!container) return;
+    "use strict";
 
-        var currentRows = container.querySelectorAll('.sbl-name-row').length + 1;
-        var row = document.createElement('div');
-        row.className = 'sbl-row sbl-name-row';
-        row.style.marginTop = '10px';
+    w.generateSBLCitation = function() {
+        // 1. GATHER AUTHORS
+        var authors = [];
+        var f1 = document.getElementById("sbl-first-name")?.value.trim();
+        var l1 = document.getElementById("sbl-last-name")?.value.trim();
+        if (f1 && l1) authors.push({ first: f1, last: l1 });
 
-        row.innerHTML = '\
-            <div class="sbl-form-group sbl-col">\
-                <label>Additional ' + role + ' ' + currentRows + ' First Name(s)</label>\
-                <input type="text" class="sbl-' + role.toLowerCase() + '-first">\
-            </div>\
-            <div class="sbl-form-group sbl-col">\
-                <label>Additional ' + role + ' ' + currentRows + ' Last Name</label>\
-                <input type="text" class="sbl-' + role.toLowerCase() + '-last">\
-            </div>\
-            <button type="button" class="sbl-btn-remove" style="margin-top: 24px; color: red; background: none; border: none; cursor: pointer; font-size: 16px;" onclick="this.parentElement.remove(); if(typeof window.generateSBLCitation===\'function\') window.generateSBLCitation();">✕</button>\
-        ';
+        var f2 = document.getElementById("sbl-author2-first")?.value.trim();
+        var l2 = document.getElementById("sbl-author2-last")?.value.trim();
+        if (f2 && l2) authors.push({ first: f2, last: l2 });
 
-        container.appendChild(row);
+        var f3 = document.getElementById("sbl-author3-first")?.value.trim();
+        var l3 = document.getElementById("sbl-author3-last")?.value.trim();
+        if (f3 && l3) authors.push({ first: f3, last: l3 });
 
-        if (typeof w.generateSBLCitation === "function") {
-            w.generateSBLCitation();
+        var fourOrMore = document.getElementById("sbl-four-or-more")?.checked;
+
+        // 2. CONCATENATE AUTHOR STRING
+        var authorStr = "";
+        if (authors.length > 0) {
+            if (fourOrMore) {
+                authorStr = l1 + ", " + f1 + ", et al.";
+            } else if (authors.length === 1) {
+                authorStr = l1 + ", " + f1 + ".";
+            } else if (authors.length === 2) {
+                authorStr = l1 + ", " + f1 + ", and " + authors[1].first + " " + authors[1].last + ".";
+            } else if (authors.length === 3) {
+                authorStr = l1 + ", " + f1 + ", " + authors[1].first + " " + authors[1].last + ", and " + authors[2].first + " " + authors[2].last + ".";
+            }
+        }
+
+        // 3. GATHER CONTRIBUTORS
+        function collectRole(containerId, firstClass, lastClass, label) {
+            var list = [];
+            var container = document.getElementById(containerId);
+            if (!container) return "";
+            
+            var firsts = container.querySelectorAll("input." + firstClass + ", input[class*='" + firstClass + "']");
+            var lasts = container.querySelectorAll("input." + lastClass + ", input[class*='" + lastClass + "']");
+            
+            firsts.forEach(function(input, idx) {
+                var f = input.value.trim();
+                var l = lasts[idx] ? lasts[idx].value.trim() : "";
+                if (f && l) list.push(f + " " + l);
+            });
+
+            if (list.length === 0) return "";
+            if (list.length === 1) return label + " " + list[0] + ".";
+            if (list.length === 2) return label + " " + list[0] + " and " + list[1] + ".";
+            return label + " " + list.slice(0, -1).join(", ") + ", and " + list[list.length - 1] + ".";
+        }
+
+        var edStr = collectRole("sbl-editors-container", "editor-first", "editor-last", "Edited by");
+        var transStr = collectRole("sbl-translators-container", "translator-first", "translator-last", "Translated by");
+        var compStr = collectRole("sbl-compilers-container", "compiler-first", "compiler-last", "Compiled by");
+
+        // 4. GATHER BASE REVENUE BOOK DATA
+        var title = document.getElementById("sbl-title")?.value.trim() || "";
+        var city = document.getElementById("sbl-city")?.value.trim() || "";
+        var publisher = document.getElementById("sbl-publisher")?.value.trim() || "";
+        var year = document.getElementById("sbl-year")?.value.trim() || "";
+
+        // 5. ASSEMBLE CITATION STRINGS
+        var citation = "";
+        if (authorStr) citation += authorStr + " ";
+        
+        if (title) {
+            citation += "<em>" + title + "</em>.";
+        } else {
+            citation += "<em>[Title]</em>.";
+        }
+
+        if (edStr) citation += " " + edStr;
+        if (transStr) citation += " " + transStr;
+        if (compStr) citation += " " + compStr;
+
+        if (city || publisher || year) {
+            var c = city || "[City]";
+            var p = publisher || "[Publisher]";
+            var y = year || "[Year]";
+            citation += " " + c + ": " + p + ", " + y + ".";
+        }
+
+        // 6. OUTPUT IMMEDIATELY TO SCREEN
+        var displayBox = document.getElementById("sbl-citation-output");
+        if (displayBox) {
+            var inputCheck = f1 || l1 || title || city || publisher || year || edStr || transStr || compStr;
+            if (!inputCheck) {
+                displayBox.innerHTML = "<em>Fill out the form fields above to preview your citation...</em>";
+            } else {
+                displayBox.innerHTML = citation;
+            }
         }
     };
+
+    // 7. HOOK EVENT listeners TO THE INPUT ARRAYS
+    document.addEventListener("DOMContentLoaded", function() {
+        var formArea = document.getElementById("sbl-step-2");
+        if (formArea) {
+            formArea.addEventListener("input", function() { w.generateSBLCitation(); });
+            formArea.addEventListener("change", function() { w.generateSBLCitation(); });
+        }
+        w.generateSBLCitation();
+    });
 })(window);
 </script>
