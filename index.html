@@ -39,6 +39,7 @@
   const btnContinue = document.getElementById('sbl-btn-continue');
   const btnBack = document.getElementById('sbl-btn-back');
   const formGroup = document.querySelector('.sbl-form-group');
+  const step1 = document.getElementById('sbl-step-1'); // Added Step 1 hook to safely manage views
   const step2 = document.getElementById('sbl-step-2');
   const sourceSelect = document.getElementById('sbl-type');
 
@@ -49,27 +50,36 @@
       const selectedSource = sourceSelect ? sourceSelect.value : "book";
       
       // 2. Hide step 1 elements cleanly
-      if (formGroup) formGroup.style.display = 'none';
-      if (btnContinue) btnContinue.style.display = 'none';
+      if (step1) step1.style.display = 'none';
       
       // 3. Show step 2 workspace wrapper
       if (step2) step2.style.display = 'block';
       
-      // 4. Safely locate metadata containers
+      // 4. Safely locate metadata containers (PATCHED: Added journalContainer)
       const bookContainer = document.getElementById('sbl-book-metadata-container');
       const chapContainer = document.getElementById('sbl-chapter-metadata-container');
       const commContainer = document.getElementById('sbl-commentary-metadata-container');
       const thesisContainer = document.getElementById('sbl-thesis-metadata-container');
       const bibleContainer = document.getElementById('sbl-bible-metadata-container');
+      const journalContainer = document.getElementById('sbl-journal-metadata-container');
 
-      // 5. Hard clear display displays to clear collision overflows
+      // Locate tracking sub-fields for serial vs static layouts
+      const journalRow = document.getElementById('row-journal-meta');
+      const bookRow = document.getElementById('row-book-series-meta');
+      const fullRangeField = document.getElementById('grp-range-field');
+      const imprintRow = document.getElementById('row-imprint');
+
+      // 5. Hard clear display displays to clear collision overflows (PATCHED: Added journalContainer)
       if (bookContainer) bookContainer.style.setProperty('display', 'none', 'important');
       if (chapContainer) chapContainer.style.setProperty('display', 'none', 'important');
       if (commContainer) commContainer.style.setProperty('display', 'none', 'important');
       if (thesisContainer) thesisContainer.style.setProperty('display', 'none', 'important');
       if (bibleContainer) bibleContainer.style.setProperty('display', 'none', 'important');
+      if (journalContainer) journalContainer.style.setProperty('display', 'none', 'important');
+      
+      if (imprintRow) imprintRow.style.display = 'flex'; // Default state
 
-      // 6. Evaluate and display the correct active track panel container layer
+      // 6. Evaluate and display the correct active track panel container layer (PATCHED: Added article logic)
       if (selectedSource === 'chapter') {
           if (chapContainer) chapContainer.style.setProperty('display', 'block', 'important');
       } else if (selectedSource === 'commentary') {
@@ -78,11 +88,28 @@
           if (thesisContainer) thesisContainer.style.setProperty('display', 'block', 'important');
       } else if (selectedSource === 'bible') {
           if (bibleContainer) bibleContainer.style.setProperty('display', 'block', 'important');
+      } else if (selectedSource === 'article') {
+          if (journalContainer) journalContainer.style.setProperty('display', 'block', 'important');
+          if (imprintRow) imprintRow.style.display = 'none'; // Journals omit City: Publisher rules
       } else {
           // Defaults or catches standard fallback book layouts
           if (bookContainer) bookContainer.style.setProperty('display', 'block', 'important');
       }
+
+      // 7. Manage Journal rows vs Book Volume series layout views
+      if (selectedSource === 'article') {
+          if (journalRow) journalRow.style.display = 'flex';
+          if (bookRow) bookRow.style.display = 'none';
+          if (fullRangeField) fullRangeField.style.display = 'block';
+      } else {
+          if (journalRow) journalRow.style.display = 'none';
+          if (bookRow) bookRow.style.display = 'block';
+          if (fullRangeField) fullRangeField.style.display = 'none';
+      }
       
+      if (typeof window.generateSBLCitation === 'function') {
+          window.generateSBLCitation();
+      }
       console.log("User selected: " + selectedSource);
     });
   }
@@ -91,12 +118,10 @@
   if (btnBack) {
     btnBack.addEventListener('click', function() {
       if (step2) step2.style.display = 'none';
-      if (formGroup) formGroup.style.display = 'block';
-      if (btnContinue) btnContinue.style.display = 'inline-block';
+      if (step1) step1.style.display = 'block';
     });
   }
 </script>
-
 
 <!-- ==========================================
      1. AUTHORS & CONTRIBUTORS
