@@ -1,312 +1,323 @@
 /* ==========================================
-   SBL Citation Generator
+   SBL Modern Academic UI Styling
    ========================================== */
 
-.sbl-widget-container {
-    max-width: 650px;
-    margin: 20px auto;
-    background: #ffffff;
-    padding: 24px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-    border: 1px solid #e2e8f0;
-    box-sizing: border-box;
+:root {
+    --primary: #1e3a8a;       /* Academic Deep Navy */
+    --primary-hover: #1e355b; /* Dark Navy Hover */
+    --accent: #b45309;        /* Warm Amber for highlights */
+    --bg-main: #f8fafc;       /* Ultra-soft Slate white backdrop */
+    --border-color: #e2e8f0;  /* Clean modern layout lines */
+    --text-main: #0f172a;     /* Deep charcoal readable body */
+    --text-muted: #64748b;    /* Clean metadata details gray */
 }
 
+.sbl-widget-container {
+    max-width: 720px;
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    border: 1px solid var(--border-color);
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: var(--text-main);
+}
 
 /* ==========================================
-   HEADER
+   HEADER DESIGNS
    ========================================== */
 
 .sbl-widget-container h2 {
     margin-top: 0;
-    color: #2b4c7e;
-    font-size: 1.6rem;
-    margin-bottom: 24px;
+    color: var(--primary);
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 28px;
     text-align: center;
-    border-bottom: 2px solid #f1f5f9;
-    padding-bottom: 12px;
+    letter-spacing: -0.02em;
 }
 
-
 /* ==========================================
-   WIZARD
+   WIZARD PANELS
    ========================================== */
 
 .sbl-wizard-step {
-    animation: fadeIn 0.3s ease-in-out;
+    animation: sblFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-
 /* ==========================================
-   BUTTONS
+   BUTTONS & LINKS
    ========================================== */
 
 .sbl-primary-btn {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     width: 100%;
-    background: #2b4c7e;
+    background: var(--primary);
     color: #ffffff;
     border: none;
-    padding: 12px;
-    font-size: 1rem;
+    padding: 14px 24px;
+    font-size: 0.95rem;
     font-weight: 600;
-    border-radius: 6px;
+    border-radius: 8px;
     cursor: pointer;
-    margin-top: 16px;
-    transition: background 0.2s ease;
+    margin-top: 20px;
+    transition: all 0.2s ease;
+    box-shadow: 0 4px 6px -1px rgba(30, 58, 138, 0.1);
 }
 
 .sbl-primary-btn:hover {
-    background: #1e355b;
+    background: var(--primary-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px -2px rgba(30, 58, 138, 0.15);
 }
 
 .sbl-back-link {
     background: none;
     border: none;
-    color: #2b4c7e;
+    color: var(--primary);
     font-weight: 600;
     cursor: pointer;
-    padding: 0;
-    margin-bottom: 16px;
+    padding: 6px 0;
+    margin-bottom: 24px;
     font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: opacity 0.2s ease;
 }
 
 .sbl-back-link:hover {
+    opacity: 0.8;
     text-decoration: underline;
 }
 
-
 /* ==========================================
-   FORM
+   FORM WRAPPERS & CONTAINERS
    ========================================== */
 
 .sbl-fieldset {
-    border: 1px solid #e2e8f0;
-    border-radius: 6px;
-    padding: 16px;
-    margin-bottom: 20px;
-    background: #fafafa;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 24px;
+    background: #f8fafc;
 }
 
 .sbl-fieldset legend {
     font-weight: 700;
-    color: #2b4c7e;
-    padding: 0 8px;
-    font-size: 0.9rem;
+    color: var(--primary);
+    padding: 0 10px;
+    font-size: 0.8rem;
     text-transform: uppercase;
-    letter-spacing: 0.02em;
+    letter-spacing: 0.05em;
 }
 
 .sbl-form-group {
-    margin-bottom: 14px;
-}
-
-.sbl-form-group:last-child {
-    margin-bottom: 0;
+    margin-bottom: 16px;
+    position: relative;
 }
 
 .sbl-row {
     display: flex;
-    gap: 14px;
+    gap: 16px;
 }
 
-.sbl-col {
-    flex: 1;
-    min-width: 0;
-}
-
-.sbl-col-60 {
-    flex: 1.6;
-    min-width: 0;
-}
-
-.sbl-col-short {
-    width: 150px;
-    flex-shrink: 0;
-}
-
+.sbl-col { flex: 1; min-width: 0; }
+.sbl-col-60 { flex: 1.6; min-width: 0; }
+.sbl-col-short { width: 120px; flex-shrink: 0; }
 
 /* ==========================================
-   LABELS & HELP TEXT
+   INPUTS & SELECTIONS
    ========================================== */
 
 .sbl-widget-container label {
     display: block;
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 6px;
     font-size: 0.85rem;
     color: #334155;
 }
 
 .sbl-source-question {
-    font-size: 1.1rem !important;
+    font-size: 1.15rem !important;
     text-align: center;
-    margin-bottom: 12px !important;
-}
-
-.sbl-instruct {
-    font-weight: normal;
-    color: #64748b;
-    font-size: 0.75rem;
-}
-
-.sbl-optional {
-    font-weight: normal;
-    color: #94a3b8;
-    font-size: 0.75rem;
+    margin-bottom: 16px !important;
+    color: var(--text-main) !important;
 }
 
 .sbl-help-text {
     display: block;
-    color: #64748b;
+    color: var(--text-muted);
     font-size: 0.75rem;
     line-height: 1.4;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    font-weight: 400;
 }
 
-
-/* ==========================================
-   INPUTS
-   ========================================== */
+.sbl-optional {
+    font-weight: 400;
+    color: #94a3b8;
+}
 
 .sbl-widget-container input,
 .sbl-widget-container select {
     width: 100%;
-    padding: 9px 12px;
+    padding: 10px 14px;
     border: 1px solid #cbd5e1;
-    border-radius: 6px;
+    border-radius: 8px;
     box-sizing: border-box;
     font-size: 0.95rem;
-    color: #1e293b;
+    color: var(--text-main);
     background-color: #ffffff;
+    transition: all 0.15s ease;
 }
 
 .sbl-widget-container input:focus,
 .sbl-widget-container select:focus {
     outline: none;
-    border-color: #2b4c7e;
-    box-shadow: 0 0 0 3px rgba(43, 76, 126, 0.1);
+    border-color: var(--primary);
+    box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.08);
 }
 
 .sbl-source-select {
-    font-size: 1.1rem !important;
-    padding: 12px !important;
+    font-size: 1.05rem !important;
+    padding: 12px 16px !important;
+    cursor: pointer;
 }
 
-
 /* ==========================================
-   CHECKBOXES / CONTRIBUTORS
+   DYNAMIC TAB / BUTTON TOGGLES
    ========================================== */
 
 .sbl-form-toggle-group {
     display: flex;
-    gap: 16px;
-    margin-bottom: 12px;
+    gap: 8px;
+    margin-bottom: 20px;
     background: #f1f5f9;
-    padding: 8px 12px;
-    border-radius: 4px;
-    flex-wrap: wrap;
+    padding: 6px;
+    border-radius: 8px;
 }
 
 .sbl-form-toggle-group label {
     display: flex !important;
     align-items: center;
+    justify-content: center;
     gap: 6px;
     cursor: pointer;
-    font-weight: 500 !important;
+    font-weight: 600 !important;
     margin: 0 !important;
+    flex: 1;
+    padding: 8px 12px;
+    background: transparent;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+    user-select: none;
 }
 
-.sbl-form-toggle-group input[type="checkbox"] {
-    width: auto;
-    margin: 0;
+/* Turns the ugly browser radio circles into beautiful tabs */
+.sbl-form-toggle-group input[type="radio"] {
+    display: none;
 }
 
-.sbl-sub-input-row {
+.sbl-form-toggle-group label:has(input[type="radio"]:checked) {
     background: #ffffff;
-    border: 1px dashed #cbd5e1;
-    padding: 10px;
-    border-radius: 4px;
-    margin-bottom: 10px;
+    color: var(--primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
 }
 
+/* Clean styling for checkbox panel links */
+#grp-contributors {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    padding: 12px;
+}
+
+#grp-contributors label {
+    border: 1px solid var(--border-color);
+    background: var(--bg-main);
+}
+
+#grp-contributors label:has(input[type="checkbox"]:checked) {
+    background: rgba(30, 58, 138, 0.04);
+    border-color: var(--primary);
+    color: var(--primary);
+}
 
 /* ==========================================
-   OUTPUT
+   PREVIEW GENERATOR OUTPUT BOXES
    ========================================== */
 
-.sbl-output-box {
-    margin-top: 28px;
-    padding: 20px;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-left: 5px solid #2b4c7e;
-    border-radius: 6px;
+.sbl-output-wrapper {
+    margin-top: 36px;
+    padding: 24px;
+    border-left: 4px solid var(--primary);
+    background-color: #f8fafc;
+    border-radius: 0 8px 8px 0;
+    border: 1px solid var(--border-color);
+    border-left: 4px solid var(--primary);
 }
 
-.sbl-output-header {
+.sbl-output-wrapper h4 {
+    margin: 0 0 8px 0;
+    color: var(--primary);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
-    border-bottom: 1px dashed #e2e8f0;
-    padding-bottom: 4px;
-}
-
-.sbl-output-title {
-    font-weight: 700;
-    font-size: 0.75rem;
-    color: #475569;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.sbl-copy-btn {
-    background: #ffffff;
-    border: 1px solid #cbd5e1;
-    padding: 3px 10px;
-    font-size: 0.75rem;
-    border-radius: 4px;
-    cursor: pointer;
-    color: #475569;
-    font-weight: 600;
-    transition: all 0.15s ease;
-}
-
-.sbl-copy-btn:hover {
-    background: #2b4c7e;
-    color: #ffffff;
-    border-color: #2b4c7e;
 }
 
 .sbl-citation {
-    font-family: Georgia, serif;
+    font-family: Georgia, Cambria, "Times New Roman", Times, serif;
     font-size: 1.05rem;
-    margin-bottom: 24px;
+    color: var(--text-main);
     line-height: 1.6;
-    color: #0f172a;
     word-break: break-word;
-    padding-left: 8px;
+    margin-bottom: 20px;
 }
 
 .sbl-citation:last-child {
     margin-bottom: 0;
 }
 
-.sbl-citation i {
+.sbl-citation em {
     font-style: italic;
 }
 
+/* Action button micro-styling inside headings */
+.sbl-copy-btn {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    padding: 4px 10px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 4px;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.15s ease;
+}
+
+.sbl-copy-btn:hover {
+    background: var(--primary);
+    color: #ffffff;
+    border-color: var(--primary);
+}
 
 /* ==========================================
-   MOBILE
+   RESPONSIVE DESIGN (MOBILE ADAPTATION)
    ========================================== */
 
-@media (max-width: 600px) {
-
+@media (max-width: 640px) {
     .sbl-widget-container {
-        padding: 16px;
+        padding: 20px;
+        margin: 16px auto;
     }
 
     .sbl-row {
@@ -320,26 +331,21 @@
 
     .sbl-form-toggle-group {
         flex-direction: column;
-        gap: 8px;
+        gap: 4px;
     }
-
 }
 
-
 /* ==========================================
-   ANIMATION
+   ANIMATIONS
    ========================================== */
 
-@keyframes fadeIn {
-
+@keyframes sblFadeIn {
     from {
         opacity: 0;
-        transform: translateY(4px);
+        transform: translateY(6px);
     }
-
     to {
         opacity: 1;
         transform: translateY(0);
     }
-
 }
