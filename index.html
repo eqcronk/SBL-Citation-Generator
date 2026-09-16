@@ -153,7 +153,8 @@
             </div>
         </div>
     </div>
-     <button type="button" class="sbl-btn-add" id="btn-add-editor" style="margin-top: 10px;" onclick="addSBLNameRow('sbl-editors-container', 'Editor')">+ Add Another Editor</button>
+     <button type="button" class="sbl-btn-add" id="btn-add-editor" style="margin-top: 10px;" onclick="(function(b){ var c=document.getElementById('sbl-editors-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Editor '+n+' First Name(s)</label><input type=&quot;text&quot; class=&quot;sbl-editor-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Editor '+n+' Last Name</label><input type=&quot;text&quot; class=&quot;sbl-editor-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove();&quot;>✕</button>'; c.appendChild(r); })(this)">+ Add Another Editor</button>
+
 </div>
 
 
@@ -172,7 +173,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="sbl-btn-add" id="btn-add-translator" style="margin-top: 10px;" onclick="addSBLNameRow('sbl-translators-container', 'Translator')">+ Add Another Translator</button>
+            <button type="button" class="sbl-btn-add" id="btn-add-translator" style="margin-top: 10px;" onclick="(function(b){ var c=document.getElementById('sbl-translators-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Translator '+n+' First Name(s)</label><input type=&quot;text&quot; class=&quot;sbl-translator-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Translator '+n+' Last Name</label><input type=&quot;text&quot; class=&quot;sbl-translator-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove();&quot;>✕</button>'; c.appendChild(r); })(this)">+ Add Another Translator</button>
         </div>
 
         <!-- DYNAMIC COMPILERS -->
