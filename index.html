@@ -113,9 +113,21 @@
 
     <!-- ─── CONTRIBUTOR CHECKBOX PANEL ─── -->
     <div id="grp-contributors" class="sbl-form-toggle-group" style="margin-bottom: 15px;">
-        <label><input type="checkbox" id="sbl-has-editor"> Has Editor(s)</label>
-        <label><input type="checkbox" id="sbl-has-translator"> Has Translator(s)</label>
-        <label><input type="checkbox" id="sbl-has-compiler"> Has Compiler(s)</label>
+       <label>
+    <input type="checkbox" id="sbl-has-editor" onclick="document.getElementById('row-editor').style.display = this.checked ? 'block' : 'none'"> 
+    Has Editor(s)
+</label>
+
+<label>
+    <input type="checkbox" id="sbl-has-translator" onclick="document.getElementById('row-translator').style.display = this.checked ? 'block' : 'none'"> 
+    Has Translator(s)
+</label>
+
+<label>
+    <input type="checkbox" id="sbl-has-compiler" onclick="document.getElementById('row-compiler').style.display = this.checked ? 'block' : 'none'"> 
+    Has Compiler(s)
+</label>
+
     </div>
 
     <!-- ─── SEPARATE SUB-INPUT FIELDS DISPLAY ARRAYS ─── -->
