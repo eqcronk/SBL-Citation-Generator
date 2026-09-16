@@ -579,7 +579,7 @@
         </fieldset>
 
 
-  <!-- ==========================================
+ <!-- ==========================================
      SBL THREE-WAY LIVE PREVIEW OUTPUT SECTION
      ========================================== -->
 <div class="sbl-output-wrapper" style="margin-top: 35px; padding: 20px; border-left: 5px solid #1a365d; background-color: #f7fafc; border-radius: 4px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);">
@@ -624,19 +624,16 @@
     "use strict";
 
     w.generateSBLCitation = function() {
-        // 1. GATHER AUTHORS
+        // 1. GATHER AUTHORS DYNAMICALLY FROM CLASS GROUPS
         var authors = [];
-        var f1 = document.getElementById("sbl-first-name")?.value.trim();
-        var l1 = document.getElementById("sbl-last-name")?.value.trim();
-        if (f1 && l1) authors.push({ first: f1, last: l1 });
-
-        var f2 = document.getElementById("sbl-author2-first")?.value.trim();
-        var l2 = document.getElementById("sbl-author2-last")?.value.trim();
-        if (f2 && l2) authors.push({ first: f2, last: l2 });
-
-        var f3 = document.getElementById("sbl-author3-first")?.value.trim();
-        var l3 = document.getElementById("sbl-author3-last")?.value.trim();
-        if (f3 && l3) authors.push({ first: f3, last: l3 });
+        var firsts = document.querySelectorAll(".sbl-author-first");
+        var lasts = document.querySelectorAll(".sbl-author-last");
+        
+        firsts.forEach(function(input, idx) {
+            var f = input.value.trim();
+            var l = lasts[idx] ? lasts[idx].value.trim() : "";
+            if (f && l) authors.push({ first: f, last: l });
+        });
 
         var fourOrMore = document.getElementById("sbl-four-or-more")?.checked;
 
@@ -651,10 +648,12 @@
         // 3. GENERATE AUTHOR STRINGS FOR BIB VS FOOTNOTES
         var bibAuthorStr = "";
         var noteAuthorStr = "";
-        var subAuthorStr = ""; // For subsequent footnotes
+        var subAuthorStr = ""; 
 
         if (authors.length > 0) {
-            subAuthorStr = l1; // Default shorthand author element
+            var f1 = authors[0].first;
+            var l1 = authors[0].last;
+            subAuthorStr = l1; 
 
             if (fourOrMore) {
                 bibAuthorStr = l1 + ", " + f1 + ", et al.";
@@ -664,17 +663,22 @@
                 bibAuthorStr = l1 + ", " + f1 + ".";
                 noteAuthorStr = f1 + " " + l1;
             } else if (authors.length === 2) {
-                bibAuthorStr = l1 + ", " + f1 + ", and " + f2 + " " + l2 + ".";
-                noteAuthorStr = f1 + " " + l1 + " and " + f2 + " " + l2;
-                subAuthorStr = l1 + " and " + l2;
+                bibAuthorStr = l1 + ", " + f1 + ", and " + authors[1].first + " " + authors[1].last + ".";
+                noteAuthorStr = f1 + " " + l1 + " and " + authors[1].first + " " + authors[1].last;
+                subAuthorStr = l1 + " and " + authors[1].last;
             } else if (authors.length === 3) {
-                bibAuthorStr = l1 + ", " + f1 + ", " + f2 + " " + l2 + ", and " + f3 + " " + l3 + ".";
-                noteAuthorStr = f1 + " " + l1 + ", " + f2 + " " + l2 + ", and " + f3 + " " + l3;
-                subAuthorStr = l1 + ", " + l2 + ", and " + l3;
+                bibAuthorStr = l1 + ", " + f1 + ", " + authors[1].first + " " + authors[1].last + ", and " + authors[2].first + " " + authors[2].last + ".";
+                noteAuthorStr = f1 + " " + l1 + ", " + authors[1].first + " " + authors[1].last + ", and " + authors[2].first + " " + authors[2].last;
+                subAuthorStr = l1 + ", " + authors[1].last + ", and " + authors[2].last;
+            } else {
+                // If more than 3 are added but checkbox isn't ticked yet, default safe layout
+                bibAuthorStr = l1 + ", " + f1 + ", et al.";
+                noteAuthorStr = f1 + " " + l1 + " et al.";
+                subAuthorStr = l1 + " et al.";
             }
         }
 
-        // 4. GATHER CONTRIBUTORS (Gathers matching layout class input arrays)
+        // 4. GATHER CONTRIBUTORS
         function collectRole(containerId, firstClass, lastClass, bibLabel, noteLabel) {
             var list = [];
             var container = document.getElementById(containerId);
@@ -735,7 +739,7 @@
         var n1Box = document.getElementById("sbl-n1-output");
         var n2Box = document.getElementById("sbl-n2-output");
 
-        var inputCheck = f1 || l1 || title || city || publisher || year;
+        var inputCheck = authors.length > 0 || title || city || publisher || year;
         
         if (bibBox && n1Box && n2Box) {
             if (!inputCheck) {
@@ -750,7 +754,7 @@
         }
     };
 
-    // 9. EVENT REGISTRATION LOOP
+    // 9. EVENT REGISTRATION LOOP (Listens to the entire Step 2 panel wrapper dynamically)
     document.addEventListener("DOMContentLoaded", function() {
         var formArea = document.getElementById("sbl-step-2");
         if (formArea) {
@@ -761,4 +765,3 @@
     });
 })(window);
 </script>
-
