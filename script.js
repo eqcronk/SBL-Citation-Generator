@@ -181,37 +181,6 @@
        INITIALIZE ON DOM LOAD
        ========================================== */
     document.addEventListener("DOMContentLoaded", function () {
-
-        const stepOne = document.getElementById("sbl-step-1");
-        const stepTwo = document.getElementById("sbl-step-2");
-        const continueButton = document.getElementById("sbl-btn-continue");
-        const backButton = document.getElementById("sbl-btn-back");
-
-        /* Wizard Navigation */
-        if (continueButton && stepOne && stepTwo) {
-            continueButton.addEventListener("click", function () {
-                stepOne.style.display = "none";
-                stepTwo.style.display = "block";
-                applyFormLayoutRules();
-            });
-        }
-
-        if (backButton && stepOne && stepTwo) {
-            backButton.addEventListener("click", function () {
-                stepTwo.style.display = "none";
-                stepOne.style.display = "block";
-            });
-        }
-
-        /* Contributor Checkbox Toggles */
-        const cbEditor = document.getElementById("sbl-has-editor");
-        const cbTranslator = document.getElementById("sbl-has-translator");
-        const cbCompiler = document.getElementById("sbl-has-compiler");
-
-        if (cbEditor) cbEditor.addEventListener("change", handleContributorToggles);
-        if (cbTranslator) cbTranslator.addEventListener("change", handleContributorToggles);
-        if (cbCompiler) cbCompiler.addEventListener("change", handleContributorToggles);
-
         /* Dynamic Repeating Sections Hooked to Contributors Only */
         setupDynamicRows('btn-add-editor', 'sbl-editors-container', 'Editor');
         setupDynamicRows('btn-add-translator', 'sbl-translators-container', 'Translator');
@@ -231,18 +200,20 @@
         handleContributorToggles();
     });
 
+    // Global bypass function exposed explicitly to the window right here
+    window.forceToggleContributors = function() {
+        var hasEd = document.getElementById("sbl-has-editor");
+        var hasTrans = document.getElementById("sbl-has-translator");
+        var hasComp = document.getElementById("sbl-has-compiler");
+
+        var rowEd = document.getElementById("row-editor");
+        var rowTrans = document.getElementById("row-translator");
+        var rowComp = document.getElementById("row-compiler");
+
+        if (rowEd && hasEd) rowEd.style.display = hasEd.checked ? "block" : "none";
+        if (rowTrans && hasTrans) rowTrans.style.display = hasTrans.checked ? "block" : "none";
+        if (rowComp && hasComp) rowComp.style.display = hasComp.checked ? "block" : "none";
+    };
+
 })();
-// Global bypass function that forces the layout elements to show up
-window.forceToggleContributors = function() {
-    var hasEd = document.getElementById("sbl-has-editor");
-    var hasTrans = document.getElementById("sbl-has-translator");
-    var hasComp = document.getElementById("sbl-has-compiler");
 
-    var rowEd = document.getElementById("row-editor");
-    var rowTrans = document.getElementById("row-translator");
-    var rowComp = document.getElementById("row-compiler");
-
-    if (rowEd && hasEd) rowEd.style.display = hasEd.checked ? "block" : "none";
-    if (rowTrans && hasTrans) rowTrans.style.display = hasTrans.checked ? "block" : "none";
-    if (rowComp && hasComp) rowComp.style.display = hasComp.checked ? "block" : "none";
-};
