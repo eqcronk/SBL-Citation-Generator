@@ -29,52 +29,43 @@
             ← Change Source Type
         </button>
 <script>
-  // Get references to the HTML elements
   const btnContinue = document.getElementById('sbl-btn-continue');
   const btnBack = document.getElementById('sbl-btn-back');
   const formGroup = document.querySelector('.sbl-form-group');
   const step2 = document.getElementById('sbl-step-2');
   const sourceSelect = document.getElementById('sbl-type');
 
-  // When "Select & Continue" is clicked
   btnContinue.addEventListener('click', function() {
     const selectedSource = sourceSelect.value;
     
-    // Hide Step 1, Show Step 2
     formGroup.style.display = 'none';
     btnContinue.style.display = 'none';
     step2.style.display = 'block';
     
-    // Dynamic Layout Switching Rules
+    const metaContainer = document.getElementById('sbl-book-metadata-container');
     const rowChapTitle = document.getElementById('row-chapter-title');
     const rowChapRange = document.getElementById('row-chapter-range');
-    const lblTitle = document.getElementById('lbl-title');
-    const txtTitle = document.getElementById('sbl-title');
 
     if (selectedSource === 'chapter') {
-        // If chapter, unhide chapter fields and alter labels
-        if (rowChapTitle) rowChapTitle.style.display = 'block';
-        if (rowChapRange) rowChapRange.style.display = 'block';
-        if (lblTitle) lblTitle.textContent = 'Book Title *';
-        if (txtTitle) txtTitle.placeholder = 'e.g. Approaches to New Testament Study';
+        // Hides the entire title/publication block if user picks chapter
+        if (metaContainer) metaContainer.style.setProperty('display', 'none', 'important');
     } else {
-        // If standard book, hide chapter adjustments
-        if (rowChapTitle) rowChapTitle.style.display = 'none';
-        if (rowChapRange) rowChapRange.style.display = 'none';
-        if (lblTitle) lblTitle.textContent = 'Book Title *';
-        if (txtTitle) txtTitle.placeholder = 'e.g. Reading John';
+        // Shows the complete field set cleanly if it is a whole book
+        if (metaContainer) metaContainer.style.setProperty('display', 'block', 'important');
+        if (rowChapTitle) rowChapTitle.style.setProperty('display', 'none', 'important');
+        if (rowChapRange) rowChapRange.style.setProperty('display', 'none', 'important');
     }
     
     console.log("User selected: " + selectedSource);
   });
 
-  // When "← Change Source Type" is clicked
   btnBack.addEventListener('click', function() {
     step2.style.display = 'none';
     formGroup.style.display = 'block';
     btnContinue.style.display = 'inline-block';
   });
 </script>
+
 
 
 
