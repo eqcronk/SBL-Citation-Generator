@@ -216,4 +216,33 @@
     };
 
 })();
+<script>
+    (function() {
+        function manageToggles() {
+            var hasEd = document.getElementById("sbl-has-editor");
+            var hasTrans = document.getElementById("sbl-has-translator");
+            var hasComp = document.getElementById("sbl-has-compiler");
+
+            var rowEd = document.getElementById("row-editor");
+            var rowTrans = document.getElementById("row-translator");
+            var rowComp = document.getElementById("row-compiler");
+
+            if (rowEd && hasEd) rowEd.style.display = hasEd.checked ? "block" : "none";
+            if (rowTrans && hasTrans) rowTrans.style.display = hasTrans.checked ? "block" : "none";
+            if (rowComp && hasComp) rowComp.style.display = hasComp.checked ? "block" : "none";
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            var cbEd = document.getElementById("sbl-has-editor");
+            var cbTrans = document.getElementById("sbl-has-translator");
+            var cbComp = document.getElementById("sbl-has-compiler");
+
+            if (cbEd) cbEd.addEventListener("change", manageToggles);
+            if (cbTrans) cbTrans.addEventListener("change", manageToggles);
+            if (cbComp) cbComp.addEventListener("change", manageToggles);
+            
+            manageToggles();
+        });
+    })();
+</script>
 
