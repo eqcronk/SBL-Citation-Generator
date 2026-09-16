@@ -71,7 +71,6 @@
     <legend>Authors &amp; Contributors</legend>
 
     <!-- ─── FIXED AUTHORS SECTION ─── -->
-    <!-- Primary Required Author -->
     <div class="sbl-row">
         <div class="sbl-form-group sbl-col">
             <label for="sbl-first-name">Author 1 First Name(s) *</label>
@@ -83,7 +82,6 @@
         </div>
     </div>
 
-    <!-- Optional Author 2 -->
     <div class="sbl-row" style="margin-top: 10px;">
         <div class="sbl-form-group sbl-col">
             <label for="sbl-author2-first">Author 2 First Name(s) (Optional)</label>
@@ -95,7 +93,6 @@
         </div>
     </div>
 
-    <!-- Optional Author 3 -->
     <div class="sbl-row" style="margin-top: 10px;">
         <div class="sbl-form-group sbl-col">
             <label for="sbl-author3-first">Author 3 First Name(s) (Optional)</label>
@@ -107,7 +104,6 @@
         </div>
     </div>
 
-    <!-- SBL Shortener Checkbox -->
     <div class="sbl-form-toggle-group" style="margin-top: 15px; margin-bottom: 15px;">
         <label>
             <input type="checkbox" id="sbl-four-or-more"> 
@@ -115,16 +111,17 @@
         </label>
     </div>
 
-    <!-- ─── CONTRIBUTOR TOGGLES ─── -->
-    <div id="grp-contributors">
-        <div class="sbl-form-toggle-group" style="margin-bottom: 15px;">
-          <label><input type="checkbox" id="sbl-has-editor"> Has Editor(s)</label>
-          <label><input type="checkbox" id="sbl-has-translator"> Has Translator(s)</label>
-          <label><input type="checkbox" id="sbl-has-compiler"> Has Compiler(s)</label>
+    <!-- ─── CONTRIBUTOR CHECKBOX PANEL ─── -->
+    <div id="grp-contributors" class="sbl-form-toggle-group" style="margin-bottom: 15px;">
+        <label><input type="checkbox" id="sbl-has-editor"> Has Editor(s)</label>
+        <label><input type="checkbox" id="sbl-has-translator"> Has Translator(s)</label>
+        <label><input type="checkbox" id="sbl-has-compiler"> Has Compiler(s)</label>
+    </div>
 
-        </div>
-
-        <!-- DYNAMIC EDITORS SECTION -->
+    <!-- ─── SEPARATE SUB-INPUT FIELDS DISPLAY ARRAYS ─── -->
+    <div id="sbl-toggled-fields-wrapper">
+        
+        <!-- DYNAMIC EDITORS -->
         <div class="sbl-contributor-section sbl-sub-input-row" id="row-editor" style="display: none; margin-bottom: 20px;">
             <div class="sbl-row" style="align-items: center; margin-bottom: 10px;">
                 <h3 style="margin: 0; flex: 1;">Editors</h3>
@@ -150,7 +147,7 @@
             <button type="button" class="sbl-btn-add" id="btn-add-editor" style="margin-top: 10px;">+ Add Another Editor</button>
         </div>
 
-        <!-- DYNAMIC TRANSLATORS SECTION -->
+        <!-- DYNAMIC TRANSLATORS -->
         <div class="sbl-contributor-section sbl-sub-input-row" id="row-translator" style="display: none; margin-bottom: 20px;">
             <h3>Translators</h3>
             <div id="sbl-translators-container">
@@ -168,7 +165,7 @@
             <button type="button" class="sbl-btn-add" id="btn-add-translator" style="margin-top: 10px;">+ Add Another Translator</button>
         </div>
 
-        <!-- DYNAMIC COMPILERS SECTION -->
+        <!-- DYNAMIC COMPILERS -->
         <div class="sbl-contributor-section sbl-sub-input-row" id="row-compiler" style="display: none; margin-bottom: 20px;">
             <h3>Compilers</h3>
             <div id="sbl-compilers-container">
@@ -185,8 +182,10 @@
             </div>
             <button type="button" class="sbl-btn-add" id="btn-add-compiler" style="margin-top: 10px;">+ Add Another Compiler</button>
         </div>
+
     </div>
 </fieldset>
+
 
         <!-- ==========================================
              2. TITLE INFORMATION
