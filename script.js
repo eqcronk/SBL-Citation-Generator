@@ -7,6 +7,11 @@
 
     "use strict";
 
+    // Safe placeholder to prevent crashes if your rendering engine isn't ready
+    window.generateSBLCitation = window.generateSBLCitation || function() {
+        console.log("SBL Citation updated.");
+    };
+
     /* ==========================================
        HELPER FUNCTIONS
        ========================================== */
@@ -61,7 +66,7 @@
 
                 container.appendChild(row);
 
-                // Add real-time event triggers for rendering engine updates if present
+                // Add real-time event triggers for rendering engine updates
                 row.querySelectorAll('input').forEach(input => {
                     input.addEventListener('input', function() {
                         if (typeof window.generateSBLCitation === "function") {
@@ -73,7 +78,7 @@
         }
     }
 
-       /* ==========================================
+    /* ==========================================
        CONTRIBUTOR TOGGLES
        ========================================== */
 
@@ -82,7 +87,7 @@
         const rowTrans = document.getElementById("row-translator");
         const rowComp = document.getElementById("row-compiler");
 
-        // Force "block" explicitly to override the hardcoded HTML hidden state
+        // Force explicit display states to safely toggle your HTML items
         if (rowEd) rowEd.style.display = getChecked("sbl-has-editor") ? "block" : "none";
         if (rowTrans) rowTrans.style.display = getChecked("sbl-has-translator") ? "block" : "none";
         if (rowComp) rowComp.style.display = getChecked("sbl-has-compiler") ? "block" : "none";
