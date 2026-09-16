@@ -112,37 +112,4 @@ window.generateSBLCitation = function () {
         console.log("SBL Result:", citation);
     }
 };
-<script>
-    window.addSBLNameRow = function(containerId, role) {
-        var container = document.getElementById(containerId);
-        if (!container) return;
 
-        // Determine current row number count
-        var currentRows = container.querySelectorAll('.sbl-name-row').length + 1;
-        
-        // Create a new layout row element
-        var row = document.createElement('div');
-        row.className = 'sbl-row sbl-name-row';
-        row.style.marginTop = '10px';
-
-        // Inject fields with dynamic numbers and clean labels
-        row.innerHTML = `
-            <div class="sbl-form-group sbl-col">
-                <label>Additional ${role} ${currentRows} First Name(s)</label>
-                <input type="text" class="sbl-${role.toLowerCase()}-first">
-            </div>
-            <div class="sbl-form-group sbl-col">
-                <label>Additional ${role} ${currentRows} Last Name</label>
-                <input type="text" class="sbl-${role.toLowerCase()}-last">
-            </div>
-            <button type="button" class="sbl-btn-remove" style="margin-top: 24px; color: red; background: none; border: none; cursor: pointer; font-size: 16px;" onclick="this.parentElement.remove(); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();">✕</button>
-        `;
-
-        container.appendChild(row);
-
-        // Instantly trigger an update engine refresh if available
-        if (typeof window.generateSBLCitation === "function") {
-            window.generateSBLCitation();
-        }
-    };
-</script>
