@@ -191,7 +191,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" class="sbl-btn-add" id="btn-add-compiler" style="margin-top: 10px;" onclick="addSBLNameRow('sbl-compilers-container', 'Compiler')">+ Add Another Compiler</button>
+            <button type="button" class="sbl-btn-add" id="btn-add-compiler" style="margin-top: 10px;" onclick="(function(b){ var c=document.getElementById('sbl-compilers-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Compiler '+n+' First Name(s)</label><input type=&quot;text&quot; class=&quot;sbl-compiler-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Compiler '+n+' Last Name</label><input type=&quot;text&quot; class=&quot;sbl-compiler-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove();&quot;>✕</button>'; c.appendChild(r); })(this)">+ Add Another Compiler</button>
         </div>
 
     </div>
