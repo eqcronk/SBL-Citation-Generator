@@ -31,60 +31,67 @@
             ← Change Source Type
         </button>
 <script>
-    <script>
+  // Get explicit DOM hooks to prevent missing reference crashes
   const btnContinue = document.getElementById('sbl-btn-continue');
   const btnBack = document.getElementById('sbl-btn-back');
   const formGroup = document.querySelector('.sbl-form-group');
   const step2 = document.getElementById('sbl-step-2');
   const sourceSelect = document.getElementById('sbl-type');
 
-  btnContinue.addEventListener('click', function() {
-    const selectedSource = sourceSelect.value;
-    
-    formGroup.style.display = 'none';
-    btnContinue.style.display = 'none';
-    step2.style.display = 'block';
-    
-    const bookContainer = document.getElementById('sbl-book-metadata-container');
-    const chapContainer = document.getElementById('sbl-chapter-metadata-container');
-    const commContainer = document.getElementById('sbl-commentary-metadata-container');
-    const thesisContainer = document.getElementById('sbl-thesis-metadata-container');
-    const bibleContainer = document.getElementById('sbl-bible-metadata-container');
+  // When "Select & Continue" is clicked
+  if (btnContinue) {
+    btnContinue.addEventListener('click', function() {
+      // 1. Establish the selection source definition inside the active function loop
+      const selectedSource = sourceSelect ? sourceSelect.value : "book";
+      
+      // 2. Hide step 1 elements cleanly
+      if (formGroup) formGroup.style.display = 'none';
+      if (btnContinue) btnContinue.style.display = 'none';
+      
+      // 3. Show step 2 workspace wrapper
+      if (step2) step2.style.display = 'block';
+      
+      // 4. Safely locate metadata containers
+      const bookContainer = document.getElementById('sbl-book-metadata-container');
+      const chapContainer = document.getElementById('sbl-chapter-metadata-container');
+      const commContainer = document.getElementById('sbl-commentary-metadata-container');
+      const thesisContainer = document.getElementById('sbl-thesis-metadata-container');
+      const bibleContainer = document.getElementById('sbl-bible-metadata-container');
 
-    // Hide all containers first to prevent overlapping layout bugs
-    if (bookContainer) bookContainer.style.setProperty('display', 'none', 'important');
-    if (chapContainer) chapContainer.style.setProperty('display', 'none', 'important');
-    if (commContainer) commContainer.style.setProperty('display', 'none', 'important');
-    if (thesisContainer) thesisContainer.style.setProperty('display', 'none', 'important');
-    if (bibleContainer) bibleContainer.style.setProperty('display', 'none', 'important');
+      // 5. Hard clear display displays to clear collision overflows
+      if (bookContainer) bookContainer.style.setProperty('display', 'none', 'important');
+      if (chapContainer) chapContainer.style.setProperty('display', 'none', 'important');
+      if (commContainer) commContainer.style.setProperty('display', 'none', 'important');
+      if (thesisContainer) thesisContainer.style.setProperty('display', 'none', 'important');
+      if (bibleContainer) bibleContainer.style.setProperty('display', 'none', 'important');
 
-    // Toggle on the correct metadata field block based on value
-    if (selectedSource === 'chapter') {
-        if (chapContainer) chapContainer.style.setProperty('display', 'block', 'important');
-    } else if (selectedSource === 'commentary') {
-        if (commContainer) commContainer.style.setProperty('display', 'block', 'important');
-    } else if (selectedSource === 'thesis') {
-        if (thesisContainer) thesisContainer.style.setProperty('display', 'block', 'important');
-    } else if (selectedSource === 'bible') {
-        if (bibleContainer) bibleContainer.style.setProperty('display', 'block', 'important');
-    } else if (selectedSource === 'book') { // Checked explicitly for 'book' right here
-        if (bookContainer) bookContainer.style.setProperty('display', 'block', 'important');
-    }
-    
-    console.log("User selected: " + selectedSource);
-  });
+      // 6. Evaluate and display the correct active track panel container layer
+      if (selectedSource === 'chapter') {
+          if (chapContainer) chapContainer.style.setProperty('display', 'block', 'important');
+      } else if (selectedSource === 'commentary') {
+          if (commContainer) commContainer.style.setProperty('display', 'block', 'important');
+      } else if (selectedSource === 'thesis') {
+          if (thesisContainer) thesisContainer.style.setProperty('display', 'block', 'important');
+      } else if (selectedSource === 'bible') {
+          if (bibleContainer) bibleContainer.style.setProperty('display', 'block', 'important');
+      } else {
+          // Defaults or catches standard fallback book layouts
+          if (bookContainer) bookContainer.style.setProperty('display', 'block', 'important');
+      }
+      
+      console.log("User selected: " + selectedSource);
+    });
+  }
 
-  btnBack.addEventListener('click', function() {
-    step2.style.display = 'none';
-    formGroup.style.display = 'block';
-    btnContinue.style.display = 'inline-block';
-  });
+  // When "← Change Source Type" is clicked
+  if (btnBack) {
+    btnBack.addEventListener('click', function() {
+      if (step2) step2.style.display = 'none';
+      if (formGroup) formGroup.style.display = 'block';
+      if (btnContinue) btnContinue.style.display = 'inline-block';
+    });
+  }
 </script>
-
-
-</script>
-
-
 
 
 <!-- ==========================================
