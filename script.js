@@ -230,4 +230,27 @@
             });
         }
 
-        if (backButton && stepOne && stepTwo) {backButton.addEventListener("click", function () {stepTwo.style.display = "none";stepOne.style.display = "block";});}/* Contributor Checkbox Toggles */const cbEditor = document.getElementById("sbl-has-editor");const cbTranslator = document.getElementById("sbl-has-translator");const cbCompiler = document.getElementById("sbl-has-compiler");if (cbEditor) cbEditor.addEventListener("change", handleContributorToggles);if (cbTranslator) cbTranslator.addEventListener("change", handleContributorToggles);if (cbCompiler) cbCompiler.addEventListener("change", handleContributorToggles);/* Dynamic Repeating Sections */setupDynamicRows('btn-add-author', 'sbl-authors-container', 'Author');setupDynamicRows('btn-add-editor', 'sbl-editors-container', 'Editor');setupDynamicRows('btn-add-translator', 'sbl-translators-container', 'Translator');setupDynamicRows('btn-add-compiler', 'sbl-compilers-container', 'Compiler');// Prime the display stateshandleContributorToggles();});})();
+        if (backButton && stepOne && stepTwo) {backButton.addEventListener("click", function () {
+              stepTwo.style.display = "none";
+              stepOne.style.display = "block";
+           });
+         }
+       /* Contributor Checkbox Toggles */
+       const cbEditor = document.getElementById("sbl-has-editor");
+       const cbTranslator = document.getElementById("sbl-has-translator");
+       const cbCompiler = document.getElementById("sbl-has-compiler");
+       
+       if (cbEditor) cbEditor.addEventListener("change", handleContributorToggles);
+       if (cbTranslator) cbTranslator.addEventListener("change", handleContributorToggles);
+       if (cbCompiler) cbCompiler.addEventListener("change", handleContributorToggles);
+       
+      /* Dynamic Repeating Sections */
+       setupDynamicRows('btn-add-author', 'sbl-authors-container', 'Author');
+       setupDynamicRows('btn-add-editor', 'sbl-editors-container', 'Editor');
+       setupDynamicRows('btn-add-translator', 'sbl-translators-container', 'Translator');
+       setupDynamicRows('btn-add-compiler', 'sbl-compilers-container', 'Compiler');
+       
+       // Prime the display states
+       handleContributorToggles();
+          });
+         })();
