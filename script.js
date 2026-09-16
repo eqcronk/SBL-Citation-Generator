@@ -32,6 +32,7 @@ window.generateSBLCitation = function () {
         }
     }
 
+
     // 3. COLLECT DYNAMIC CONTRIBUTORS (Loops through matching class arrays)
     function getContributors(roleClass) {
         let list = [];
