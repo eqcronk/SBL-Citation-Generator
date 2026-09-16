@@ -7,59 +7,173 @@
 
     <!-- STEP 1: SOURCE TYPE -->
     <div id="sbl-step-1" class="sbl-wizard-step">
-
         <div class="sbl-form-group">
             <label for="sbl-type" class="sbl-source-question">
                 What type of source are you citing?
             </label>
-
             <select id="sbl-type" class="sbl-source-select">
                 <option value="book">Whole Book</option>
                 <option value="chapter">Chapter or Essay in an Edited Book</option>
                 <option value="article">Journal Article</option>
             </select>
         </div>
-
         <button type="button" id="sbl-btn-continue" class="sbl-primary-btn">
             Select &amp; Continue →
         </button>
-    <div id="sbl-step-2" class="sbl-wizard-step" style="display: none;">
+    </div> <!-- CLOSED STEP 1 -->
 
+    <!-- STEP 2: DETAILS CONTAINER -->
+    <div id="sbl-step-2" class="sbl-wizard-step" style="display: none;">
         <button type="button" id="sbl-btn-back" class="sbl-back-link">
             ← Change Source Type
         </button>
+
+        <!-- ==========================================
+             1. AUTHORS & CONTRIBUTORS
+             ========================================== -->
+        <fieldset class="sbl-fieldset">
+            <legend>Authors &amp; Contributors</legend>
+
+            <div class="sbl-row">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-first-name">Author First Name(s)</label>
+                    <input type="text" id="sbl-first-name" placeholder="e.g. Charles H.">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-last-name">Author Last Name</label>
+                    <input type="text" id="sbl-last-name" placeholder="e.g. Talbert">
+                </div>
+            </div>
+
+            <!-- Contributors Checkboxes -->
+            <div id="grp-contributors">
+                <div class="sbl-form-toggle-group">
+                    <label><input type="checkbox" id="sbl-has-editor"> Has Editor(s)</label>
+                    <label><input type="checkbox" id="sbl-has-translator"> Has Translator(s)</label>
+                    <label><input type="checkbox" id="sbl-has-compiler"> Has Compiler(s)</label>
+                </div>
+
+                <!-- Editor -->
+                <div class="sbl-row sbl-sub-input-row" id="row-editor" style="display: none;">
+                    <div class="sbl-form-group sbl-col">
+                        <label for="sbl-ed-name">Editor Name(s) <span class="sbl-instruct">First Last order</span></label>
+                        <input type="text" id="sbl-ed-name" placeholder="e.g. Thomas Williams">
+                    </div>
+                    <div class="sbl-form-group sbl-col-short">
+                        <label for="sbl-ed-type">Role Assignment</label>
+                        <select id="sbl-ed-type">
+                            <option value="secondary">Secondary (Book has Author)</option>
+                            <option value="primary">Primary (No Primary Author)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Translator -->
+                <div class="sbl-form-group sbl-sub-input-row" id="row-translator" style="display: none;">
+                    <label for="sbl-trans-name">Translator Name(s) <span class="sbl-instruct">First Last order</span></label>
+                    <input type="text" id="sbl-trans-name" placeholder="e.g. Peter Heinegg">
+                </div>
+
+                <!-- Compiler -->
+                <div class="sbl-form-group sbl-sub-input-row" id="row-compiler" style="display: none;">
+                    <label for="sbl-comp-name">Compiler Name(s) <span class="sbl-instruct">First Last order</span></label>
+                    <input type="text" id="sbl-comp-name" placeholder="e.g. David Tombs">
+                </div>
+            </div>
+        </fieldset>
+
+        <!-- ==========================================
+             2. TITLE INFORMATION
+             ========================================== -->
+        <fieldset class="sbl-fieldset">
+            <legend>Title Information</legend>
+
+            <!-- Chapter / Article Title -->
+            <div class="sbl-form-group" id="grp-inner-title" style="display: none;">
+                <label for="sbl-inner-title" id="lbl-inner-title">Chapter / Article Title</label>
+                <input type="text" id="sbl-inner-title" placeholder="">
+            </div>
+
+            <!-- Main Book Title -->
+            <div class="sbl-row" id="row-main-title">
+                <div class="sbl-form-group sbl-col-60">
+                    <label for="sbl-title" id="lbl-title">Book Title</label>
+                    <input type="text" id="sbl-title" placeholder="e.g. Reading John">
+                </div>
+                <!-- Subtitle Column -->
+                <div class="sbl-form-group sbl-col" id="grp-subtitle">
+                    <label for="sbl-subtitle">Subtitle</label>
+                    <input type="text" id="sbl-subtitle" placeholder="e.g. A Literary Commentary">
+                </div>
+            </div>
+        </fieldset>
+    </div> <!-- CLOSED STEP 2 -->
+</div> <!-- CLOSED CONTAINER -->
+
+<!-- ==========================================
+     JAVASCRIPT LOGIC
+     ========================================== -->
 <script>
-  // Get references to the HTML elements
+  // Wizard Navigation References
   const btnContinue = document.getElementById('sbl-btn-continue');
   const btnBack = document.getElementById('sbl-btn-back');
-  const formGroup = document.querySelector('.sbl-form-group');
+  const step1 = document.getElementById('sbl-step-1');
   const step2 = document.getElementById('sbl-step-2');
   const sourceSelect = document.getElementById('sbl-type');
 
-  // When "Select & Continue" is clicked
+  // Form Field Group References
+  const grpInnerTitle = document.getElementById('grp-inner-title');
+  const lblInnerTitle = document.getElementById('lbl-inner-title');
+  const lblTitle = document.getElementById('lbl-title');
+
+  // Contributor Checkbox References
+  const checkEditor = document.getElementById('sbl-has-editor');
+  const checkTranslator = document.getElementById('sbl-has-translator');
+  const checkCompiler = document.getElementById('sbl-has-compiler');
+
+  const rowEditor = document.getElementById('row-editor');
+  const rowTranslator = document.getElementById('row-translator');
+  const rowCompiler = document.getElementById('row-compiler');
+
+  // --- 1. NAVIGATION LOGIC ---
   btnContinue.addEventListener('click', function() {
-    // 1. Get the chosen value (e.g., "book", "chapter", "article")
     const selectedSource = sourceSelect.value;
     
-    // 2. Hide the step 1 elements
-    formGroup.style.display = 'none';
-    btnContinue.style.display = 'none';
-    
-    // 3. Show step 2
+    // Hide Step 1, Show Step 2
+    step1.style.display = 'none';
     step2.style.display = 'block';
-    
-    // Optional: Log or use the value for the next step
-    console.log("User selected: " + selectedSource);
+
+    // Adapt Step 2 Fields conditionally based on Source Type
+    if (selectedSource === 'book') {
+        grpInnerTitle.style.display = 'none';
+        lblTitle.innerText = 'Book Title';
+    } else if (selectedSource === 'chapter') {
+        grpInnerTitle.style.display = 'block';
+        lblInnerTitle.innerText = 'Chapter or Essay Title';
+        lblTitle.innerText = 'Edited Book Title';
+    } else if (selectedSource === 'article') {
+        grpInnerTitle.style.display = 'block';
+        lblInnerTitle.innerText = 'Journal Article Title';
+        lblTitle.innerText = 'Journal Title';
+    }
   });
 
-  // When "← Change Source Type" is clicked
   btnBack.addEventListener('click', function() {
-    // 1. Hide step 2
     step2.style.display = 'none';
-    
-    // 2. Show the step 1 elements again
-    formGroup.style.display = 'block';
-    btnContinue.style.display = 'inline-block'; // or 'block' depending on layout
+    step1.style.display = 'block';
+  });
+
+  // --- 2. DYNAMIC INPUT TOGGLES ---
+  checkEditor.addEventListener('change', function() {
+    rowEditor.style.display = this.checked ? 'flex' : 'none'; // 'flex' preserves row layout
+  });
+
+  checkTranslator.addEventListener('change', function() {
+    rowTranslator.style.display = this.checked ? 'block' : 'none';
+  });
+
+  checkCompiler.addEventListener('change', function() {
+    rowCompiler.style.display = this.checked ? 'block' : 'none';
   });
 </script>
 
