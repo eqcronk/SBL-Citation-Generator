@@ -1,238 +1,113 @@
 /* ==========================================
-   SBL Citation Generator
-   Logic Engine
+   SBL 2nd Edition Citation Engine
    ========================================== */
+window.generateSBLCitation = function () {
+    // 1. COLLECT AUTHORS (Fixed Fields)
+    let authors = [];
+    let first1 = document.getElementById("sbl-first-name")?.value.trim();
+    let last1 = document.getElementById("sbl-last-name")?.value.trim();
+    if (first1 && last1) authors.push({ first: first1, last: last1 });
 
-(function () {
+    let first2 = document.getElementById("sbl-author2-first")?.value.trim();
+    let last2 = document.getElementById("sbl-author2-last")?.value.trim();
+    if (first2 && last2) authors.push({ first: first2, last: last2 });
 
-    "use strict";
+    let first3 = document.getElementById("sbl-author3-first")?.value.trim();
+    let last3 = document.getElementById("sbl-author3-last")?.value.trim();
+    if (first3 && last3) authors.push({ first: first3, last: last3 });
 
-    // Safe placeholder to prevent crashes if your rendering engine isn't ready
-    window.generateSBLCitation = window.generateSBLCitation || function() {
-        console.log("SBL Citation updated.");
-    };
+    let fourOrMore = document.getElementById("sbl-four-or-more")?.checked;
 
-    /* ==========================================
-       HELPER FUNCTIONS
-       ========================================== */
-
-    function getValue(id) {
-        const element = document.getElementById(id);
-        return element ? element.value.trim() : "";
-    }
-
-    function getChecked(id) {
-        const element = document.getElementById(id);
-        return element ? element.checked : false;
-    }
-
-    /**
-     * Helper to set up dynamic "Add Another" rows safely for Contributors
-     */
-    function setupDynamicRows(buttonId, containerId, role) {
-        const button = document.getElementById(buttonId);
-        const container = document.getElementById(containerId);
-
-        if (button && container) {
-            button.addEventListener('click', function() {
-                const currentRows = container.querySelectorAll('.sbl-name-row').length + 1;
-                
-                const row = document.createElement('div');
-                row.className = 'sbl-row sbl-name-row';
-                row.style.marginTop = '10px';
-
-                row.innerHTML = `
-                    <div class="sbl-form-group sbl-col">
-                        <label>Additional ${role} ${currentRows} First Name(s)</label>
-                        <input type="text" class="sbl-${role.toLowerCase()}-first">
-                    </div>
-                    <div class="sbl-form-group sbl-col">
-                        <label>Additional ${role} ${currentRows} Last Name</label>
-                        <input type="text" class="sbl-${role.toLowerCase()}-last">
-                    </div>
-                    <button type="button" class="sbl-btn-remove" style="margin-top: 24px; color: red; background: none; border: none; cursor: pointer; font-size: 16px;">✕</button>
-                `;
-
-                row.querySelector('.sbl-btn-remove').addEventListener('click', function() {
-                    row.remove();
-                    if (typeof window.generateSBLCitation === "function") {
-                        window.generateSBLCitation();
-                    }
-                });
-
-                container.appendChild(row);
-
-                row.querySelectorAll('input').forEach(input => {
-                    input.addEventListener('input', function() {
-                        if (typeof window.generateSBLCitation === "function") {
-                            window.generateSBLCitation();
-                        }
-                    });
-                });
-            });
+    // 2. CONCATENATE AUTHOR STRING (SBL Rules: Last, First for Author 1, First Last for others)
+    let authorStr = "";
+    if (authors.length > 0) {
+        if (fourOrMore) {
+            authorStr = `${authors[0].last}, ${authors[0].first}, et al.`;
+        } else if (authors.length === 1) {
+            authorStr = `${authors[0].last}, ${authors[0].first}.`;
+        } else if (authors.length === 2) {
+            authorStr = `${authors[0].last}, ${authors[0].first}, and ${authors[1].first} ${authors[1].last}.`;
+        } else if (authors.length === 3) {
+            authorStr = `${authors[0].last}, ${authors[0].first}, ${authors[1].first} ${authors[1].last}, and ${authors[2].first} ${authors[2].last}.`;
         }
     }
 
-    /* ==========================================
-       CONTRIBUTOR TOGGLES
-       ========================================== */
+    // 3. COLLECT DYNAMIC CONTRIBUTORS (Loops through matching class arrays)
+    function getContributors(roleClass) {
+        let list = [];
+        let firstInputs = document.querySelectorAll(`.sbl-${roleClass}-first`);
+        let lastInputs = document.querySelectorAll(`.sbl-${roleClass}-last`);
+        
+        // Grab the static first row text field values
+        let baseFirst = document.querySelector(`[placeholder*="${roleClass === 'editor' ? 'Thomas' : roleClass === 'translator' ? 'Peter' : 'David'}"]`)?.value.trim();
+        let baseLast = document.querySelector(`[placeholder*="${roleClass === 'editor' ? 'Williams' : roleClass === 'translator' ? 'Heinegg' : 'Tombs'}"]`)?.value.trim();
+        if (baseFirst && baseLast) list.push(`${baseFirst} ${baseLast}`);
 
-    function handleContributorToggles() {
-        const rowEd = document.getElementById("row-editor");
-        const rowTrans = document.getElementById("row-translator");
-        const rowComp = document.getElementById("row-compiler");
-
-        if (rowEd) rowEd.style.display = getChecked("sbl-has-editor") ? "block" : "none";
-        if (rowTrans) rowTrans.style.display = getChecked("sbl-has-translator") ? "block" : "none";
-        if (rowComp) rowComp.style.display = getChecked("sbl-has-compiler") ? "block" : "none";
-
-        if (typeof window.generateSBLCitation === "function") {
-            window.generateSBLCitation();
-        }
-    }
-
-    /* ==========================================
-       SOURCE TYPE LAYOUT
-       ========================================== */
-
-    function applyFormLayoutRules() {
-        const typeSelect = document.getElementById("sbl-type");
-        if (!typeSelect) return;
-
-        const type = typeSelect.value;
-
-        const lblTitle = document.getElementById("lbl-title");
-        const txtTitle = document.getElementById("sbl-title");
-        const lblPages = document.getElementById("lbl-pages");
-        const grpInnerTitle = document.getElementById("grp-inner-title");
-        const grpContributors = document.getElementById("grp-contributors");
-        const rowMainTitle = document.getElementById("row-main-title");
-        const grpSubtitle = document.getElementById("grp-subtitle");
-        const rowJournalMeta = document.getElementById("row-journal-meta");
-        const rowBookSeriesMeta = document.getElementById("row-book-series-meta");
-        const rowImprint = document.getElementById("row-imprint");
-        const grpRangeField = document.getElementById("grp-range-field");
-        const grpVolDistinctTitle = document.getElementById("grp-vol-distinct-title");
-        const lblSerialLegend = document.getElementById("lbl-serial-legend");
-        const toggledWrapper = document.getElementById("sbl-toggled-fields-wrapper");
-
-        if (type === "book") {
-            if (lblTitle) lblTitle.textContent = "Book Title";
-            if (txtTitle) txtTitle.placeholder = "e.g. Reading John";
-            if (lblPages) lblPages.textContent = "Pages Cited";
-            if (grpInnerTitle) grpInnerTitle.style.display = "none";
-            if (grpContributors) grpContributors.style.display = "block";
-            if (toggledWrapper) toggledWrapper.style.display = "block";
-            if (rowMainTitle) rowMainTitle.style.display = "flex";
-            if (grpSubtitle) grpSubtitle.style.display = "block";
-            if (rowJournalMeta) rowJournalMeta.style.display = "none";
-            if (rowBookSeriesMeta) rowBookSeriesMeta.style.display = "block";
-            if (rowImprint) rowImprint.style.display = "flex";
-            if (grpRangeField) grpRangeField.style.display = "none";
-            if (grpVolDistinctTitle) grpVolDistinctTitle.style.display = "block";
-            if (lblSerialLegend) lblSerialLegend.textContent = "Volume & Series Info";
-        }
-        else if (type === "chapter") {
-            if (lblTitle) lblTitle.textContent = "Overarching Book Title";
-            if (txtTitle) txtTitle.placeholder = "e.g. Approaches to New Testament Study";
-            if (lblPages) lblPages.textContent = "Pages Cited";
-            if (grpInnerTitle) grpInnerTitle.style.display = "block";
-            
-            const lblInner = document.getElementById("lbl-inner-title");
-            const txtInner = document.getElementById("sbl-inner-title");
-            if (lblInner) lblInner.textContent = "Chapter / Essay Title";
-            if (txtInner) txtInner.placeholder = "e.g. Canonical Criticism";
-
-            if (grpContributors) grpContributors.style.display = "block";
-            if (toggledWrapper) toggledWrapper.style.display = "block";
-            if (rowMainTitle) rowMainTitle.style.display = "flex";
-            if (grpSubtitle) grpSubtitle.style.display = "block";
-            if (rowJournalMeta) rowJournalMeta.style.display = "none";
-            if (rowBookSeriesMeta) rowBookSeriesMeta.style.display = "block";
-            if (rowImprint) rowImprint.style.display = "flex";
-            if (grpRangeField) grpRangeField.style.display = "block";
-            if (grpVolDistinctTitle) grpVolDistinctTitle.style.display = "block";
-            if (lblSerialLegend) lblSerialLegend.textContent = "Volume & Series Info";
-        }
-        else if (type === "article") {
-            if (lblTitle) lblTitle.textContent = "Article";
-            if (lblPages) lblPages.textContent = "Pages Cited";
-            if (grpInnerTitle) grpInnerTitle.style.display = "block";
-
-            const lblInner = document.getElementById("lbl-inner-title");
-            const txtInner = document.getElementById("sbl-inner-title");
-            if (lblInner) lblInner.textContent = "Article Title";
-            if (txtInner) txtInner.placeholder = "e.g. John Chrysostom on the Gaze";
-
-            if (grpContributors) grpContributors.style.display = "none";
-            if (toggledWrapper) toggledWrapper.style.display = "none";
-            if (rowMainTitle) rowMainTitle.style.display = "none";
-            if (grpSubtitle) grpSubtitle.style.display = "none";
-            if (rowJournalMeta) rowJournalMeta.style.display = "flex";
-            if (rowBookSeriesMeta) rowBookSeriesMeta.style.display = "none";
-            if (rowImprint) rowImprint.style.display = "none";
-            if (grpRangeField) grpRangeField.style.display = "block";
-        }
-    }
-
-    /* ==========================================
-       INITIALIZE ON DOM LOAD
-       ========================================== */
-    document.addEventListener("DOMContentLoaded", function () {
-
-        const stepOne = document.getElementById("sbl-step-1");
-        const stepTwo = document.getElementById("sbl-step-2");
-        const continueButton = document.getElementById("sbl-btn-continue");
-        const backButton = document.getElementById("sbl-btn-back");
-
-        /* Wizard Navigation */
-        if (continueButton && stepOne && stepTwo) {
-            continueButton.addEventListener("click", function () {
-                stepOne.style.display = "none";
-                stepTwo.style.display = "block";
-                applyFormLayoutRules();
-            });
-        }
-
-        if (backButton && stepOne && stepTwo) {
-            backButton.addEventListener("click", function () {
-                stepTwo.style.display = "none";
-                stepOne.style.display = "block";
-            });
-        }
-
-        /* Contributor Checkbox Toggles */
-        const cbEditor = document.getElementById("sbl-has-editor");
-        const cbTranslator = document.getElementById("sbl-has-translator");
-        const cbCompiler = document.getElementById("sbl-has-compiler");
-
-        if (cbEditor) cbEditor.addEventListener("change", handleContributorToggles);
-        /* Contributor Checkbox Toggles */
-        const cbEditor = document.getElementById("sbl-has-editor");
-        const cbTranslator = document.getElementById("sbl-has-translator");
-        const cbCompiler = document.getElementById("sbl-has-compiler");
-
-        if (cbEditor) cbEditor.addEventListener("change", handleContributorToggles);
-        if (cbTranslator) cbTranslator.addEventListener("change", handleContributorToggles);
-        if (cbCompiler) cbCompiler.addEventListener("change", handleContributorToggles);
-
-        /* Dynamic Repeating Sections Hooked to Contributors Only */
-        setupDynamicRows('btn-add-editor', 'sbl-editors-container', 'Editor');
-        setupDynamicRows('btn-add-translator', 'sbl-translators-container', 'Translator');
-        setupDynamicRows('btn-add-compiler', 'sbl-compilers-container', 'Compiler');
-
-        /* Real-time Rendering Listeners for All Form Fields */
-        const inputs = document.querySelectorAll('#sbl-step-2 input, #sbl-step-2 select');
-        inputs.forEach(input => {
-            input.addEventListener('input', function() {
-                if (typeof window.generateSBLCitation === "function") {
-                    window.generateSBLCitation();
-                }
-            });
+        // Grab any added dynamic text input row fields
+        firstInputs.forEach((input, index) => {
+            let f = input.value.trim();
+            let l = lastInputs[index]?.value.trim();
+            if (f && l) list.push(`${f} ${l}`);
         });
 
-        // Initialize state view configurations
-        handleContributorToggles();
-    });
+        if (list.length === 0) return "";
+        if (list.length === 1) return list[0];
+        if (list.length === 2) return `${list[0]} and ${list[1]}`;
+        return list.slice(0, -1).join(", ") + ", and " + list[list.length - 1];
+    }
 
-})();
+    let edStr = getContributors("editor");
+    let transStr = getContributors("translator");
+    let compStr = getContributors("compiler");
+    let edType = document.getElementById("sbl-ed-type")?.value;
+
+    // 4. COLLECT CORE BOOK META DATA
+    let title = document.getElementById("sbl-title")?.value.trim() || "[Title]";
+    let city = document.getElementById("sbl-city")?.value.trim() || "[City]";
+    let publisher = document.getElementById("sbl-publisher")?.value.trim() || "[Publisher]";
+    let year = document.getElementById("sbl-year")?.value.trim() || "[Year]";
+
+    // 5. ASSEMBLE BIBLIOGRAPHY CITATION PARTS
+    let citation = "";
+
+    // SBL Primary Editor Rule (No standard author present)
+    if (authorStr === "" && edStr !== "" && edType === "primary") {
+        let edLabel = document.querySelectorAll(".sbl-editor-first").length > 0 || edStr.includes("and") ? "eds." : "ed.";
+        // Invert the first editor's name for bibliography style
+        let edParts = edStr.split(" ");
+        if (edParts.length > 1) {
+            let firstEdLast = edParts.pop();
+            let firstEdRest = edParts.join(" ");
+            citation += `${firstEdLast}, ${firstEdRest}, ${edLabel} `;
+        } else {
+            citation += `${edStr}, ${edLabel} `;
+        }
+    } else {
+        if (authorStr) citation += authorStr + " ";
+    }
+
+    // Append Book Title
+    citation += `<em>${title}</em>.`;
+
+    // Append Secondary Contributors (SBL Rules: Edited by / Translated by)
+    if (edStr && (authorStr || edType === "secondary")) {
+        citation += ` Edited by ${edStr}.`;
+    }
+    if (transStr) {
+        citation += ` Translated by ${transStr}.`;
+    }
+    if (compStr) {
+        citation += ` Compiled by ${compStr}.`;
+    }
+
+    // Append Publication Imprint
+    citation += ` ${city}: ${publisher}, ${year}.`;
+
+    // 6. OUTPUT TO DISPLAY CONTAINER
+    let outputBox = document.getElementById("sbl-citation-output");
+    if (outputBox) {
+        outputBox.innerHTML = citation;
+    } else {
+        console.log("SBL Result:", citation);
+    }
+};
