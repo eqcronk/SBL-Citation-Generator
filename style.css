@@ -1,33 +1,52 @@
 /* ==========================================
-   SBL Citation Generator Styling
+   SBL Citation Generator
    ========================================== */
+
 .sbl-widget-container {
     max-width: 650px;
     margin: 20px auto;
     background: #ffffff;
     padding: 24px;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
     border: 1px solid #e2e8f0;
     box-sizing: border-box;
 }
-.sbl-widget-container h2 { 
-    margin-top: 0; 
-    color: #2b4c7e; 
-    font-size: 1.6rem; 
+
+
+/* ==========================================
+   HEADER
+   ========================================== */
+
+.sbl-widget-container h2 {
+    margin-top: 0;
+    color: #2b4c7e;
+    font-size: 1.6rem;
     margin-bottom: 24px;
     text-align: center;
     border-bottom: 2px solid #f1f5f9;
     padding-bottom: 12px;
 }
+
+
+/* ==========================================
+   WIZARD
+   ========================================== */
+
 .sbl-wizard-step {
     animation: fadeIn 0.3s ease-in-out;
 }
+
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
+
 .sbl-primary-btn {
     display: block;
     width: 100%;
     background: #2b4c7e;
-    color: white;
+    color: #ffffff;
     border: none;
     padding: 12px;
     font-size: 1rem;
@@ -37,7 +56,11 @@
     margin-top: 16px;
     transition: background 0.2s ease;
 }
-.sbl-primary-btn:hover { background: #1e355b; }
+
+.sbl-primary-btn:hover {
+    background: #1e355b;
+}
+
 .sbl-back-link {
     background: none;
     border: none;
@@ -48,7 +71,16 @@
     margin-bottom: 16px;
     font-size: 0.9rem;
 }
-.sbl-back-link:hover { text-decoration: underline; }
+
+.sbl-back-link:hover {
+    text-decoration: underline;
+}
+
+
+/* ==========================================
+   FORM
+   ========================================== */
+
 .sbl-fieldset {
     border: 1px solid #e2e8f0;
     border-radius: 6px;
@@ -56,6 +88,7 @@
     margin-bottom: 20px;
     background: #fafafa;
 }
+
 .sbl-fieldset legend {
     font-weight: 700;
     color: #2b4c7e;
@@ -64,7 +97,108 @@
     text-transform: uppercase;
     letter-spacing: 0.02em;
 }
-.sbl-form-group { margin-bottom: 14px; }
+
+.sbl-form-group {
+    margin-bottom: 14px;
+}
+
+.sbl-form-group:last-child {
+    margin-bottom: 0;
+}
+
+.sbl-row {
+    display: flex;
+    gap: 14px;
+}
+
+.sbl-col {
+    flex: 1;
+    min-width: 0;
+}
+
+.sbl-col-60 {
+    flex: 1.6;
+    min-width: 0;
+}
+
+.sbl-col-short {
+    width: 150px;
+    flex-shrink: 0;
+}
+
+
+/* ==========================================
+   LABELS & HELP TEXT
+   ========================================== */
+
+.sbl-widget-container label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 4px;
+    font-size: 0.85rem;
+    color: #334155;
+}
+
+.sbl-source-question {
+    font-size: 1.1rem !important;
+    text-align: center;
+    margin-bottom: 12px !important;
+}
+
+.sbl-instruct {
+    font-weight: normal;
+    color: #64748b;
+    font-size: 0.75rem;
+}
+
+.sbl-optional {
+    font-weight: normal;
+    color: #94a3b8;
+    font-size: 0.75rem;
+}
+
+.sbl-help-text {
+    display: block;
+    color: #64748b;
+    font-size: 0.75rem;
+    line-height: 1.4;
+    margin-bottom: 5px;
+}
+
+
+/* ==========================================
+   INPUTS
+   ========================================== */
+
+.sbl-widget-container input,
+.sbl-widget-container select {
+    width: 100%;
+    padding: 9px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    box-sizing: border-box;
+    font-size: 0.95rem;
+    color: #1e293b;
+    background-color: #ffffff;
+}
+
+.sbl-widget-container input:focus,
+.sbl-widget-container select:focus {
+    outline: none;
+    border-color: #2b4c7e;
+    box-shadow: 0 0 0 3px rgba(43, 76, 126, 0.1);
+}
+
+.sbl-source-select {
+    font-size: 1.1rem !important;
+    padding: 12px !important;
+}
+
+
+/* ==========================================
+   CHECKBOXES / CONTRIBUTORS
+   ========================================== */
+
 .sbl-form-toggle-group {
     display: flex;
     gap: 16px;
@@ -72,38 +206,140 @@
     background: #f1f5f9;
     padding: 8px 12px;
     border-radius: 4px;
+    flex-wrap: wrap;
 }
+
 .sbl-form-toggle-group label {
     display: flex !important;
     align-items: center;
     gap: 6px;
     cursor: pointer;
     font-weight: 500 !important;
+    margin: 0 !important;
 }
+
+.sbl-form-toggle-group input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
 .sbl-sub-input-row {
-    background: #fff;
+    background: #ffffff;
     border: 1px dashed #cbd5e1;
     padding: 10px;
     border-radius: 4px;
     margin-bottom: 10px;
 }
-.sbl-row { display: flex; gap: 14px; }
-.sbl-col { flex: 1; min-width: 0; }
-.sbl-col-60 { flex: 1.6; min-width: 0; }
-.sbl-col-short { width: 150px; }
-.sbl-widget-container label { display: block; font-weight: 600; margin-bottom: 4px; font-size: 0.85rem; color: #334155; }
-.sbl-instruct { font-weight: normal; color: #64748b; font-size: 0.75rem; }
-.sbl-optional { font-weight: normal; color: #94a3b8; font-size: 0.75rem; }
-.sbl-widget-container input, .sbl-widget-container select {
-    width: 100%; padding: 9px 12px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; color: #1e293b; background-color: #fff;
+
+
+/* ==========================================
+   OUTPUT
+   ========================================== */
+
+.sbl-output-box {
+    margin-top: 28px;
+    padding: 20px;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 5px solid #2b4c7e;
+    border-radius: 6px;
 }
-.sbl-widget-container input:focus, .sbl-widget-container select:focus { outline: none; border-color: #2b4c7e; box-shadow: 0 0 0 3px rgba(43, 76, 126, 0.1); }
-.sbl-output-box { margin-top: 28px; padding: 20px; background: #f8fafc; border: 1px solid #e2e8f0; border-left: 5px solid #2b4c7e; border-radius: 6px; }
-.sbl-output-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px dashed #e2e8f0; padding-bottom: 4px; }
-.sbl-output-title { font-weight: 700; font-size: 0.75rem; color: #475569; text-transform: uppercase; letter-spacing: 0.05em; }
-.sbl-copy-btn { background: #ffffff; border: 1px solid #cbd5e1; padding: 3px 10px; font-size: 0.75rem; border-radius: 4px; cursor: pointer; color: #475569; font-weight: 600; transition: all 0.15s ease; }
-.sbl-copy-btn:hover { background: #2b4c7e; color: #ffffff; border-color: #2b4c7e; }
-.sbl-citation { font-family: Georgia, serif; font-size: 1.05rem; margin-bottom: 24px; line-height: 1.6; color: #0f172a; word-break: break-word; padding-left: 8px; }
-.sbl-citation:last-child { margin-bottom: 0; }
-.sbl-citation i { font-style: italic; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+.sbl-output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+    border-bottom: 1px dashed #e2e8f0;
+    padding-bottom: 4px;
+}
+
+.sbl-output-title {
+    font-weight: 700;
+    font-size: 0.75rem;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.sbl-copy-btn {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    padding: 3px 10px;
+    font-size: 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    color: #475569;
+    font-weight: 600;
+    transition: all 0.15s ease;
+}
+
+.sbl-copy-btn:hover {
+    background: #2b4c7e;
+    color: #ffffff;
+    border-color: #2b4c7e;
+}
+
+.sbl-citation {
+    font-family: Georgia, serif;
+    font-size: 1.05rem;
+    margin-bottom: 24px;
+    line-height: 1.6;
+    color: #0f172a;
+    word-break: break-word;
+    padding-left: 8px;
+}
+
+.sbl-citation:last-child {
+    margin-bottom: 0;
+}
+
+.sbl-citation i {
+    font-style: italic;
+}
+
+
+/* ==========================================
+   MOBILE
+   ========================================== */
+
+@media (max-width: 600px) {
+
+    .sbl-widget-container {
+        padding: 16px;
+    }
+
+    .sbl-row {
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .sbl-col-short {
+        width: 100%;
+    }
+
+    .sbl-form-toggle-group {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+}
+
+
+/* ==========================================
+   ANIMATION
+   ========================================== */
+
+@keyframes fadeIn {
+
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+}
