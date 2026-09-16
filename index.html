@@ -74,33 +74,58 @@
 <fieldset class="sbl-fieldset">
     <legend>Authors &amp; Contributors</legend>
 
-    <!-- ─── DYNAMIC AUTHORS SECTION ─── -->
-    <div class="sbl-contributor-section" style="margin-bottom: 20px;">
-        <div id="sbl-authors-container">
-            <!-- Primary Required Author 1 -->
-            <div class="sbl-row sbl-name-row">
-                <div class="sbl-form-group sbl-col">
-                    <label for="sbl-first-name">Author 1 First Name(s) *</label>
-                    <input type="text" id="sbl-first-name" class="sbl-author-first" placeholder="e.g. Charles H." required>
-                </div>
-                <div class="sbl-form-group sbl-col">
-                    <label for="sbl-last-name">Author 1 Last Name *</label>
-                    <input type="text" id="sbl-last-name" class="sbl-author-last" placeholder="e.g. Talbert" required>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Add Author Button (Triggers inline script math) -->
-        <button type="button" class="sbl-btn-add" id="btn-add-author" style="margin-top: 10px;" 
-                onclick="(function(){ var c=document.getElementById('sbl-authors-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Author '+n+' First Name(s) (Optional)</label><input type=&quot;text&quot; class=&quot;sbl-author-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Author '+n+' Last Name (Optional)</label><input type=&quot;text&quot; class=&quot;sbl-author-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove(); document.getElementById(\'sbl-et-al-wrapper\').style.display=c.querySelectorAll(\'.sbl-name-row\').length>=3?\'block\':\'none\'; if(typeof window.generateSBLCitation===\'function\')window.generateSBLCitation();&quot;>✕</button>'; c.appendChild(r); document.getElementById('sbl-et-al-wrapper').style.display=n>=3?'block':'none'; })(this)">+ Add Another Author</button>
+    <!-- Author Type Control Toggle Tiers -->
+    <div class="sbl-form-toggle-group" style="margin-bottom: 20px; background: #edf2f7; padding: 12px; border-radius: 4px;">
+        <strong style="margin-right: 15px; color: #4a5568;">Author Entry Type:</strong>
+        <label style="margin-right: 15px;">
+            <input type="radio" name="sbl-author-type" id="type-author-standard" value="standard" checked onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'block', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'none', 'important'); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();"> Personal Author(s)
+        </label>
+        <label style="margin-right: 15px;">
+            <input type="radio" name="sbl-author-type" id="type-author-corporate" value="corporate" onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'none', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'block', 'important'); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();"> Corporate/Organization Author
+        </label>
+        <label>
+            <input type="radio" name="sbl-author-type" id="type-author-none" value="none" onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'none', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'none', 'important'); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();"> No Author (Skip Section)
+        </label>
     </div>
 
-    <!-- Hidden SBL Shortener Checkbox (Reveals only when 3+ authors are mapped) -->
-    <div id="sbl-et-al-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; margin-bottom: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
-        <label>
-            <input type="checkbox" id="sbl-four-or-more"> 
-            <strong>Four or More Authors</strong> (Appends "et al." to the citation)
-        </label>
+    <!-- TIER A: STANDARD PERSONAL AUTHORS WRAPPER -->
+    <div id="sbl-standard-authors-wrapper">
+        <div class="sbl-contributor-section" style="margin-bottom: 20px;">
+            <div id="sbl-authors-container">
+                <!-- Primary Required Author 1 -->
+                <div class="sbl-row sbl-name-row">
+                    <div class="sbl-form-group sbl-col">
+                        <label for="sbl-first-name">Author 1 First Name(s)</label>
+                        <input type="text" id="sbl-first-name" class="sbl-author-first" placeholder="e.g. Charles H.">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label for="sbl-last-name">Author 1 Last Name</label>
+                        <input type="text" id="sbl-last-name" class="sbl-author-last" placeholder="e.g. Talbert">
+                    </div>
+                </div>
+            </div>
+            
+            <button type="button" class="sbl-btn-add" id="btn-add-author" style="margin-top: 10px;" 
+                    onclick="(function(){ var c=document.getElementById('sbl-authors-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Author '+n+' First Name(s) (Optional)</label><input type=&quot;text&quot; class=&quot;sbl-author-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Author '+n+' Last Name (Optional)</label><input type=&quot;text&quot; class=&quot;sbl-author-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove(); document.getElementById(\'sbl-et-al-wrapper\').style.display=c.querySelectorAll(\'.sbl-name-row\').length>=3?\'block\':\'none\'; if(typeof window.generateSBLCitation===\'function\')window.generateSBLCitation();&quot;>✕</button>'; c.appendChild(r); document.getElementById('sbl-et-al-wrapper').style.display=n>=3?'block':'none'; })(this)">+ Add Another Author</button>
+        </div>
+
+        <!-- Hidden SBL Shortener Checkbox (3+ authors) -->
+        <div id="sbl-et-al-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; margin-bottom: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
+            <label>
+                <input type="checkbox" id="sbl-four-or-more"> 
+                <strong>Four or More Authors</strong> (Appends "et al." to the citation)
+            </label>
+        </div>
+    </div>
+
+    <!-- TIER B: CORPORATE AUTHOR WRAPPER (Hidden by default) -->
+    <div id="sbl-corporate-authors-wrapper" style="display: none; margin-bottom: 20px;">
+        <div class="sbl-row">
+            <div class="sbl-form-group sbl-col">
+                <label for="sbl-corporate-name">Corporate/Organization Author Name *</label>
+                <input type="text" id="sbl-corporate-name" placeholder="e.g. Society of Biblical Literature">
+            </div>
+        </div>
     </div>
 
     <!-- ─── CONTRIBUTOR CHECKBOX PANEL ─── -->
@@ -112,7 +137,6 @@
 
     <!-- ─── SEPARATE SUB-INPUT FIELDS DISPLAY ARRAYS ─── -->
     <div id="sbl-toggled-fields-wrapper">
-        
         <!-- DYNAMIC EDITORS -->
         <div class="sbl-row" id="row-editor" style="display: none; margin-bottom: 20px;">
             <div class="sbl-row" style="align-items: center; margin-bottom: 10px; width: 100%;">
@@ -150,7 +174,6 @@
             </div>
             <button type="button" class="sbl-btn-add" id="btn-add-translator" style="margin-top: 10px;" onclick="(function(b){ var c=document.getElementById('sbl-translators-container'); if(!c)return; var n=c.querySelectorAll('.sbl-name-row').length+1; var r=document.createElement('div'); r.className='sbl-row sbl-name-row'; r.style.marginTop='10px'; r.innerHTML='<div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Translator '+n+' First Name(s)</label><input type=&quot;text&quot; class=&quot;sbl-translator-first&quot;></div><div class=&quot;sbl-form-group sbl-col&quot;><label>Additional Translator '+n+' Last Name</label><input type=&quot;text&quot; class=&quot;sbl-translator-last&quot;></div><button type=&quot;button&quot; style=&quot;margin-top:24px;color:red;background:none;border:none;cursor:pointer;&quot; onclick=&quot;this.parentElement.remove(); if(typeof window.generateSBLCitation===\'function\')window.generateSBLCitation();&quot;>✕</button>'; c.appendChild(r); })(this)">+ Add Another Translator</button>
         </div>
-
         <!-- DYNAMIC COMPILERS -->
         <div class="sbl-row" id="row-compiler" style="display: none; margin-bottom: 20px;">
             <h3>Compilers</h3>
