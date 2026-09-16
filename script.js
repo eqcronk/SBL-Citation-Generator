@@ -66,7 +66,8 @@
             rowImprint.style.display = 'flex';
             grpRangeField.style.display = 'none';
             grpVolDistinctTitle.style.display = 'block';
-            lblSerialLegend.textContent = "Volume & Series Info";
+            document.getElementById('sbl-range').closest('.sbl-row').style.display = 'none';
+           lblSerialLegend.textContent = "Volume & Series Info";
         } else if (type === 'chapter') {
             lblTitle.textContent = "Overarching Book Title";
             txtTitle.placeholder = "e.g. Approaches to New Testament Study";
@@ -82,6 +83,7 @@
             rowImprint.style.display = 'flex';
             grpRangeField.style.display = 'block';
             grpVolDistinctTitle.style.display = 'block';
+            document.getElementById('sbl-range').closest('.sbl-row').style.display = '';
             lblSerialLegend.textContent = "Volume & Series Info";
         } else if (type === 'article') {
             lblTitle.textContent = "N/A";
@@ -97,6 +99,7 @@
             rowImprint.style.display = 'none';
             grpRangeField.style.display = 'block';
             grpVolDistinctTitle.style.display = 'none';
+            document.getElementById('sbl-range').closest('.sbl-row').style.display = '';
             lblSerialLegend.textContent = "Journal Specifications";
         }
         generateSBLCitation();
