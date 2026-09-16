@@ -7,7 +7,6 @@
 
     "use strict";
 
-
     /* ==========================================
        HELPER FUNCTIONS
        ========================================== */
@@ -22,84 +21,6 @@
         return element ? element.checked : false;
     }
 
-    function escapeHtml(value) {
-        return String(value)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "'");
-    }
-
-    function invertName(fullName) {
-
-        if (!fullName) {
-            return "";
-        }
-
-        const parts = fullName.trim().split(/\s+/);
-
-        if (parts.length > 1) {
-
-            const last = parts.pop();
-
-            return `${last}, ${parts.join(" ")}`;
-
-        }
-
-        return fullName;
-    }
-
-    /**
-     * Helper to set up dynamic "Add Another" rows safely
-     */
-    function setupDynamicRows(buttonId, containerId, role) {
-        const button = document.getElementById(buttonId);
-        const container = document.getElementById(containerId);
-
-        if (button && container) {
-            button.addEventListener('click', function() {
-                // Create a dynamic row container
-                const row = document.createElement('div');
-                row.className = 'sbl-row sbl-name-row';
-                row.style.marginTop = '10px';
-
-                // Inject internal layout with dynamic labeling
-                row.innerHTML = `
-                    <div class="sbl-form-group sbl-col">
-                        <label>Additional ${role} First Name(s)</label>
-                        <input type="text" class="sbl-${role.toLowerCase()}-first">
-                    </div>
-                    <div class="sbl-form-group sbl-col">
-                        <label>Additional ${role} Last Name</label>
-                        <input type="text" class="sbl-${role.toLowerCase()}-last">
-                    </div>
-                    <button type="button" class="sbl-btn-remove" style="margin-top: 24px; color: red; background: none; border: none; cursor: pointer; font-size: 16px;">✕</button>
-                `;
-
-                // Add deletion listener to the removal button
-                row.querySelector('.sbl-btn-remove').addEventListener('click', function() {
-                    row.remove();
-                    if (typeof window.generateSBLCitation === "function") {
-                        window.generateSBLCitation();
-                    }
-                });
-
-                container.appendChild(row);
-
-                // Add real-time event triggers for rendering engine updates if present
-                row.querySelectorAll('input').forEach(input => {
-                    input.addEventListener('input', function() {
-                        if (typeof window.generateSBLCitation === "function") {
-                            window.generateSBLCitation();
-                        }
-                    });
-                });
-            });
-        }
-    }
-
-
     /* ==========================================
        CONTRIBUTOR TOGGLES
        ========================================== */
@@ -109,15 +30,14 @@
         const rowTrans = document.getElementById("row-translator");
         const rowComp = document.getElementById("row-compiler");
 
-        if (rowEd) rowEd.style.display = getChecked("sbl-has-editor") ? "block" : "none";
-        if (rowTrans) rowTrans.style.display = getChecked("sbl-has-translator") ? "block" : "none";
-        if (rowComp) rowComp.style.display = getChecked("sbl-has-compiler") ? "block" : "none";
+        if (rowEd) rowEd.style.display = getChecked("sbl-has-editor") ? "flex" : "none";
+        if (rowTrans) rowTrans.style.display = getChecked("sbl-has-translator") ? "flex" : "none";
+        if (rowComp) rowComp.style.display = getChecked("sbl-has-compiler") ? "flex" : "none";
 
         if (typeof window.generateSBLCitation === "function") {
             window.generateSBLCitation();
         }
     }
-
 
     /* ==========================================
        SOURCE TYPE LAYOUT
@@ -143,9 +63,6 @@
         const grpVolDistinctTitle = document.getElementById("grp-vol-distinct-title");
         const lblSerialLegend = document.getElementById("lbl-serial-legend");
 
-        /* ==========================================
-           WHOLE BOOK
-           ========================================== */
         if (type === "book") {
             if (lblTitle) lblTitle.textContent = "Book Title";
             if (txtTitle) txtTitle.placeholder = "e.g. Reading John";
@@ -161,10 +78,6 @@
             if (grpVolDistinctTitle) grpVolDistinctTitle.style.display = "block";
             if (lblSerialLegend) lblSerialLegend.textContent = "Volume & Series Info";
         }
-
-        /* ==========================================
-           CHAPTER / ESSAY
-           ========================================== */
         else if (type === "chapter") {
             if (lblTitle) lblTitle.textContent = "Overarching Book Title";
             if (txtTitle) txtTitle.placeholder = "e.g. Approaches to New Testament Study";
@@ -186,10 +99,6 @@
             if (grpVolDistinctTitle) grpVolDistinctTitle.style.display = "block";
             if (lblSerialLegend) lblSerialLegend.textContent = "Volume & Series Info";
         }
-
-        /* ==========================================
-           JOURNAL ARTICLE
-           ========================================== */
         else if (type === "article") {
             if (lblTitle) lblTitle.textContent = "Article";
             if (lblPages) lblPages.textContent = "Pages Cited";
@@ -210,7 +119,6 @@
         }
     }
 
-
     /* ==========================================
        INITIALIZE ON DOM LOAD
        ========================================== */
@@ -221,7 +129,7 @@
         const continueButton = document.getElementById("sbl-btn-continue");
         const backButton = document.getElementById("sbl-btn-back");
 
-        /* Wizard Navigation Listeners */
+        /* Wizard Navigation */
         if (continueButton && stepOne && stepTwo) {
             continueButton.addEventListener("click", function () {
                 stepOne.style.display = "none";
@@ -230,27 +138,34 @@
             });
         }
 
-        if (backButton && stepOne && stepTwo) {backButton.addEventListener("click", function () {
-              stepTwo.style.display = "none";
-              stepOne.style.display = "block";
-           });
-         }
-       /* Contributor Checkbox Toggles */
-       const cbEditor = document.getElementById("sbl-has-editor");
-       const cbTranslator = document.getElementById("sbl-has-translator");
-       const cbCompiler = document.getElementById("sbl-has-compiler");
-       
-       if (cbEditor) cbEditor.addEventListener("change", handleContributorToggles);
-       if (cbTranslator) cbTranslator.addEventListener("change", handleContributorToggles);
-       if (cbCompiler) cbCompiler.addEventListener("change", handleContributorToggles);
-       
-      /* Dynamic Repeating Sections */
-       setupDynamicRows('btn-add-author', 'sbl-authors-container', 'Author');
-       setupDynamicRows('btn-add-editor', 'sbl-editors-container', 'Editor');
-       setupDynamicRows('btn-add-translator', 'sbl-translators-container', 'Translator');
-       setupDynamicRows('btn-add-compiler', 'sbl-compilers-container', 'Compiler');
-       
-       // Prime the display states
-       handleContributorToggles();
-          });
-         })();
+        if (backButton && stepOne && stepTwo) {
+            backButton.addEventListener("click", function () {
+                stepTwo.style.display = "none";
+                stepOne.style.display = "block";
+            });
+        }
+
+        /* Contributor Checkbox Toggles */
+        const cbEditor = document.getElementById("sbl-has-editor");
+        const cbTranslator = document.getElementById("sbl-has-translator");
+        const cbCompiler = document.getElementById("sbl-has-compiler");
+
+        if (cbEditor) cbEditor.addEventListener("change", handleContributorToggles);
+        if (cbTranslator) cbTranslator.addEventListener("change", handleContributorToggles);
+        if (cbCompiler) cbCompiler.addEventListener("change", handleContributorToggles);
+
+        /* Real-time Rendering Listeners for All Form Fields */
+        const inputs = document.querySelectorAll('#sbl-step-2 input, #sbl-step-2 select');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                if (typeof window.generateSBLCitation === "function") {
+                    window.generateSBLCitation();
+                }
+            });
+        });
+
+        // Initialize state view configurations
+        handleContributorToggles();
+    });
+
+})();
