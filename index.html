@@ -277,7 +277,7 @@
     <div class="sbl-form-toggle-group" style="margin-bottom: 20px; background: #edf2f7; padding: 12px; border-radius: 4px;">
         <strong style="margin-right: 15px; color: #4a5568;">Author Entry Type:</strong>
         <label style="margin-right: 15px;">
-            <input type="radio" name="sbl-author-type" id="type-author-standard" value="standard" checked onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'block', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'none', 'important'); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();"> Personal Author(s)
+            <input type="radio" name="sbl-author-type" id="type-author-standard" value="standard" checked onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'block', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'none', 'important'); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();"> Author
         </label>
         <label style="margin-right: 15px;">
             <input type="radio" name="sbl-author-type" id="type-author-corporate" value="corporate" onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'none', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'block', 'important'); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();"> Corporate/Organization Author
@@ -294,11 +294,11 @@
                 <!-- Primary Required Author 1 -->
                 <div class="sbl-row sbl-name-row">
                     <div class="sbl-form-group sbl-col">
-                        <label for="sbl-first-name">Author 1 First Name(s)</label>
+                        <label for="sbl-first-name">Author First Name(s)</label>
                         <input type="text" id="sbl-first-name" class="sbl-author-first" placeholder="e.g. Charles H.">
                     </div>
                     <div class="sbl-form-group sbl-col">
-                        <label for="sbl-last-name">Author 1 Last Name</label>
+                        <label for="sbl-last-name">Author Last Name</label>
                         <input type="text" id="sbl-last-name" class="sbl-author-last" placeholder="e.g. Talbert">
                     </div>
                 </div>
