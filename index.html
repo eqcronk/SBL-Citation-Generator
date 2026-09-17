@@ -1165,39 +1165,58 @@
             bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + "<em>" + commTitle + "</em>. " + commSeries + " " + commVol + ". " + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + ".";
             noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + "<em>" + commTitle + "</em>, " + commSeries + " " + commVol + " (" + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + "), " + pDisplay + ".";
 
-        // 6. FORMULATE OUTPUT B: FIRST FOOTNOTE
-        var noteCitation = "";
-        if (noteAuthorStr) noteCitation += noteAuthorStr + ", ";
-        
-        if (currentSourceType === "chapter") {
-            noteCitation += chapterTitle ? '"' + chapterTitle + '," in ' : '"[Chapter Title]," in ';
-            noteCitation += title ? "<em>" + title + "</em>" : "<em>[Book Title]</em>";
-            noteCitation += " (" + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + "), " + pDisplay + ".";
-        } else if (currentSourceType === "article") {
-            noteCitation += artTitle ? '"' + artTitle + ',"' : '"[Article Title],"';
-            noteCitation += title ? " <em>" + title + "</em>" : " <em>[Journal Title]</em>";
-            noteCitation += serialString + ": " + pDisplay + ".";
-        } else {
-            noteCitation += title ? "<em>" + title + "</em>" : "<em>[Title]</em>";
-            noteCitation += " (" + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + "), " + pDisplay + ".";
+                   subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + "<em>" + commTitle + "</em>, " + pDisplay + ".";
+        } 
+        else if (currentSourceType === "thesis") {
+            var tTitle = document.getElementById("sbl-thesis-title")?.value.trim() || "[Thesis Title]";
+            var tType = document.getElementById("sbl-thesis-type")?.value || "PhD diss.";
+            var tSchool = document.getElementById("sbl-thesis-school")?.value.trim() || "[Institution]";
+
+            bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + '"' + tTitle + '." ' + tType + ", " + tSchool + ", " + (year || "[Year]") + ".";
+            noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + '"' + tTitle + '" (' + tType + ', ' + tSchool + ', ' + (year || "[Year]") + '), ' + pDisplay + ".";
+            subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + '"' + tTitle + '," ' + pDisplay + ".";
+        } 
+        else if (currentSourceType === "bible") {
+            var bBook = document.getElementById("sbl-bible-book")?.value || "[Book]";
+            var bPassage = document.getElementById("sbl-bible-passage")?.value.trim() || "##:##";
+            var bVersion = document.getElementById("sbl-bible-version")?.value.trim() || "[Version]";
+
+            bibCitation = "<em>Biblical texts are omitted from an SBL bibliography section unless required by your instructor.</em>";
+            noteCitation = bBook + " " + bPassage + " (" + bVersion + ").";
+            subCitation = bBook + " " + bPassage + ".";
         }
 
-        if (ed.note) noteCitation += ed.note;
-        if (trans.note) noteCitation += trans.note;
-        if (comp.note) noteCitation += comp.note;
+        // 6. RENDER DYNAMIC PREVIEWS IMMEDIATELY
+        var bibBox = document.getElementById("sbl-bib-output");
+        var n1Box = document.getElementById("sbl-n1-output");
+        var n2Box = document.getElementById("sbl-n2-output");
 
-        // 7. FORMULATE OUTPUT C: SUBSEQUENT FOOTNOTE
-        var subCitation = "";
-        if (subAuthorStr) subCitation += subAuthorStr + ", ";
+        var inputCheck = authors.length > 0 || corporateName || (authorType === "none") || city || publisher || year;
         
-        if (currentSourceType === "chapter") {
-            subCitation += chapterTitle ? '"' + chapterTitle + '"' : '"[Chapter Title]"';
-        } else if (currentSourceType === "article") {
-            subCitation += artTitle ? '"' + artTitle + '"' : '"[Article Title]"';
-        } else {
-            subCitation += title ? "<em>" + title + "</em>" : "<em>[Title]</em>";
+        if (bibBox && n1Box && n2Box) {
+            if (!inputCheck) {
+                bibBox.innerHTML = "<em>Fill out fields above to build bibliography preview...</em>";
+                n1Box.innerHTML = "<em>Fill out fields above to build full footnote preview...</em>";
+                n2Box.innerHTML = "<em>Fill out fields above to build short footnote preview...</em>";
+            } else {
+                bibBox.innerHTML = bibCitation;
+                n1Box.innerHTML = noteCitation;
+                n2Box.innerHTML = subCitation;
+            }
         }
-        subCitation += ", " + pDisplay + ".";
+    };
+
+    // 7. EVENT REGISTRATION INPUT OBSERVERS
+    document.addEventListener("DOMContentLoaded", function() {
+        var formArea = document.getElementById("sbl-step-2");
+        if (formArea) {
+            formArea.addEventListener("input", function() { w.generateSBLCitation(); });
+            formArea.addEventListener("change", function() { w.generateSBLCitation(); });
+        }
+        w.generateSBLCitation();
+    });
+})(window);
+
         // 8. RENDER PREVIEWS IMMEDIATELY
         var bibBox = document.getElementById("sbl-bib-output");
         var n1Box = document.getElementById("sbl-n1-output");
