@@ -1157,15 +1157,14 @@
             noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + '"' + artTitle + '," <em>' + jName + '</em>' + serial + " (" + (year || "[Year]") + "): " + pDisplay + ".";
             subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + '"' + artTitle + '," ' + pDisplay + ".";
         }
-        else if (currentSourceType === "commentary") {
+                else if (currentSourceType === "commentary") {
             var commTitle = document.getElementById("sbl-comm-title")?.value.trim() || "[Commentary Title]";
             var commSeries = document.getElementById("sbl-comm-series")?.value.trim() || "[Series]";
             var commVol = document.getElementById("sbl-comm-vol")?.value.trim() || "##";
 
             bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + "<em>" + commTitle + "</em>. " + commSeries + " " + commVol + ". " + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + ".";
             noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + "<em>" + commTitle + "</em>, " + commSeries + " " + commVol + " (" + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + "), " + pDisplay + ".";
-
-                   subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + "<em>" + commTitle + "</em>, " + pDisplay + ".";
+            subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + "<em>" + commTitle + "</em>, " + pDisplay + ".";
         } 
         else if (currentSourceType === "thesis") {
             var tTitle = document.getElementById("sbl-thesis-title")?.value.trim() || "[Thesis Title]";
@@ -1216,6 +1215,7 @@
         w.generateSBLCitation();
     });
 })(window);
+</script>
 
         // 8. RENDER PREVIEWS IMMEDIATELY
         var bibBox = document.getElementById("sbl-bib-output");
