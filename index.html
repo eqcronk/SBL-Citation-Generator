@@ -1112,38 +1112,6 @@
 })(window);
 </script>
 
-        // 8. RENDER PREVIEWS IMMEDIATELY
-        var bibBox = document.getElementById("sbl-bib-output");
-        var n1Box = document.getElementById("sbl-n1-output");
-        var n2Box = document.getElementById("sbl-n2-output");
-
-        var inputCheck = authors.length > 0 || corporateName || (authorType === "none") || title || city || publisher || year || chapterTitle;
-        
-        if (bibBox && n1Box && n2Box) {
-            if (!inputCheck) {
-                bibBox.innerHTML = "<em>Fill out fields above to build bibliography preview...</em>";
-                n1Box.innerHTML = "<em>Fill out fields above to build full footnote preview...</em>";
-                n2Box.innerHTML = "<em>Fill out fields above to build short footnote preview...</em>";
-            } else {
-                bibBox.innerHTML = bibCitation;
-                n1Box.innerHTML = noteCitation;
-                n2Box.innerHTML = subCitation;
-            }
-        }
-    };
-
-    // 9. EVENT REGISTRATION LOOP
-    document.addEventListener("DOMContentLoaded", function() {
-        var formArea = document.getElementById("sbl-step-2");
-        if (formArea) {
-            formArea.addEventListener("input", function() { w.generateSBLCitation(); });
-            formArea.addEventListener("change", function() { w.generateSBLCitation(); });
-        }
-        w.generateSBLCitation();
-    });
-})(window);
-</script>
-
 <script>
 (function () {
   function q(selector) {
