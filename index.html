@@ -297,6 +297,57 @@
             box-sizing: border-box;
         }
     }
+         @media (max-width: 640px) {
+    /* Keep the Authors & Contributors fieldset inside the widget */
+    .sbl-widget-container fieldset {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    #sbl-standard-authors-wrapper,
+    #sbl-corporate-authors-wrapper,
+    #sbl-authors-container,
+    #sbl-authors-container .sbl-name-row,
+    #sbl-corporate-authors-wrapper .sbl-row {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+
+    /* Stack each author field vertically */
+    #sbl-authors-container .sbl-name-row .sbl-form-group,
+    #sbl-corporate-authors-wrapper .sbl-form-group {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        margin-bottom: 16px;
+        box-sizing: border-box;
+    }
+
+    /* Force the actual text boxes to shrink */
+    #sbl-authors-container input[type="text"],
+    #sbl-corporate-authors-wrapper input[type="text"],
+    #sbl-standard-authors-wrapper input[type="text"] {
+        display: block;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Prevent labels and controls from creating horizontal overflow */
+    #sbl-standard-authors-wrapper label,
+    #sbl-corporate-authors-wrapper label {
+        max-width: 100%;
+        overflow-wrap: anywhere;
+    }
+}
 </style>
 
 
