@@ -472,186 +472,156 @@
     <div class="sbl-form-toggle-group" style="margin-bottom: 20px; background: #edf2f7; padding: 12px; border-radius: 4px;">
         <strong style="margin-right: 15px; color: #4a5568;">Author Entry Type:</strong>
         <label style="margin-right: 15px;">
-            <input type="radio" name="sbl-author-type" id="type-author-standard" value="standard" checked onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'block', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'none', 'important'); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();"> Author
+            <input type="radio" name="sbl-author-type" id="type-author-standard" value="standard" checked onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'block', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'none', 'important'); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();">
+            Author
         </label>
         <label style="margin-right: 15px;">
-            <input type="radio" name="sbl-author-type" id="type-author-corporate" value="corporate" onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'none', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'block', 'important'); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();"> Corporate Author
+            <input type="radio" name="sbl-author-type" id="type-author-corporate" value="corporate" onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'none', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'block', 'important'); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();">
+            Corporate/Organization
         </label>
         <label>
-            <input type="radio" name="sbl-author-type" id="type-author-none" value="none" onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'none', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'none', 'important'); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();"> No Author
+            <input type="radio" name="sbl-author-type" id="type-author-none" value="none" onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'none', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'none', 'important'); if(typeof window.generateSBLCitation==='function') window.generateSBLCitation();">
+            None
         </label>
     </div>
-<script>
-document.addEventListener("DOMContentLoaded", function () {
-    const MAX_ENTRIES = 3;
 
-    const groups = [
-        {
-            buttonId: "btn-add-author",
-            containerId: "sbl-authors-container",
-            firstClass: "sbl-author-first",
-            lastClass: "sbl-author-last",
-            label: "Author",
-            etAlId: "sbl-authors-et-al",
-            etAlText: "Use et al. for authors"
-        },
-        {
-            buttonId: "btn-add-editor",
-            containerId: "sbl-editors-container",
-            firstClass: "sbl-editor-first",
-            lastClass: "sbl-editor-last",
-            label: "Editor",
-            etAlId: "sbl-editors-et-al",
-            etAlText: "Use et al. for editors"
-        },
-        {
-            buttonId: "btn-add-translator",
-            containerId: "sbl-translators-container",
-            firstClass: "sbl-translator-first",
-            lastClass: "sbl-translator-last",
-            label: "Translator",
-            etAlId: "sbl-translators-et-al",
-            etAlText: "Use et al. for translators"
-        },
-        {
-            buttonId: "btn-add-compiler",
-            containerId: "sbl-compilers-container",
-            firstClass: "sbl-compiler-first",
-            lastClass: "sbl-compiler-last",
-            label: "Compiler",
-            etAlId: "sbl-compilers-et-al",
-            etAlText: "Use et al. for compilers"
-        }
-    ];
+    <!-- TIER A: STANDARD PERSONAL AUTHORS WRAPPER -->
+    <div id="sbl-standard-authors-wrapper">
+        <div class="sbl-contributor-section" style="margin-bottom: 20px;">
+            <div id="sbl-authors-container">
+                <div class="sbl-row sbl-name-row">
+                    <div class="sbl-form-group sbl-col">
+                        <label for="sbl-first-name">Author 1 First Name(s)</label>
+                        <input type="text" id="sbl-first-name" class="sbl-author-first" placeholder="e.g. Charles H.">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label for="sbl-last-name">Author 1 Last Name</label>
+                        <input type="text" id="sbl-last-name" class="sbl-author-last" placeholder="e.g. Talbert">
+                    </div>
+                </div>
+            </div>
 
-    function refreshGroup(group) {
-        const container = document.getElementById(group.containerId);
-        const button = document.getElementById(group.buttonId);
-        const etAlBox = document.getElementById(group.etAlId);
+            <button
+                type="button"
+                class="sbl-btn-add"
+                id="btn-add-author"
+                style="margin-top: 10px;"
+            >
+                + Add Another Author
+            </button>
+        </div>
 
-        if (!container) return;
+        <div id="sbl-et-al-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; margin-bottom: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
+            <label>
+                <input type="checkbox" id="sbl-four-or-more">
+                <strong>Four or More Authors</strong> (Appends "et al." to the citation)
+            </label>
+        </div>
+    </div>
 
-        const rows = container.querySelectorAll(".sbl-name-row");
-        const count = rows.length;
+    <!-- TIER B: CORPORATE AUTHOR WRAPPER -->
+    <div id="sbl-corporate-authors-wrapper" style="display: none; margin-bottom: 20px;">
+        <div class="sbl-row">
+            <div class="sbl-form-group sbl-col">
+                <label for="sbl-corporate-name">Corporate/Organization Author Name *</label>
+                <input type="text" id="sbl-corporate-name" placeholder="e.g. Society of Biblical Literature">
+            </div>
+        </div>
+    </div>
 
-        if (button) {
-            button.disabled = count >= MAX_ENTRIES;
-            button.style.opacity = count >= MAX_ENTRIES ? "0.5" : "1";
-            button.style.cursor = count >= MAX_ENTRIES ? "not-allowed" : "pointer";
-            button.textContent = count >= MAX_ENTRIES
-                ? "Maximum of 3 reached"
-                : "+ Add Another " + group.label;
-        }
+    <!-- CONTRIBUTOR CHECKBOX PANEL -->
+    <div id="grp-contributors" class="sbl-form-toggle-group" style="margin-bottom: 15px;">
+        <label><input type="checkbox" id="sbl-has-editor" onclick="document.getElementById('row-editor').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> Has Editor(s)</label>
+        <label><input type="checkbox" id="sbl-has-translator" onclick="document.getElementById('row-translator').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> Has Translator(s)</label>
+        <label><input type="checkbox" id="sbl-has-compiler" onclick="document.getElementById('row-compiler').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> Has Compiler(s)</label>
+    </div>
 
-        /*
-         * Show the group's et al. checkbox once there are
-         * two or more entries. Change >= 2 to >= 3 if you
-         * only want it after the third entry.
-         */
-        if (etAlBox) {
-            etAlBox.style.display = count >= 2 ? "block" : "none";
-        }
-    }
+    <!-- SEPARATE SUB-INPUT FIELDS DISPLAY ARRAYS -->
+    <div id="sbl-toggled-fields-wrapper">
+        <!-- DYNAMIC EDITORS -->
+        <div class="sbl-row" id="row-editor" style="display: none; margin-bottom: 20px;">
+            <div class="sbl-row" style="align-items: center; margin-bottom: 10px; width: 100%;">
+                <h3 style="margin: 0; flex: 1;">Editors</h3>
+            </div>
 
-    function createEtAlBox(group) {
-        const container = document.getElementById(group.containerId);
-        if (!container || document.getElementById(group.etAlId)) return;
+            <div id="sbl-editors-container" style="width: 100%;">
+                <div class="sbl-row sbl-name-row">
+                    <div class="sbl-form-group sbl-col">
+                        <label>Editor 1 First Name(s)</label>
+                        <input type="text" class="sbl-editor-first" placeholder="e.g. Thomas">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label>Editor 1 Last Name</label>
+                        <input type="text" class="sbl-editor-last" placeholder="e.g. Williams">
+                    </div>
+                </div>
+            </div>
 
-        const wrapper = document.createElement("div");
-        wrapper.id = group.etAlId;
-        wrapper.className = "sbl-form-toggle-group";
-        wrapper.style.cssText =
-            "display:none; margin:12px 0; background:#fffaf0; " +
-            "padding:10px; border-left:3px solid #dd6b20;";
+            <button
+                type="button"
+                class="sbl-btn-add"
+                id="btn-add-editor"
+                style="margin-top: 10px;"
+            >
+                + Add Another Editor
+            </button>
+        </div>
 
-        wrapper.innerHTML =
-            '<label>' +
-                '<input type="checkbox" id="' + group.etAlId + '-checkbox">' +
-                " <strong>" + group.etAlText + "</strong>" +
-            "</label>";
+        <!-- DYNAMIC TRANSLATORS -->
+        <div class="sbl-row" id="row-translator" style="display: none; margin-bottom: 20px;">
+            <h3>Translators</h3>
 
-        container.parentElement.appendChild(wrapper);
+            <div id="sbl-translators-container">
+                <div class="sbl-row sbl-name-row">
+                    <div class="sbl-form-group sbl-col">
+                        <label>Translator 1 First Name(s)</label>
+                        <input type="text" class="sbl-translator-first" placeholder="e.g. Peter">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label>Translator 1 Last Name</label>
+                        <input type="text" class="sbl-translator-last" placeholder="e.g. Heinegg">
+                    </div>
+                </div>
+            </div>
 
-        const checkbox = wrapper.querySelector("input");
-        checkbox.addEventListener("change", function () {
-            if (typeof window.generateSBLCitation === "function") {
-                window.generateSBLCitation();
-            }
-        });
-    }
+            <button
+                type="button"
+                class="sbl-btn-add"
+                id="btn-add-translator"
+                style="margin-top: 10px;"
+            >
+                + Add Another Translator
+            </button>
+        </div>
 
-    function addEntry(group) {
-        const container = document.getElementById(group.containerId);
-        if (!container) return;
+        <!-- DYNAMIC COMPILERS -->
+        <div class="sbl-row" id="row-compiler" style="display: none; margin-bottom: 20px;">
+            <h3>Compilers</h3>
 
-        const rows = container.querySelectorAll(".sbl-name-row");
+            <div id="sbl-compilers-container">
+                <div class="sbl-row sbl-name-row">
+                    <div class="sbl-form-group sbl-col">
+                        <label>Compiler 1 First Name(s)</label>
+                        <input type="text" class="sbl-compiler-first" placeholder="e.g. David">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label>Compiler 1 Last Name</label>
+                        <input type="text" class="sbl-compiler-last" placeholder="e.g. Tombs">
+                    </div>
+                </div>
+            </div>
 
-        if (rows.length >= MAX_ENTRIES) {
-            refreshGroup(group);
-            return;
-        }
-
-        const number = rows.length + 1;
-
-        const row = document.createElement("div");
-        row.className = "sbl-row sbl-name-row";
-        row.style.marginTop = "10px";
-
-        row.innerHTML =
-            '<div class="sbl-form-group sbl-col">' +
-                "<label>" + group.label + " " + number + " First Name(s)</label>" +
-                '<input type="text" class="' + group.firstClass + '">' +
-            "</div>" +
-            '<div class="sbl-form-group sbl-col">' +
-                "<label>" + group.label + " " + number + " Last Name</label>" +
-                '<input type="text" class="' + group.lastClass + '">' +
-            "</div>" +
-            '<button type="button" class="sbl-remove-entry" ' +
-                'style="margin-top:24px;color:#b91c1c;background:none;border:none;cursor:pointer;">' +
-                "Remove" +
-            "</button>";
-
-        container.appendChild(row);
-
-        row.querySelector(".sbl-remove-entry").addEventListener("click", function () {
-            row.remove();
-            refreshGroup(group);
-
-            if (typeof window.generateSBLCitation === "function") {
-                window.generateSBLCitation();
-            }
-        });
-
-        row.querySelectorAll("input").forEach(function (input) {
-            input.addEventListener("input", function () {
-                if (typeof window.generateSBLCitation === "function") {
-                    window.generateSBLCitation();
-                }
-            });
-        });
-
-        refreshGroup(group);
-    }
-
-    groups.forEach(function (group) {
-        const button = document.getElementById(group.buttonId);
-        const container = document.getElementById(group.containerId);
-
-        if (!button || !container) return;
-
-        button.onclick = null;
-
-        createEtAlBox(group);
-
-        button.addEventListener("click", function (event) {
-            event.preventDefault();
-            addEntry(group);
-        });
-
-        refreshGroup(group);
-    });
-});
-</script>
+            <button
+                type="button"
+                class="sbl-btn-add"
+                id="btn-add-compiler"
+                style="margin-top: 10px;"
+            >
+                + Add Another Compiler
+            </button>
+        </div>
+    </div>
+</fieldset>
     <!-- TIER A: STANDARD PERSONAL AUTHORS WRAPPER -->
 <div id="sbl-authors-container">
     ...
