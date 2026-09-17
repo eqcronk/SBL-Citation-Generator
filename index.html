@@ -348,6 +348,82 @@
         overflow-wrap: anywhere;
     }
 }
+         @media (max-width: 640px) {
+    /* Force the whole authors box to stay inside viewport */
+    .sbl-widget-container fieldset {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+    }
+
+    /* Stack the author entry type options (Standard / Corporate / None) */
+    .sbl-form-toggle-group {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    .sbl-form-toggle-group label {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 0 10px 0 !important;
+        box-sizing: border-box !important;
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    /* Stack the actual author name rows */
+    #sbl-standard-authors-wrapper .sbl-row,
+    #sbl-authors-container .sbl-row,
+    #sbl-corporate-authors-wrapper .sbl-row {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    #sbl-standard-authors-wrapper .sbl-form-group,
+    #sbl-authors-container .sbl-form-group,
+    #sbl-corporate-authors-wrapper .sbl-form-group {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+        margin-bottom: 16px !important;
+    }
+
+    /* Force all text fields to shrink to mobile width */
+    #sbl-standard-authors-wrapper input[type="text"],
+    #sbl-corporate-authors-wrapper input[type="text"],
+    #sbl-authors-container input[type="text"] {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    /* Contributor checkbox group */
+    #grp-contributors {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    #grp-contributors label {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        margin-bottom: 8px !important;
+        white-space: normal !important;
+    }
+}
 </style>
 
 
