@@ -1024,47 +1024,15 @@
             });
         }
 
-        var fourOrMore = document.getElementById("sbl-four-or-more")?.checked;
+        var forceEtAl = document.getElementById("sbl-four-or-more")?.checked;
 
-        // 2. GATHER CORE TEXT ENTRY DATA ACCORDING TO CURRENT SOURCE MODE
+        // 2. GATHER SHARED BASIC METADATA ARRAYS
         var currentSourceType = document.getElementById("sbl-type")?.value || "book";
-        
-        var title = "";
-        var artTitle = document.getElementById("sbl-article-title")?.value.trim() || "";
-        var jVol = document.getElementById("sbl-volume")?.value.trim() || "";
-        var jIssue = document.getElementById("sbl-issue")?.value.trim() || "";
-        var jName = document.getElementById("sbl-journal")?.value.trim() || "";
-
-        if (currentSourceType === "chapter") {
-            title = document.getElementById("sbl-title-chap")?.value.trim() || "";
-        } else if (currentSourceType === "commentary") {
-            title = document.getElementById("sbl-comm-title")?.value.trim() || "";
-        } else if (currentSourceType === "thesis") {
-            title = document.getElementById("sbl-thesis-title")?.value.trim() || "";
-        } else if (currentSourceType === "article") {
-            title = jName || ""; // Map title string directly to Journal Title
-        } else {
-            title = document.getElementById("sbl-title")?.value.trim() || "";
-        }
-        
-        var pages = document.getElementById("sbl-pages")?.value.trim() || "";
         var city = document.getElementById("sbl-city")?.value.trim() || "";
         var publisher = document.getElementById("sbl-publisher")?.value.trim() || "";
         var year = document.getElementById("sbl-year")?.value.trim() || "";
-        
+        var pages = document.getElementById("sbl-pages")?.value.trim() || "";
         var pDisplay = pages ? pages : "##";
-        var chapterTitle = document.getElementById("sbl-inner-title")?.value.trim() || "";
-        var chapRange = document.getElementById("sbl-chapter-range")?.value.trim() || "";
-        var fullRange = document.getElementById("sbl-range")?.value.trim() || "##-##";
-        var rangeDisplay = chapRange ? chapRange : "##-##";
-
-        // Pre-build the serial string chunk: "Volume, no. Issue (Year)"
-        var serialString = "";
-        if (currentSourceType === "article") {
-            serialString = (jVol ? " " + jVol : " ##");
-            if (jIssue) serialString += ", no. " + jIssue;
-            serialString += " (" + (year || "[Year]") + ")";
-        }
 
         // 3. GENERATE AUTHOR STRINGS BASED ON TRACK SELECTION
         var bibAuthorStr = "";
@@ -1081,7 +1049,7 @@
             var l1 = authors[0].last || "";
             subAuthorStr = l1 || f1; 
 
-            if (fourOrMore) {
+            if (forceEtAl || authors.length >= 4) {
                 bibAuthorStr = (l1 && f1) ? (l1 + ", " + f1 + ", et al.") : ((l1 || f1) + ", et al.");
                 noteAuthorStr = f1 + " " + l1 + " et al.";
                 subAuthorStr = (l1 || f1) + " et al.";
@@ -1102,10 +1070,6 @@
                 bibAuthorStr = l1 + ", " + f1 + ", " + f2 + " " + l2 + ", and " + f3 + " " + l3 + ".";
                 noteAuthorStr = f1 + " " + l1 + ", " + f2 + " " + l2 + ", and " + f3 + " " + l3;
                 subAuthorStr = l1 + ", " + l2 + ", and " + l3;
-            } else {
-                bibAuthorStr = l1 + ", " + f1 + ", et al.";
-                noteAuthorStr = f1 + " " + l1 + " et al.";
-                subAuthorStr = l1 + " et al.";
             }
         }
 
@@ -1141,27 +1105,65 @@
         var trans = collectRole("sbl-translators-container", "translator-first", "translator-last", "Translated by", "trans.");
         var comp = collectRole("sbl-compilers-container", "compiler-first", "compiler-last", "Compiled by", "comp.");
 
-       // 5. FORMULATE OUTPUT A: BIBLIOGRAPHY
+        // 5. ASSEMBLE OUTPUT PACKETS FOR ALL SOURCE TYPES
         var bibCitation = "";
-        if (bibAuthorStr) bibCitation += bibAuthorStr + " ";
-        
-        if (currentSourceType === "chapter") {
-            bibCitation += chapterTitle ? '"' + chapterTitle + '."' : '"[Chapter Title]."';
-            bibCitation += title ? " In <em>" + title + "</em>." : " In <em>[Book Title]</em>.";
-            bibCitation += " " + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + ".";
-            bibCitation += " " + rangeDisplay + ".";
-        } else if (currentSourceType === "article") {
-            bibCitation += artTitle ? '"' + artTitle + '."' : '"[Article Title]."';
-            bibCitation += title ? " <em>" + title + "</em>" : " <em>[Journal Title]</em>";
-            bibCitation += serialString + ": " + fullRange + ".";
-        } else {
-            bibCitation += title ? "<em>" + title + "</em>." : "<em>[Title]</em>.";
-            bibCitation += " " + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + ".";
-        }
+        var noteCitation = "";
+        var subCitation = "";
 
-        if (ed.bib) bibCitation += ed.bib;
-        if (trans.bib) bibCitation += trans.bib;
-        if (comp.bib) bibCitation += comp.bib;
+        if (currentSourceType === "book") {
+            var mTitle = document.getElementById("sbl-title")?.value.trim() || "[Title]";
+            var sTitle = document.getElementById("sbl-subtitle")?.value.trim() || "";
+            var shortT = document.getElementById("sbl-short-title")?.value.trim() || mTitle;
+            var fullT = sTitle ? mTitle + ": " + sTitle : mTitle;
+
+            bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + "<em>" + fullT + "</em>.";
+            if (ed.bib) bibCitation += ed.bib;
+            if (trans.bib) bibCitation += trans.bib;
+            if (comp.bib) bibCitation += comp.bib;
+            bibCitation += " " + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + ".";
+
+            noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + "<em>" + fullT + "</em>";
+            if (ed.note) noteCitation += ed.note;
+            if (trans.note) noteCitation += trans.note;
+            if (comp.note) noteCitation += comp.note;
+            noteCitation += " (" + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + "), " + pDisplay + ".";
+
+            subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + "<em>" + shortT + "</em>, " + pDisplay + ".";
+        } 
+        else if (currentSourceType === "chapter") {
+            var chapterTitle = document.getElementById("sbl-inner-title")?.value.trim() || "[Chapter Title]";
+            var mTitleChap = document.getElementById("sbl-title-chap")?.value.trim() || "[Book Title]";
+            var chapRange = document.getElementById("sbl-chapter-range")?.value.trim() || "##-##";
+
+            bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + '"' + chapterTitle + '."' + " In <em>" + mTitleChap + "</em>.";
+            if (ed.bib) bibCitation += ed.bib;
+            bibCitation += " " + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + ", " + chapRange + ".";
+
+            noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + '"' + chapterTitle + '," in <em>' + mTitleChap + "</em>";
+            if (ed.note) noteCitation += ed.note;
+            noteCitation += " (" + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + "), " + pDisplay + ".";
+
+            subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + '"' + chapterTitle + '," ' + pDisplay + ".";
+        } 
+        else if (currentSourceType === "article") {
+            var artTitle = document.getElementById("sbl-article-title")?.value.trim() || "[Article Title]";
+            var jName = document.getElementById("sbl-journal-name")?.value.trim() || "[Journal Name]";
+            var jVol = document.getElementById("sbl-journal-vol")?.value.trim() || "##";
+            var jIss = document.getElementById("sbl-journal-issue")?.value.trim() || "";
+            var jRng = document.getElementById("sbl-journal-range")?.value.trim() || "##-##";
+            var serial = jIss ? " " + jVol + ", no. " + jIss : " " + jVol;
+
+            bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + '"' + artTitle + '." <em>' + jName + '</em>' + serial + " (" + (year || "[Year]") + "): " + jRng + ".";
+            noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + '"' + artTitle + '," <em>' + jName + '</em>' + serial + " (" + (year || "[Year]") + "): " + pDisplay + ".";
+            subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + '"' + artTitle + '," ' + pDisplay + ".";
+        }
+        else if (currentSourceType === "commentary") {
+            var commTitle = document.getElementById("sbl-comm-title")?.value.trim() || "[Commentary Title]";
+            var commSeries = document.getElementById("sbl-comm-series")?.value.trim() || "[Series]";
+            var commVol = document.getElementById("sbl-comm-vol")?.value.trim() || "##";
+
+            bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + "<em>" + commTitle + "</em>. " + commSeries + " " + commVol + ". " + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + ".";
+            noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + "<em>" + commTitle + "</em>, " + commSeries + " " + commVol + " (" + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + "), " + pDisplay + ".";
 
         // 6. FORMULATE OUTPUT B: FIRST FOOTNOTE
         var noteCitation = "";
