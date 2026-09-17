@@ -1205,13 +1205,18 @@
         }
     };
 
-    // 7. EVENT REGISTRATION INPUT OBSERVERS
+     // ==========================================
+    // 7. FIXED: GLOBAL INTERACTIVE INPUT OBSERVERS
+    // ==========================================
     document.addEventListener("DOMContentLoaded", function() {
-        var formArea = document.getElementById("sbl-step-2");
-        if (formArea) {
-            formArea.addEventListener("input", function() { w.generateSBLCitation(); });
-            formArea.addEventListener("change", function() { w.generateSBLCitation(); });
+        // Targets the global master widget card container instead of an isolated step wrapper
+        var globalWidget = document.querySelector(".sbl-widget-container");
+        if (globalWidget) {
+            globalWidget.addEventListener("input", function() { w.generateSBLCitation(); });
+            globalWidget.addEventListener("change", function() { w.generateSBLCitation(); });
         }
+        
+        // Run a manual execution sweep on startup to initialize fallback values cleanly
         w.generateSBLCitation();
     });
 })(window);
