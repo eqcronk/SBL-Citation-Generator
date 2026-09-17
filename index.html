@@ -1488,7 +1488,37 @@ const compilerName = formatContributors(compilers, "sbl-compilers-et-al");
       }
     }
   };
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const continueButton = document.getElementById("sbl-btn-continue");
+    const backButton = document.getElementById("sbl-btn-back");
+    const step1 = document.getElementById("sbl-step-1");
+    const step2 = document.getElementById("sbl-step-2");
 
+    if (!continueButton || !step1 || !step2) {
+        console.error("Citation wizard elements are missing.");
+        return;
+    }
+
+    continueButton.addEventListener("click", function () {
+        step1.style.display = "none";
+        step2.classList.add("sbl-step-active");
+        step2.style.display = "block";
+
+        if (typeof window.generateSBLCitation === "function") {
+            window.generateSBLCitation();
+        }
+    });
+
+    if (backButton) {
+        backButton.addEventListener("click", function () {
+            step2.classList.remove("sbl-step-active");
+            step2.style.display = "none";
+            step1.style.display = "block";
+        });
+    }
+});
+</script>
   document.addEventListener("DOMContentLoaded", function () {
     const widget = document.querySelector(".sbl-widget-container");
     if (widget) {
