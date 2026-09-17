@@ -999,226 +999,204 @@
      SBL 2nd EDITION LIVE CALCULATION LOGIC
      ========================================== -->
 <script>
-(function(w) {
-    "use strict";
+(function (w) {
+  "use strict";
 
-    w.generateSBLCitation = function() {
-        // Find which author track option is picked
-        var authorType = "standard";
-        if (document.getElementById("type-author-corporate")?.checked) authorType = "corporate";
-        if (document.getElementById("type-author-none")?.checked) authorType = "none";
+  function collectAuthors() {
+    const authors = [];
+    const standardWrapper = document.getElementById("sbl-standard-authors-wrapper");
+    if (!standardWrapper || standardWrapper.style.display === "none") return authors;
 
-        // 1. GATHER AUTHORS DYNAMICALLY BASED ON TYPE SELECTION
-        var authors = [];
-        var corporateName = document.getElementById("sbl-corporate-name")?.value.trim() || "";
-        
-        if (authorType === "standard") {
-            var firsts = document.querySelectorAll(".sbl-author-first");
-            var lasts = document.querySelectorAll(".sbl-author-last");
-            firsts.forEach(function(input, idx) {
-                var f = input.value.trim();
-                var l = lasts[idx] ? lasts[idx].value.trim() : "";
-                if (f || l) { // Grab the row if at least one field has text
-                    authors.push({ first: f, last: l });
-                }
-            });
-        }
+    const firstInputs = document.querySelectorAll(".sbl-author-first");
+    const lastInputs = document.querySelectorAll(".sbl-author-last");
 
-        var forceEtAl = document.getElementById("sbl-four-or-more")?.checked;
-
-        // 2. GATHER SHARED BASIC METADATA ARRAYS
-        var currentSourceType = document.getElementById("sbl-type")?.value || "book";
-        var city = document.getElementById("sbl-city")?.value.trim() || "";
-        var publisher = document.getElementById("sbl-publisher")?.value.trim() || "";
-        var year = document.getElementById("sbl-year")?.value.trim() || "";
-        var pages = document.getElementById("sbl-pages")?.value.trim() || "";
-        var pDisplay = pages ? pages : "##";
-
-        // 3. GENERATE AUTHOR STRINGS BASED ON TRACK SELECTION
-        var bibAuthorStr = "";
-        var noteAuthorStr = "";
-        var subAuthorStr = ""; 
-
-        if (authorType === "corporate" && corporateName) {
-            bibAuthorStr = corporateName + ".";
-            noteAuthorStr = corporateName;
-            subAuthorStr = corporateName;
-        } 
-        else if (authorType === "standard" && authors.length > 0) {
-            var f1 = authors[0].first || "";
-            var l1 = authors[0].last || "";
-            subAuthorStr = l1 || f1; 
-
-            if (forceEtAl || authors.length >= 4) {
-                bibAuthorStr = (l1 && f1) ? (l1 + ", " + f1 + ", et al.") : ((l1 || f1) + ", et al.");
-                noteAuthorStr = f1 + " " + l1 + " et al.";
-                subAuthorStr = (l1 || f1) + " et al.";
-            } else if (authors.length === 1) {
-                bibAuthorStr = (l1 && f1) ? (l1 + ", " + f1 + ".") : ((l1 || f1) + ".");
-                noteAuthorStr = f1 + " " + l1;
-            } else if (authors.length === 2) {
-                var f2 = authors[1].first || "";
-                var l2 = authors[1].last || "";
-                bibAuthorStr = l1 + ", " + f1 + ", and " + f2 + " " + l2 + ".";
-                noteAuthorStr = f1 + " " + l1 + " and " + f2 + " " + l2;
-                subAuthorStr = l1 + " and " + l2;
-            } else if (authors.length === 3) {
-                var f2 = authors[1].first || "";
-                var l2 = authors[1].last || "";
-                var f3 = authors[2].first || "";
-                var l3 = authors[2].last || "";
-                bibAuthorStr = l1 + ", " + f1 + ", " + f2 + " " + l2 + ", and " + f3 + " " + l3 + ".";
-                noteAuthorStr = f1 + " " + l1 + ", " + f2 + " " + l2 + ", and " + f3 + " " + l3;
-                subAuthorStr = l1 + ", " + l2 + ", and " + l3;
-            }
-        }
-
-        // 4. GATHER CONTRIBUTORS (EDITORS, TRANSLATORS, COMPILERS)
-        function collectRole(containerId, firstClass, lastClass, bibLabel, noteLabel) {
-            var list = [];
-            var container = document.getElementById(containerId);
-            if (!container) return { bib: "", note: "" };
-            
-            var firsts = container.querySelectorAll("input." + firstClass + ", input[class*='" + firstClass + "']");
-            var lasts = container.querySelectorAll("input." + lastClass + ", input[class*='" + lastClass + "']");
-            
-            firsts.forEach(function(input, idx) {
-                var f = input.value.trim();
-                var l = lasts[idx] ? lasts[idx].value.trim() : "";
-                if (f || l) list.push(f + " " + l);
-            });
-
-            if (list.length === 0) return { bib: "", note: "" };
-            
-            var processedNames = "";
-            if (list.length === 1) processedNames = list[0];
-            else if (list.length === 2) processedNames = list[0] + " and " + list[1];
-            else processedNames = list.slice(0, -1).join(", ") + ", and " + list[list.length - 1];
-
-            return {
-                bib: " " + bibLabel + " " + processedNames + ".",
-                note: ", " + noteLabel + " " + processedNames
-            };
-        }
-
-        var ed = collectRole("sbl-editors-container", "editor-first", "editor-last", "Edited by", "ed.");
-        var trans = collectRole("sbl-translators-container", "translator-first", "translator-last", "Translated by", "trans.");
-        var comp = collectRole("sbl-compilers-container", "compiler-first", "compiler-last", "Compiled by", "comp.");
-
-        // 5. ASSEMBLE OUTPUT PACKETS FOR ALL SOURCE TYPES
-        var bibCitation = "";
-        var noteCitation = "";
-        var subCitation = "";
-
-        if (currentSourceType === "book") {
-            var mTitle = document.getElementById("sbl-title")?.value.trim() || "[Title]";
-            var sTitle = document.getElementById("sbl-subtitle")?.value.trim() || "";
-            var shortT = document.getElementById("sbl-short-title")?.value.trim() || mTitle;
-            var fullT = sTitle ? mTitle + ": " + sTitle : mTitle;
-
-            bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + "<em>" + fullT + "</em>.";
-            if (ed.bib) bibCitation += ed.bib;
-            if (trans.bib) bibCitation += trans.bib;
-            if (comp.bib) bibCitation += comp.bib;
-            bibCitation += " " + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + ".";
-
-            noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + "<em>" + fullT + "</em>";
-            if (ed.note) noteCitation += ed.note;
-            if (trans.note) noteCitation += trans.note;
-            if (comp.note) noteCitation += comp.note;
-            noteCitation += " (" + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + "), " + pDisplay + ".";
-
-            subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + "<em>" + shortT + "</em>, " + pDisplay + ".";
-        } 
-        else if (currentSourceType === "chapter") {
-            var chapterTitle = document.getElementById("sbl-inner-title")?.value.trim() || "[Chapter Title]";
-            var mTitleChap = document.getElementById("sbl-title-chap")?.value.trim() || "[Book Title]";
-            var chapRange = document.getElementById("sbl-chapter-range")?.value.trim() || "##-##";
-
-            bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + '"' + chapterTitle + '."' + " In <em>" + mTitleChap + "</em>.";
-            if (ed.bib) bibCitation += ed.bib;
-            bibCitation += " " + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + ", " + chapRange + ".";
-
-            noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + '"' + chapterTitle + '," in <em>' + mTitleChap + "</em>";
-            if (ed.note) noteCitation += ed.note;
-            noteCitation += " (" + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + "), " + pDisplay + ".";
-
-            subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + '"' + chapterTitle + '," ' + pDisplay + ".";
-        } 
-       else if (currentSourceType === "article") {
-            var artTitle = document.getElementById("sbl-article-title")?.value.trim() || "[Article Title]";
-            var jName = document.getElementById("sbl-journal-name")?.value.trim() || "[Journal Name]";
-            var jVol = document.getElementById("sbl-journal-vol")?.value.trim() || "##";
-            var jIss = document.getElementById("sbl-journal-issue")?.value.trim() || "";
-            var jRng = document.getElementById("sbl-journal-range")?.value.trim() || "##-##";
-            var serial = jIss ? " " + jVol + ", no. " + jIss : " " + jVol;
-
-            bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + '"' + artTitle + '." <em>' + jName + '</em>' + serial + " (" + (year || "[Year]") + "): " + jRng + ".";
-            noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + '"' + artTitle + '," <em>' + jName + '</em>' + serial + " (" + (year || "[Year]") + "): " + pDisplay + ".";
-            subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + '"' + artTitle + '," ' + pDisplay + ".";
-        }
-        else if (currentSourceType === "commentary") {
-            var commTitle = document.getElementById("sbl-comm-title")?.value.trim() || "[Commentary Title]";
-            var commSeries = document.getElementById("sbl-comm-series")?.value.trim() || "[Series]";
-            var commVol = document.getElementById("sbl-comm-vol")?.value.trim() || "##";
-
-            bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + "<em>" + commTitle + "</em>. " + commSeries + " " + commVol + ". " + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + ".";
-            noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + "<em>" + commTitle + "</em>, " + commSeries + " " + commVol + " (" + (city || "[City]") + ": " + (publisher || "[Publisher]") + ", " + (year || "[Year]") + "), " + pDisplay + ".";
-            subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + "<em>" + commTitle + "</em>, " + pDisplay + ".";
-        } 
-        else if (currentSourceType === "thesis") {
-            var tTitle = document.getElementById("sbl-thesis-title")?.value.trim() || "[Thesis Title]";
-            var tType = document.getElementById("sbl-thesis-type")?.value || "PhD diss.";
-            var tSchool = document.getElementById("sbl-thesis-school")?.value.trim() || "[Institution]";
-
-            bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + '"' + tTitle + '." ' + tType + ", " + tSchool + ", " + (year || "[Year]") + ".";
-            noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + '"' + tTitle + '" (' + tType + ', ' + tSchool + ', ' + (year || "[Year]") + '), ' + pDisplay + ".";
-            subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + '"' + tTitle + '," ' + pDisplay + ".";
-        } 
-        else if (currentSourceType === "bible") {
-            var bBook = document.getElementById("sbl-bible-book")?.value || "[Book]";
-            var bPassage = document.getElementById("sbl-bible-passage")?.value.trim() || "##:##";
-            var bVersion = document.getElementById("sbl-bible-version")?.value.trim() || "[Version]";
-
-            bibCitation = "<em>Biblical texts are omitted from an SBL bibliography section unless required by your instructor.</em>";
-            noteCitation = bBook + " " + bPassage + " (" + bVersion + ").";
-            subCitation = bBook + " " + bPassage + ".";
-        }
-
-        // 6. RENDER DYNAMIC PREVIEWS IMMEDIATELY
-        var bibBox = document.getElementById("sbl-bib-output");
-        var n1Box = document.getElementById("sbl-n1-output");
-        var n2Box = document.getElementById("sbl-n2-output");
-
-        var inputCheck = authors.length > 0 || corporateName || (authorType === "none") || city || publisher || year;
-        
-        if (bibBox && n1Box && n2Box) {
-            if (!inputCheck) {
-                bibBox.innerHTML = "<em>Fill out fields above to build bibliography preview...</em>";
-                n1Box.innerHTML = "<em>Fill out fields above to build full footnote preview...</em>";
-                n2Box.innerHTML = "<em>Fill out fields above to build short footnote preview...</em>";
-            } else {
-                bibBox.innerHTML = bibCitation;
-                n1Box.innerHTML = noteCitation;
-                n2Box.innerHTML = subCitation;
-            }
-        }
-    };
-
-     // ==========================================
-    // 7. FIXED: GLOBAL INTERACTIVE INPUT OBSERVERS
-    // ==========================================
-    document.addEventListener("DOMContentLoaded", function() {
-        // Targets the global master widget card container instead of an isolated step wrapper
-        var globalWidget = document.querySelector(".sbl-widget-container");
-        if (globalWidget) {
-            globalWidget.addEventListener("input", function() { w.generateSBLCitation(); });
-            globalWidget.addEventListener("change", function() { w.generateSBLCitation(); });
-        }
-        
-        // Run a manual execution sweep on startup to initialize fallback values cleanly
-        w.generateSBLCitation();
+    firstInputs.forEach((firstInput, index) => {
+      const first = firstInput.value.trim();
+      const last = lastInputs[index]?.value.trim() || "";
+      if (first && last) authors.push({ first, last });
     });
+
+    return authors;
+  }
+
+  function formatAuthorList(list, mode) {
+    if (!list.length) return "";
+    if (list.length === 1) {
+      return mode === "bib"
+        ? `${list[0].last}, ${list[0].first}.`
+        : `${list[0].first} ${list[0].last}`;
+    }
+    if (list.length === 2) {
+      return mode === "bib"
+        ? `${list[0].last}, ${list[0].first}, and ${list[1].first} ${list[1].last}.`
+        : `${list[0].first} ${list[0].last} and ${list[1].first} ${list[1].last}`;
+    }
+    return mode === "bib"
+      ? `${list[0].last}, ${list[0].first}, ${list[1].first} ${list[1].last}, and ${list[2].first} ${list[2].last}.`
+      : `${list[0].first} ${list[0].last}, ${list[1].first} ${list[1].last}, and ${list[2].first} ${list[2].last}`;
+  }
+
+  function getContributorName(containerId, firstClass, lastClass) {
+    const container = document.getElementById(containerId);
+    if (!container) return "";
+    const firstInputs = container.querySelectorAll(`.${firstClass}`);
+    const lastInputs = container.querySelectorAll(`.${lastClass}`);
+
+    const names = [];
+    firstInputs.forEach((firstInput, index) => {
+      const first = firstInput.value.trim();
+      const last = lastInputs[index]?.value.trim() || "";
+      if (first && last) names.push(`${first} ${last}`);
+    });
+
+    if (names.length === 0) return "";
+    if (names.length === 1) return names[0];
+    if (names.length === 2) return `${names[0]} and ${names[1]}`;
+    return `${names.slice(0, -1).join(", ")}, and ${names[names.length - 1]}`;
+  }
+
+  w.generateSBLCitation = function () {
+    const currentSourceType = document.getElementById("sbl-type")?.value || "book";
+    const authorType = document.querySelector('input[name="sbl-author-type"]:checked')?.value || "standard";
+
+    const authors = collectAuthors();
+    const corporateName = document.getElementById("sbl-corporate-name")?.value.trim() || "";
+
+    let bibAuthorStr = "";
+    let noteAuthorStr = "";
+    let subAuthorStr = "";
+
+    if (authorType === "corporate" && corporateName) {
+      bibAuthorStr = corporateName + ".";
+      noteAuthorStr = corporateName;
+      subAuthorStr = corporateName;
+    } else if (authorType === "standard" && authors.length) {
+      const firstAuthor = authors[0];
+      const forceEtAl = document.getElementById("sbl-four-or-more")?.checked;
+
+      if (forceEtAl) {
+        bibAuthorStr = `${firstAuthor.last}, ${firstAuthor.first}, et al.`;
+        noteAuthorStr = `${firstAuthor.first} ${firstAuthor.last} et al.`;
+        subAuthorStr = `${firstAuthor.last} et al.`;
+      } else {
+        bibAuthorStr = `${firstAuthor.last}, ${firstAuthor.first}.`;
+        noteAuthorStr = `${firstAuthor.first} ${firstAuthor.last}`;
+        subAuthorStr = `${firstAuthor.last}`;
+      }
+    }
+
+    const city = document.getElementById("sbl-city")?.value.trim() || "[City]";
+    const publisher = document.getElementById("sbl-publisher")?.value.trim() || "[Publisher]";
+    const year = document.getElementById("sbl-year")?.value.trim() || "[Year]";
+    const pDisplay = document.getElementById("sbl-pages")?.value.trim() || "##";
+
+    const editorStr = getContributorName("sbl-editors-container", "sbl-editor-first", "sbl-editor-last");
+    const translatorStr = getContributorName("sbl-translators-container", "sbl-translator-first", "sbl-translator-last");
+    const compilerStr = getContributorName("sbl-compilers-container", "sbl-compiler-first", "sbl-compiler-last");
+
+    let bibCitation = "";
+    let noteCitation = "";
+    let subCitation = "";
+
+    if (currentSourceType === "book") {
+      const mTitle = document.getElementById("sbl-title")?.value.trim() || "[Book Title]";
+      const sTitle = document.getElementById("sbl-subtitle")?.value.trim() || "";
+      const shortT = document.getElementById("sbl-short-title")?.value.trim() || mTitle;
+      const fullT = sTitle ? `${mTitle}: ${sTitle}` : mTitle;
+
+      bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + "<em>" + fullT + "</em>.";
+      if (editorStr) bibCitation += " Edited by " + editorStr + ".";
+      if (translatorStr) bibCitation += " Translated by " + translatorStr + ".";
+      if (compilerStr) bibCitation += " Compiled by " + compilerStr + ".";
+      bibCitation += " " + city + ": " + publisher + ", " + year + ".";
+
+      noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + "<em>" + fullT + "</em>";
+      if (editorStr) noteCitation += " ed.";
+      if (translatorStr) noteCitation += " trans.";
+      if (compilerStr) noteCitation += " comp.";
+      noteCitation += " (" + city + ": " + publisher + ", " + year + "), " + pDisplay + ".";
+
+      subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + "<em>" + shortT + "</em>, " + pDisplay + ".";
+    }
+    else if (currentSourceType === "chapter") {
+      const chapterTitle = document.getElementById("sbl-inner-title")?.value.trim() || "[Chapter Title]";
+      const bookTitle = document.getElementById("sbl-title-chap")?.value.trim() || "[Book Title]";
+      const chapRange = document.getElementById("sbl-chapter-range")?.value.trim() || "##-##";
+
+      bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + '"' + chapterTitle + '." In <em>' + bookTitle + "</em>, " + chapRange + ". " + city + ": " + publisher + ", " + year + ".";
+      noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + '"' + chapterTitle + '," in <em>' + bookTitle + "</em> (" + city + ": " + publisher + ", " + year + "), " + pDisplay + ".";
+      subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + '"' + chapterTitle + '," ' + pDisplay + ".";
+    }
+    else if (currentSourceType === "article") {
+      const artTitle = document.getElementById("sbl-article-title")?.value.trim() || "[Article Title]";
+      const jName = document.getElementById("sbl-journal")?.value.trim() || "[Journal Name]";
+      const jVol = document.getElementById("sbl-volume")?.value.trim() || "##";
+      const jIss = document.getElementById("sbl-issue")?.value.trim() || "";
+      const jRng = document.getElementById("sbl-range")?.value.trim() || "##-##";
+      const serial = jIss ? " " + jVol + ", no. " + jIss : " " + jVol;
+
+      bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + '"' + artTitle + '." <em>' + jName + '</em>' + serial + " (" + year + "): " + jRng + ".";
+      noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + '"' + artTitle + '," <em>' + jName + '</em>' + serial + " (" + year + "): " + pDisplay + ".";
+      subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + '"' + artTitle + '," ' + pDisplay + ".";
+    }
+    else if (currentSourceType === "commentary") {
+      const commTitle = document.getElementById("sbl-comm-title")?.value.trim() || "[Commentary Title]";
+      const commSeries = document.getElementById("sbl-comm-series")?.value.trim() || "[Series]";
+      const commVol = document.getElementById("sbl-comm-vol")?.value.trim() || "##";
+
+      bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + "<em>" + commTitle + "</em>. " + commSeries + " " + commVol + ". " + city + ": " + publisher + ", " + year + ".";
+      noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + "<em>" + commTitle + "</em>, " + commSeries + " " + commVol + " (" + city + ": " + publisher + ", " + year + "), " + pDisplay + ".";
+      subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + "<em>" + commTitle + "</em>, " + pDisplay + ".";
+    }
+    else if (currentSourceType === "thesis") {
+      const tTitle = document.getElementById("sbl-thesis-title")?.value.trim() || "[Thesis Title]";
+      const tType = document.getElementById("sbl-thesis-type")?.value || "PhD diss.";
+      const tSchool = document.getElementById("sbl-thesis-school")?.value.trim() || "[Institution]";
+
+      bibCitation = (bibAuthorStr ? bibAuthorStr + " " : "") + '"' + tTitle + '." ' + tType + ", " + tSchool + ", " + year + ".";
+      noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + '"' + tTitle + '" (' + tType + ", " + tSchool + ", " + year + "), " + pDisplay + ".";
+      subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + '"' + tTitle + '," ' + pDisplay + ".";
+    }
+    else if (currentSourceType === "bible") {
+      const bBook = document.getElementById("sbl-bible-book")?.value || "[Book]";
+      const bPassage = document.getElementById("sbl-bible-passage")?.value.trim() || "##:##";
+      const bVersion = document.getElementById("sbl-bible-version")?.value.trim() || "[Version]";
+
+      bibCitation = "<em>Biblical texts are omitted from an SBL bibliography section unless required by your instructor.</em>";
+      noteCitation = bBook + " " + bPassage + " (" + bVersion + ").";
+      subCitation = bBook + " " + bPassage + ".";
+    }
+
+    const bibBox = document.getElementById("sbl-bib-output");
+    const n1Box = document.getElementById("sbl-n1-output");
+    const n2Box = document.getElementById("sbl-n2-output");
+
+    const inputCheck = !!(authors.length || corporateName || authorType === "none" || city || publisher || year || document.getElementById("sbl-title")?.value.trim() || document.getElementById("sbl-inner-title")?.value.trim());
+
+    if (bibBox && n1Box && n2Box) {
+      if (!inputCheck) {
+        bibBox.innerHTML = "<em>Fill out fields above to build bibliography preview...</em>";
+        n1Box.innerHTML = "<em>Fill out fields above to build full footnote preview...</em>";
+        n2Box.innerHTML = "<em>Fill out fields above to build short footnote preview...</em>";
+      } else {
+        bibBox.innerHTML = bibCitation;
+        n1Box.innerHTML = noteCitation;
+        n2Box.innerHTML = subCitation;
+      }
+    }
+  };
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const widget = document.querySelector(".sbl-widget-container");
+    if (widget) {
+      widget.addEventListener("input", function () { w.generateSBLCitation(); });
+      widget.addEventListener("change", function () { w.generateSBLCitation(); });
+    }
+
+    if (typeof w.generateSBLCitation === "function") {
+      w.generateSBLCitation();
+    }
+  });
 })(window);
 </script>
 
