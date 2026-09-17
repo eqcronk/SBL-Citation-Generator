@@ -1145,7 +1145,7 @@
 
             subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + '"' + chapterTitle + '," ' + pDisplay + ".";
         } 
-        else if (currentSourceType === "article") {
+       else if (currentSourceType === "article") {
             var artTitle = document.getElementById("sbl-article-title")?.value.trim() || "[Article Title]";
             var jName = document.getElementById("sbl-journal-name")?.value.trim() || "[Journal Name]";
             var jVol = document.getElementById("sbl-journal-vol")?.value.trim() || "##";
@@ -1157,7 +1157,7 @@
             noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + '"' + artTitle + '," <em>' + jName + '</em>' + serial + " (" + (year || "[Year]") + "): " + pDisplay + ".";
             subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + '"' + artTitle + '," ' + pDisplay + ".";
         }
-                else if (currentSourceType === "commentary") {
+        else if (currentSourceType === "commentary") {
             var commTitle = document.getElementById("sbl-comm-title")?.value.trim() || "[Commentary Title]";
             var commSeries = document.getElementById("sbl-comm-series")?.value.trim() || "[Series]";
             var commVol = document.getElementById("sbl-comm-vol")?.value.trim() || "##";
