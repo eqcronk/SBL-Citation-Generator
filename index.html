@@ -6,233 +6,301 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBL Citation Generator</title>
-    <style>
-        /* ==========================================================================
-           SBL PREMIUM ACADEMIC THEME CONFIGURATION
-           ========================================================================== */
+    <title>SBL Citation Generator</title><style>
+    /* ==========================================================================
+       SBL PREMIUM ACADEMIC THEME CONFIGURATION
+       ========================================================================== */
+    body {
+        background-color: #f1f5f9;
+        margin: 0;
+        padding: 20px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    .sbl-widget-container {
+        max-width: 740px;
+        margin: 40px auto;
+        background: #ffffff;
+        padding: 36px;
+        border-radius: 12px;
+        box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e2e8f0;
+        box-sizing: border-box;
+        color: #0f172a;
+    }
+
+    .sbl-widget-container h2 {
+        margin-top: 0;
+        color: #1e3a8a;
+        font-size: 1.8rem;
+        font-weight: 700;
+        margin-bottom: 30px;
+        text-align: center;
+        letter-spacing: -0.02em;
+        border-bottom: 2px solid #f1f5f9;
+        padding-bottom: 16px;
+    }
+
+    .sbl-wizard-step {
+        animation: sblFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .sbl-primary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        background: #1e3a8a;
+        color: #ffffff;
+        border: none;
+        padding: 14px 24px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        border-radius: 8px;
+        cursor: pointer;
+        margin-top: 20px;
+        transition: all 0.2s ease;
+    }
+
+    .sbl-primary-btn:hover {
+        background: #1e355b;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+    }
+
+    .sbl-back-link {
+        background: none;
+        border: none;
+        color: #1e3a8a;
+        font-weight: 600;
+        cursor: pointer;
+        padding: 6px 0;
+        margin-bottom: 24px;
+        font-size: 0.9rem;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .sbl-back-link:hover {
+        text-decoration: underline;
+    }
+
+    .sbl-fieldset {
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 24px;
+        margin-bottom: 26px;
+        background: #f8fafc;
+    }
+
+    .sbl-fieldset legend {
+        font-weight: 700;
+        color: #1e3a8a;
+        padding: 0 12px;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .sbl-form-group {
+        margin-bottom: 18px;
+    }
+
+    .sbl-row {
+        display: flex;
+        gap: 16px;
+    }
+
+    .sbl-col {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .sbl-col-60 {
+        flex: 1.6;
+        min-width: 0;
+    }
+
+    .sbl-col-short {
+        width: 130px;
+        flex-shrink: 0;
+    }
+
+    .sbl-widget-container label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+        font-size: 0.85rem;
+        color: #334155;
+    }
+
+    .sbl-source-question {
+        font-size: 1.2rem !important;
+        text-align: center;
+        margin-bottom: 20px !important;
+        color: #0f172a !important;
+    }
+
+    .sbl-widget-container input,
+    .sbl-widget-container select {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 8px;
+        box-sizing: border-box;
+        font-size: 0.95rem;
+        color: #0f172a;
+        background-color: #ffffff;
+        transition: all 0.15s ease;
+    }
+
+    .sbl-widget-container input:focus,
+    .sbl-widget-container select:focus {
+        outline: none;
+        border-color: #1e3a8a;
+        box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
+    }
+
+    .sbl-form-toggle-group {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 20px;
+        background: #f1f5f9;
+        padding: 10px;
+        border-radius: 8px;
+    }
+
+    .sbl-form-toggle-group label {
+        display: inline-flex !important;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        margin: 0 !important;
+        font-weight: 500 !important;
+    }
+
+    .sbl-output-wrapper {
+        margin-top: 36px;
+        padding: 24px;
+        background-color: #f8fafc;
+        border-radius: 8px;
+        border: 1px solid #e2e8f0;
+        border-left: 5px solid #1e3a8a;
+    }
+
+    .sbl-output-wrapper h4 {
+        margin: 0 0 8px 0;
+        color: #1e3a8a;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .sbl-citation {
+        font-family: Georgia, Cambria, serif;
+        font-size: 1.05rem;
+        color: #0f172a;
+        line-height: 1.6;
+        word-break: break-word;
+        margin-bottom: 24px;
+        padding: 14px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 6px;
+        min-height: 24px;
+    }
+
+    .sbl-copy-btn {
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        padding: 4px 10px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        border-radius: 4px;
+        cursor: pointer;
+        color: #64748b;
+        transition: all 0.15s ease;
+    }
+
+    .sbl-copy-btn:hover {
+        background: #1e3a8a;
+        color: #ffffff;
+        border-color: #1e3a8a;
+    }
+
+    @keyframes sblFadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(6px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @media (max-width: 640px) {
         body {
-            background-color: #f1f5f9;
-            margin: 0;
-            padding: 20px;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding: 12px;
         }
 
         .sbl-widget-container {
-            max-width: 740px;
-            margin: 40px auto;
-            background: #ffffff;
-            padding: 36px;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e2e8f0;
-            box-sizing: border-box;
-            color: #0f172a;
+            padding: 20px;
+            margin: 10px auto;
         }
 
-        .sbl-widget-container h2 {
-            margin-top: 0;
-            color: #1e3a8a;
-            font-size: 1.8rem;
-            font-weight: 700;
-            margin-bottom: 30px;
-            text-align: center;
-            letter-spacing: -0.02em;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 16px;
+        .sbl-widget-container .sbl-row {
+            flex-direction: column;
+            gap: 0;
         }
 
-        .sbl-wizard-step {
-            animation: sblFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-
-        .sbl-primary-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+        .sbl-widget-container .sbl-col,
+        .sbl-widget-container .sbl-col-60,
+        .sbl-widget-container .sbl-col-short {
             width: 100%;
-            background: #1e3a8a;
-            color: #ffffff;
-            border: none;
-            padding: 14px 24px;
-            font-size: 0.95rem;
-            font-weight: 600;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: all 0.2s ease;
+            max-width: 100%;
+            flex: none;
+            box-sizing: border-box;
         }
 
-        .sbl-primary-btn:hover {
-            background: #1e355b;
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(30, 58, 138, 0.2);
+        .sbl-widget-container .sbl-name-row {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
-        .sbl-back-link {
-            background: none;
-            border: none;
-            color: #1e3a8a;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 6px 0;
-            margin-bottom: 24px;
-            font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-block;
+        .sbl-widget-container .sbl-name-row .sbl-form-group {
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
-        .sbl-back-link:hover {
-            text-decoration: underline;
+        .sbl-widget-container .sbl-form-toggle-group {
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
-        .sbl-fieldset {
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 24px;
-            margin-bottom: 26px;
-            background: #f8fafc;
-        }
-
-        .sbl-fieldset legend {
-            font-weight: 700;
-            color: #1e3a8a;
-            padding: 0 12px;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-        }
-
-        .sbl-form-group {
-            margin-bottom: 18px;
-        }
-
-        .sbl-row {
-            display: flex;
-            gap: 16px;
-        }
-
-        .sbl-col { flex: 1; min-width: 0; }
-        .sbl-col-60 { flex: 1.6; min-width: 0; }
-        .sbl-col-short { width: 130px; flex-shrink: 0; }
-
-        .sbl-widget-container label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 6px;
-            font-size: 0.85rem;
-            color: #334155;
-        }
-
-        .sbl-source-question {
-            font-size: 1.2rem !important;
-            text-align: center;
-            margin-bottom: 20px !important;
-            color: #0f172a !important;
+        .sbl-widget-container #grp-contributors label {
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .sbl-widget-container input,
         .sbl-widget-container select {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 8px;
+            max-width: 100%;
             box-sizing: border-box;
-            font-size: 0.95rem;
-            color: #0f172a;
-            background-color: #ffffff;
-            transition: all 0.15s ease;
         }
+    }
+</style>
 
-        .sbl-widget-container input:focus,
-        .sbl-widget-container select:focus {
-            outline: none;
-            border-color: #1e3a8a;
-            box-shadow: 0 0 0 4px rgba(30, 58, 138, 0.1);
-        }
 
-        .sbl-form-toggle-group {
-            display: flex;
-            gap: 12px;
-            margin-bottom: 20px;
-            background: #f1f5f9;
-            padding: 10px;
-            border-radius: 8px;
-        }
-
-        .sbl-form-toggle-group label {
-            display: inline-flex !important;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            margin: 0 !important;
-            font-weight: 500 !important;
-        }
-
-        .sbl-output-wrapper {
-            margin-top: 36px;
-            padding: 24px;
-            background-color: #f8fafc;
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            border-left: 5px solid #1e3a8a;
-        }
-
-        .sbl-output-wrapper h4 {
-            margin: 0 0 8px 0;
-            color: #1e3a8a;
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .sbl-citation {
-            font-family: Georgia, Cambria, serif;
-            font-size: 1.05rem;
-            color: #0f172a;
-            line-height: 1.6;
-            word-break: break-word;
-            margin-bottom: 24px;
-            padding: 14px;
-            background: #ffffff;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
-            min-height: 24px;
-        }
-
-        .sbl-copy-btn {
-            background: #ffffff;
-            border: 1px solid #cbd5e1;
-            padding: 4px 10px;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            border-radius: 4px;
-            cursor: pointer;
-            color: #64748b;
-            transition: all 0.15s ease;
-        }
-
-        .sbl-copy-btn:hover {
-            background: #1e3a8a;
-            color: #ffffff;
-            border-color: #1e3a8a;
-        }
-
-        @media (max-width: 640px) {
-            .sbl-premium-theme .sbl-row { flex-direction: column; gap: 0; }
-            .sbl-premium-theme .sbl-col-short { width: 100%; }
-            .sbl-premium-theme .sbl-form-toggle-group { flex-direction: column; gap: 8px; }
-        }
-
-        @keyframes sblFadeIn {
-            from { opacity: 0; transform: translateY(6px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
+     
 </head>
 <div class="sbl-widget-container">
     <h2>SBL Citation Generator</h2>
