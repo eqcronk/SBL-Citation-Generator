@@ -449,9 +449,38 @@
 </style>
 
 
-     
+
 </head>
-<div class="sbl-widget-container">
+     <body>
+          <div class="sbl-widget-container">
+          <script>
+document.addEventListener("DOMContentLoaded", function () {
+    const continueButton = document.getElementById("sbl-btn-continue");
+    const backButton = document.getElementById("sbl-btn-back");
+    const step1 = document.getElementById("sbl-step-1");
+    const step2 = document.getElementById("sbl-step-2");
+
+    if (!continueButton || !step1 || !step2) {
+        return;
+    }
+
+    continueButton.addEventListener("click", function () {
+        step1.style.display = "none";
+        step2.classList.add("sbl-step-active");
+        step2.style.display = "block";
+    });
+
+    if (backButton) {
+        backButton.addEventListener("click", function () {
+            step2.classList.remove("sbl-step-active");
+            step2.style.display = "none";
+            step1.style.display = "block";
+        });
+    }
+});
+</script>
+     </body>
+
     <h2>SBL Citation Generator</h2>
 
 <!-- STEP 1: SOURCE TYPE SELECTION PANEL -->
