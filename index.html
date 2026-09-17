@@ -1144,3 +1144,199 @@
 })(window);
 </script>
 
+<script>
+(function () {
+  function q(selector) {
+    return document.querySelector(selector);
+  }
+
+  function qa(selector) {
+    return Array.from(document.querySelectorAll(selector));
+  }
+
+  function getAuthorNames(classFirst, classLast) {
+    const firsts = qa("." + classFirst);
+    const lasts = qa("." + classLast);
+
+    const names = [];
+    firsts.forEach((firstInput, index) => {
+      const first = firstInput.value.trim();
+      const last = lasts[index] ? lasts[index].value.trim() : "";
+      if (first && last) names.push(first + " " + last);
+    });
+
+    return names;
+  }
+
+  function generateSBLCitation() {
+    const sourceType = q("#sbl-type")?.value || "book";
+    const authorType = q('input[name="sbl-author-type"]:checked')?.value || "standard";
+    const corpName = q("#sbl-corporate-name")?.value.trim() || "";
+
+    const firstAuthorFields = qa(".sbl-author-first");
+    const lastAuthorFields = qa(".sbl-author-last");
+
+    let bibAuthor = "";
+    let noteAuthor = "";
+    let subAuthor = "";
+
+    if (authorType === "corporate" && corpName) {
+      bibAuthor = corpName + ".";
+      noteAuthor = corpName;
+      subAuthor = corpName;
+    } else if (authorType === "standard") {
+      const first = firstAuthorFields[0]?.value.trim() || "";
+      const last = lastAuthorFields[0]?.value.trim() || "";
+      const forceEtAl = q("#sbl-four-or-more")?.checked;
+
+      if (first || last) {
+        if (forceEtAl) {
+          bibAuthor = last + ", " + first + ", et al.";
+          noteAuthor = first + " " + last + " et al.";
+          subAuthor = last + " et al.";
+        } else {
+          bibAuthor = last + ", " + first + ".";
+          noteAuthor = first + " " + last;
+          subAuthor = last;
+        }
+      }
+    }
+
+    const city = q("#sbl-city")?.value.trim() || "[City]";
+    const publisher = q("#sbl-publisher")?.value.trim() || "[Publisher]";
+    const year = q("#sbl-year")?.value.trim() || "[Year]";
+    const pages = q("#sbl-pages")?.value.trim() || "##";
+    const range = q("#sbl-range")?.value.trim() || "##-##";
+
+    const editors = getAuthorNames("sbl-editor-first", "sbl-editor-last");
+    const translators = getAuthorNames("sbl-translator-first", "sbl-translator-last");
+    const compilers = getAuthorNames("sbl-compiler-first", "sbl-compiler-last");
+
+    function formatContributors(list) {
+      if (!list.length) return "";
+      if (list.length === 1) return list[0];
+      if (list.length === 2) return list.join(" and ");
+      return list.slice(0, -1).join(", ") + ", and " + list[list.length - 1];
+    }
+
+    const editorName = formatContributors(editors);
+    const translatorName = formatContributors(translators);
+    const compilerName = formatContributors(compilers);
+
+    let bib = "";
+    let note = "";
+    let short = "";
+
+    if (sourceType === "book") {
+      const title = q("#sbl-title")?.value.trim() || "[Book Title]";
+      const subtitle = q("#sbl-subtitle")?.value.trim();
+      const fullTitle = subtitle ? title + ": " + subtitle : title;
+
+      bib = (bibAuthor ? bibAuthor + " " : "") + "<em>" + fullTitle + "</em>.";
+      if (editorName) bib += " Edited by " + editorName + ".";
+      if (translatorName) bib += " Translated by " + translatorName + ".";
+      if (compilerName) bib += " Compiled by " + compilerName + ".";
+      bib += " " + city + ": " + publisher + ", " + year + ".";
+
+      note = (noteAuthor ? noteAuthor + ", " : "") + "<em>" + fullTitle + "</em>";
+      if (editorName) note += " ed.";
+      if (translatorName) note += " trans.";
+      if (compilerName) note += " comp.";
+      note += " (" + city + ": " + publisher + ", " + year + "), " + pages + ".";
+
+      short = (subAuthor ? subAuthor + ", " : "") + "<em>" + title + "</em>, " + pages + ".";
+    }
+
+    if (sourceType === "chapter") {
+      const chapterTitle = q("#sbl-inner-title")?.value.trim() || "[Chapter Title]";
+      const bookTitle = q("#sbl-title-chap")?.value.trim() || "[Book Title]";
+      const chapRange = q("#sbl-chapter-range")?.value.trim() || "##-##";
+
+      bib = (bibAuthor ? bibAuthor + " " : "") + '"' + chapterTitle + '." In <em>' + bookTitle + "</em>, " + chapRange + ". " + city + ": " + publisher + ", " + year + ".";
+      note = (noteAuthor ? noteAuthor + ", " : "") + '"' + chapterTitle + '," in <em>' + bookTitle + "</em> (" + city + ": " + publisher + ", " + year + "), " + pages + ".";
+      short = (subAuthor ? subAuthor + ", " : "") + '"' + chapterTitle + '," ' + pages + ".";
+    }
+
+    if (sourceType === "article") {
+      const articleTitle = q("#sbl-article-title")?.value.trim() || "[Article Title]";
+      const journalName = q("#sbl-journal")?.value.trim() || "[Journal Name]";
+      const volume = q("#sbl-volume")?.value.trim() || "##";
+      const issue = q("#sbl-issue")?.value.trim() || "";
+      const volumeInfo = issue ? " " + volume + ", no. " + issue : " " + volume;
+
+      bib = (bibAuthor ? bibAuthor + " " : "") + '"' + articleTitle + '." <em>' + journalName + "</em>" + volumeInfo + " (" + year + "): " + range + ".";
+      note = (noteAuthor ? noteAuthor + ", " : "") + '"' + articleTitle + '," <em>' + journalName + "</em>" + volumeInfo + " (" + year + "): " + pages + ".";
+      short = (subAuthor ? subAuthor + ", " : "") + '"' + articleTitle + '," ' + pages + ".";
+    }
+
+    if (sourceType === "commentary") {
+      const title = q("#sbl-comm-title")?.value.trim() || "[Commentary Title]";
+      const series = q("#sbl-comm-series")?.value.trim() || "[Series]";
+      const vol = q("#sbl-comm-vol")?.value.trim() || "##";
+
+      bib = (bibAuthor ? bibAuthor + " " : "") + "<em>" + title + "</em>. " + series + " " + vol + ". " + city + ": " + publisher + ", " + year + ".";
+      note = (noteAuthor ? noteAuthor + ", " : "") + "<em>" + title + "</em>, " + series + " " + vol + " (" + city + ": " + publisher + ", " + year + "), " + pages + ".";
+      short = (subAuthor ? subAuthor + ", " : "") + "<em>" + title + "</em>, " + pages + ".";
+    }
+
+    if (sourceType === "thesis") {
+      const title = q("#sbl-thesis-title")?.value.trim() || "[Thesis Title]";
+      const degree = q("#sbl-thesis-type")?.value || "PhD diss.";
+      const school = q("#sbl-thesis-school")?.value.trim() || "[Institution]";
+
+      bib = (bibAuthor ? bibAuthor + " " : "") + '"' + title + '." ' + degree + ", " + school + ", " + year + ".";
+      note = (noteAuthor ? noteAuthor + ", " : "") + '"' + title + '" (' + degree + ", " + school + ", " + year + "), " + pages + ".";
+      short = (subAuthor ? subAuthor + ", " : "") + '"' + title + '," ' + pages + ".";
+    }
+
+    if (sourceType === "bible") {
+      const book = q("#sbl-bible-book")?.value || "[Book]";
+      const passage = q("#sbl-bible-passage")?.value.trim() || "##:##";
+      const version = q("#sbl-bible-version")?.value.trim() || "[Version]";
+
+      bib = "<em>Biblical texts are omitted from an SBL bibliography section unless required by your instructor.</em>";
+      note = book + " " + passage + " (" + version + ").";
+      short = book + " " + passage + ".";
+    }
+
+    const bibBox = q("#sbl-bib-output");
+    const n1Box = q("#sbl-n1-output");
+    const n2Box = q("#sbl-n2-output");
+
+    if (bibBox) bibBox.innerHTML = bib || "<em>Awaiting input fields...</em>";
+    if (n1Box) n1Box.innerHTML = note || "<em>Awaiting input fields...</em>";
+    if (n2Box) n2Box.innerHTML = short || "<em>Awaiting input fields...</em>";
+  }
+
+  document.addEventListener("DOMContentLoaded", function () {
+    const widget = q(".sbl-widget-container");
+    if (widget) {
+      widget.addEventListener("input", generateSBLCitation);
+      widget.addEventListener("change", generateSBLCitation);
+    }
+
+    const btnContinue = q("#sbl-btn-continue");
+    if (btnContinue) {
+      btnContinue.addEventListener("click", function () {
+        const step1 = q("#sbl-step-1");
+        const step2 = q("#sbl-step-2");
+        if (step1) step1.style.display = "none";
+        if (step2) step2.style.display = "block";
+        generateSBLCitation();
+      });
+    }
+
+    const btnBack = q("#sbl-btn-back");
+    if (btnBack) {
+      btnBack.addEventListener("click", function () {
+        const step1 = q("#sbl-step-1");
+        const step2 = q("#sbl-step-2");
+        if (step1) step1.style.display = "block";
+        if (step2) step2.style.display = "none";
+      });
+    }
+
+    generateSBLCitation();
+  });
+})();
+</script>
