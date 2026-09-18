@@ -445,6 +445,27 @@
 #sbl-step-2.sbl-step-active {
     display: block !important;
 }
+      /* Keep "Four or more..." checkbox labels on one line */
+#sbl-et-al-wrapper label,
+#sbl-et-al-editors-wrapper label,
+#sbl-et-al-translators-wrapper label,
+#sbl-et-al-compilers-wrapper label {
+    display: inline-flex !important;
+    align-items: center;
+    width: auto !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    margin: 0 !important;
+}
+
+/* Prevent the checkbox itself from shrinking */
+#sbl-et-al-wrapper input,
+#sbl-et-al-editors-wrapper input,
+#sbl-et-al-translators-wrapper input,
+#sbl-et-al-compilers-wrapper input {
+    flex: 0 0 auto;
+}   
 }
 </style>
 
