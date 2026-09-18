@@ -633,6 +633,12 @@ document.addEventListener("DOMContentLoaded", function () {
             >
                 + Add Another Editor
             </button>
+            <div id="sbl-et-al-editors-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
+                <label>
+                    <input type="checkbox" id="sbl-editors-et-al">
+                    <strong>Use et al. for editors</strong>
+                </label>
+            </div>
         </div>
 
         <!-- DYNAMIC TRANSLATORS -->
@@ -660,6 +666,12 @@ document.addEventListener("DOMContentLoaded", function () {
             >
                 + Add Another Translator
             </button>
+            <div id="sbl-et-al-translators-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
+                <label>
+                    <input type="checkbox" id="sbl-translators-et-al">
+                    <strong>Use et al. for translators</strong>
+                </label>
+            </div>
         </div>
 
         <!-- DYNAMIC COMPILERS -->
@@ -687,6 +699,12 @@ document.addEventListener("DOMContentLoaded", function () {
             >
                 + Add Another Compiler
             </button>
+            <div id="sbl-et-al-compilers-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
+                <label>
+                    <input type="checkbox" id="sbl-compilers-et-al">
+                    <strong>Use et al. for compilers</strong>
+                </label>
+            </div>
         </div>
     </div>
 </fieldset>
@@ -1472,19 +1490,34 @@ const compilerName = formatContributors(compilers, "sbl-compilers-et-al");
       noteAuthor = corpName;
       subAuthor = corpName;
     } else if (authorType === "standard") {
-      const first = firstAuthorFields[0]?.value.trim() || "";
-      const last = lastAuthorFields[0]?.value.trim() || "";
+      const authors = [];
+      firstAuthorFields.forEach(function (input, i) {
+        const first = input.value.trim();
+        const last = (lastAuthorFields[i] || {}).value ? lastAuthorFields[i].value.trim() : "";
+        if (first || last) authors.push({ first: first, last: last });
+      });
       const forceEtAl = q("#sbl-four-or-more")?.checked;
 
-      if (first || last) {
-        if (forceEtAl) {
-          bibAuthor = last + ", " + first + ", et al.";
-          noteAuthor = first + " " + last + " et al.";
-          subAuthor = last + " et al.";
+      if (authors.length) {
+        const a = authors;
+        if (forceEtAl || a.length >= 4) {
+          // 4+ authors (or checkbox forced): first author + et al.
+          bibAuthor  = a[0].last + ", " + a[0].first + ", et al.";
+          noteAuthor = a[0].first + " " + a[0].last + " et al.";
+          subAuthor  = a[0].last + " et al.";
+        } else if (a.length === 1) {
+          bibAuthor  = a[0].last + ", " + a[0].first + ".";
+          noteAuthor = a[0].first + " " + a[0].last;
+          subAuthor  = a[0].last;
+        } else if (a.length === 2) {
+          bibAuthor  = a[0].last + ", " + a[0].first + ", and " + a[1].first + " " + a[1].last + ".";
+          noteAuthor = a[0].first + " " + a[0].last + " and " + a[1].first + " " + a[1].last;
+          subAuthor  = a[0].last + " and " + a[1].last;
         } else {
-          bibAuthor = last + ", " + first + ".";
-          noteAuthor = first + " " + last;
-          subAuthor = last;
+          // 3 authors
+          bibAuthor  = a[0].last + ", " + a[0].first + ", " + a[1].first + " " + a[1].last + ", and " + a[2].first + " " + a[2].last + ".";
+          noteAuthor = a[0].first + " " + a[0].last + ", " + a[1].first + " " + a[1].last + ", and " + a[2].first + " " + a[2].last;
+          subAuthor  = a[0].last + ", " + a[1].last + ", and " + a[2].last;
         }
       }
     }
@@ -1499,16 +1532,17 @@ const compilerName = formatContributors(compilers, "sbl-compilers-et-al");
     const translators = getAuthorNames("sbl-translator-first", "sbl-translator-last");
     const compilers = getAuthorNames("sbl-compiler-first", "sbl-compiler-last");
 
-    function formatContributors(list) {
+    function formatContributors(list, etAlCheckboxId) {
       if (!list.length) return "";
+      if (etAlCheckboxId && q("#" + etAlCheckboxId)?.checked) return list[0] + " et al.";
       if (list.length === 1) return list[0];
       if (list.length === 2) return list.join(" and ");
       return list.slice(0, -1).join(", ") + ", and " + list[list.length - 1];
     }
 
-    const editorName = formatContributors(editors);
-    const translatorName = formatContributors(translators);
-    const compilerName = formatContributors(compilers);
+    const editorName = formatContributors(editors, "sbl-editors-et-al");
+    const translatorName = formatContributors(translators, "sbl-translators-et-al");
+    const compilerName = formatContributors(compilers, "sbl-compilers-et-al");
 
     let bib = "";
     let note = "";
@@ -1622,6 +1656,44 @@ const compilerName = formatContributors(compilers, "sbl-compilers-et-al");
         if (step2) step2.style.display = "none";
       });
     }
+
+    // Helper: wire up an "Add Another X" button with a 2-click limit.
+    // After the 2nd click (3 rows total), the button hides itself.
+    // For authors only, also shows the et al. checkbox at that point.
+    function wireAddButton(btnId, containerId, labelSingular, firstClass, lastClass, etAlWrapperId) {
+      const btn = q("#" + btnId);
+      if (!btn) return;
+      btn.addEventListener("click", function () {
+        const container = q("#" + containerId);
+        const count = container.querySelectorAll(".sbl-name-row").length + 1;
+        const row = document.createElement("div");
+        row.className = "sbl-row sbl-name-row";
+        row.innerHTML =
+          '<div class="sbl-form-group sbl-col">' +
+            '<label>' + labelSingular + ' ' + count + ' First Name(s)</label>' +
+            '<input type="text" class="' + firstClass + '" placeholder="e.g. John">' +
+          '</div>' +
+          '<div class="sbl-form-group sbl-col">' +
+            '<label>' + labelSingular + ' ' + count + ' Last Name</label>' +
+            '<input type="text" class="' + lastClass + '" placeholder="e.g. Smith">' +
+          '</div>';
+        container.appendChild(row);
+        // After 2nd click (3 rows total): hide button and, for authors, show et al.
+        if (count >= 3) {
+          btn.style.display = "none";
+          if (etAlWrapperId) {
+            const etAlWrapper = q("#" + etAlWrapperId);
+            if (etAlWrapper) etAlWrapper.style.display = "block";
+          }
+        }
+        generateSBLCitation();
+      });
+    }
+
+    wireAddButton("btn-add-author",     "sbl-authors-container",     "Author",     "sbl-author-first",     "sbl-author-last",     "sbl-et-al-wrapper");
+    wireAddButton("btn-add-editor",     "sbl-editors-container",     "Editor",     "sbl-editor-first",     "sbl-editor-last",     "sbl-et-al-editors-wrapper");
+    wireAddButton("btn-add-translator", "sbl-translators-container", "Translator", "sbl-translator-first", "sbl-translator-last", "sbl-et-al-translators-wrapper");
+    wireAddButton("btn-add-compiler",   "sbl-compilers-container",   "Compiler",   "sbl-compiler-first",   "sbl-compiler-last",   "sbl-et-al-compilers-wrapper");
 
     generateSBLCitation();
   });
