@@ -1119,7 +1119,39 @@ document.addEventListener("DOMContentLoaded", function () {
                 </div>
 
             </div>
+<!-- Co-publication / Joint publication -->
+<div class="sbl-form-toggle-group" style="margin-top: 8px;">
+    <label>
+        <input type="checkbox" id="sbl-co-publication">
+        Co-publication / Joint publication
+    </label>
+</div>
 
+<div id="sbl-co-publication-fields" style="display: none;">
+    <div class="sbl-row">
+        <div class="sbl-form-group sbl-col">
+            <label for="sbl-city-2">
+                Second Publication City
+            </label>
+            <input
+                type="text"
+                id="sbl-city-2"
+                placeholder=" London"
+            >
+        </div>
+
+        <div class="sbl-form-group sbl-col">
+            <label for="sbl-publisher-2">
+                Second Publisher
+            </label>
+            <input
+                type="text"
+                id="sbl-publisher-2"
+                placeholder=" T&amp;T Clark"
+            >
+        </div>
+    </div>
+</div>
 
             <!-- Year / Pages Cited -->
             <div class="sbl-row">
@@ -1456,11 +1488,23 @@ const compilerName = formatContributors(compilers, "sbl-compilers-et-al");
       }
     }
   };
-  document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function () {
     const widget = document.querySelector(".sbl-widget-container");
     if (widget) {
-      widget.addEventListener("input", function () { w.generateSBLCitation(); });
-      widget.addEventListener("change", function () { w.generateSBLCitation(); });
+        widget.addEventListener("input", generateSBLCitation);
+        widget.addEventListener("change", generateSBLCitation);
+    }
+
+    const coPublicationToggle = document.getElementById("sbl-co-publication");
+    const coPublicationFields = document.getElementById("sbl-co-publication-fields");
+
+    if (coPublicationToggle && coPublicationFields) {
+        coPublicationToggle.addEventListener("change", function () {
+            coPublicationFields.style.display = this.checked ? "block" : "none";
+            generateSBLCitation();
+        });
+    }
+});
     }
 
     if (typeof w.generateSBLCitation === "function") {
@@ -1545,6 +1589,13 @@ const compilerName = formatContributors(compilers, "sbl-compilers-et-al");
 
     const city = q("#sbl-city")?.value.trim() || "[City]";
     const publisher = q("#sbl-publisher")?.value.trim() || "[Publisher]";
+     const isCoPublication = q("#sbl-co-publication")?.checked;
+     const city2 = q("#sbl-city-2")?.value.trim() || "";
+     const publisher2 = q("#sbl-publisher-2")?.value.trim() || "";
+
+const publicationInfo = isCoPublication && city2 && publisher2
+  ? city + ": " + publisher + "; " + city2 + ": " + publisher2
+  : city + ": " + publisher;
     const year = q("#sbl-year")?.value.trim() || "[Year]";
     const pages = q("#sbl-pages")?.value.trim() || "##";
     const range = q("#sbl-range")?.value.trim() || "##-##";
@@ -1578,13 +1629,13 @@ const compilerName = formatContributors(compilers, "sbl-compilers-et-al");
       if (editorName) bib += " Edited by " + editorName + ".";
       if (translatorName) bib += " Translated by " + translatorName + ".";
       if (compilerName) bib += " Compiled by " + compilerName + ".";
-      bib += " " + city + ": " + publisher + ", " + year + ".";
+      bib += " " + publicationInfo + ", " + year + "."
 
       note = (noteAuthor ? noteAuthor + ", " : "") + "<em>" + fullTitle + "</em>";
       if (editorName) note += " ed.";
       if (translatorName) note += " trans.";
       if (compilerName) note += " comp.";
-      note += " (" + city + ": " + publisher + ", " + year + "), " + pages + ".";
+      note += " (" + publicationInfo + ", " + year + "), " + pages + ".";";
 
       short = (subAuthor ? subAuthor + ", " : "") + "<em>" + title + "</em>, " + pages + ".";
     }
