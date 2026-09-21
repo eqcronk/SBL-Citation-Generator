@@ -298,6 +298,7 @@
         }
     }
          @media (max-width: 640px) {
+              
     /* Keep the Authors & Contributors fieldset inside the widget */
     .sbl-widget-container fieldset {
         width: 100%;
@@ -526,206 +527,133 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
 
 
-    <!-- STEP 2: METADATA PANEL WORKSPACE WRAPPER -->
-    <div id="sbl-step-2" class="sbl-wizard-step" style="display: none;">
+<!-- STEP 2: METADATA PANEL WORKSPACE WRAPPER -->
+<div id="sbl-step-2" class="sbl-wizard-step">
 
-        <button type="button" id="sbl-btn-back" class="sbl-back-link">
-            ← Change Source Type
-        </button>
-<!-- ==========================================
-     1. AUTHORS & CONTRIBUTORS
-     ========================================== -->
-<fieldset class="sbl-fieldset">
-    <legend>Authors &amp; Contributors</legend>
+    <button type="button" id="sbl-btn-back" class="sbl-back-link">
+        ← Change Source Type
+    </button>
 
-    <!-- Author Type Control Toggle Tiers -->
-    <div class="sbl-form-toggle-group" style="margin-bottom: 20px; background: #edf2f7; padding: 12px; border-radius: 4px;">
-        <strong style="margin-right: 15px; color: #4a5568;">Author Entry Type:</strong>
-        <label style="margin-right: 15px;">
-<input type="radio" name="sbl-author-type" id="type-author-standard" value="standard" checked onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'block', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'none', 'important');">            Author
-        </label>
-        <label style="margin-right: 15px;">
-<input type="radio" name="sbl-author-type" id="type-author-corporate" value="corporate" onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'none', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'block', 'important');">            Corporate/Organization
-        </label>
-        <label>
-<input type="radio" name="sbl-author-type" id="type-author-none" value="none" onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'none', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'none', 'important');">            None
-        </label>
-    </div>
+    <!-- ==========================================
+         1. AUTHORS & CONTRIBUTORS
+         ========================================== -->
+    <fieldset class="sbl-fieldset">
+        <legend>Authors &amp; Contributors</legend>
 
-      <!-- TIER A: STANDARD PERSONAL AUTHORS WRAPPER -->
-    <div id="sbl-standard-authors-wrapper">
-        <div class="sbl-contributor-section" style="margin-bottom: 20px;">
-            <div id="sbl-authors-container">
-                <div class="sbl-row sbl-name-row">
-                    <div class="sbl-form-group sbl-col">
-                        <label for="sbl-first-name">
-                            Author 1 First Name(s)
-                        </label>
-                        <input
-                            type="text"
-                            id="sbl-first-name"
-                            class="sbl-author-first"
-                            placeholder="e.g. Charles H."
-                        >
-                    </div>
-
-                    <div class="sbl-form-group sbl-col">
-                        <label for="sbl-last-name">
-                            Author 1 Last Name
-                        </label>
-                        <input
-                            type="text"
-                            id="sbl-last-name"
-                            class="sbl-author-last"
-                            placeholder="e.g. Talbert"
-                        >
-                    </div>
-                </div>
-            </div>
-
-            <button
-                type="button"
-                class="sbl-btn-add"
-                id="btn-add-author"
-                style="margin-top: 10px;"
-            >
-                + Add Another Author
-            </button>
-        </div>
-
-        <div
-            id="sbl-et-al-wrapper"
-            class="sbl-form-toggle-group"
-            style="display: none; margin-top: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;"
-        >
+        <!-- Author Type Control Toggle Tiers -->
+        <div class="sbl-form-toggle-group" style="margin-bottom: 20px; background: #edf2f7; padding: 12px; border-radius: 4px;">
+            <strong style="margin-right: 15px; color: #4a5568;">Author Entry Type:</strong>
+            <label style="margin-right: 15px;">
+                <input type="radio" name="sbl-author-type" id="type-author-standard" value="standard" checked onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'block', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'none', 'important');"> Author
+            </label>
+            <label style="margin-right: 15px;">
+                <input type="radio" name="sbl-author-type" id="type-author-corporate" value="corporate" onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'none', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'block', 'important');"> Corporate/Organization
+            </label>
             <label>
-                <input type="checkbox" id="sbl-four-or-more">
-                <strong>Four or more authors</strong>
+                <input type="radio" name="sbl-author-type" id="type-author-none" value="none" onclick="document.getElementById('sbl-standard-authors-wrapper').style.setProperty('display', 'none', 'important'); document.getElementById('sbl-corporate-authors-wrapper').style.setProperty('display', 'none', 'important');"> None
             </label>
         </div>
-    </div>
 
-    <!-- TIER B: CORPORATE AUTHOR WRAPPER -->
-    <div id="sbl-corporate-authors-wrapper" style="display: none; margin-bottom: 20px;">
-        <div class="sbl-row">
-            <div class="sbl-form-group sbl-col">
-                <label for="sbl-corporate-name">Corporate/Organization Author Name *</label>
-                <input type="text" id="sbl-corporate-name" placeholder="e.g. Society of Biblical Literature">
-            </div>
-        </div>
-    </div>
-
-    <!-- CONTRIBUTOR CHECKBOX PANEL -->
-    <div id="grp-contributors" class="sbl-form-toggle-group" style="margin-bottom: 15px;">
-        <label><input type="checkbox" id="sbl-has-editor" onclick="document.getElementById('row-editor').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> Has Editor(s)</label>
-        <label><input type="checkbox" id="sbl-has-translator" onclick="document.getElementById('row-translator').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> Has Translator(s)</label>
-        <label><input type="checkbox" id="sbl-has-compiler" onclick="document.getElementById('row-compiler').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> Has Compiler(s)</label>
-    </div>
-
-    <!-- SEPARATE SUB-INPUT FIELDS DISPLAY ARRAYS -->
-    <div id="sbl-toggled-fields-wrapper">
-        <!-- DYNAMIC EDITORS -->
-        <div class="sbl-row" id="row-editor" style="display: none; margin-bottom: 20px;">
-            <div class="sbl-row" style="align-items: center; margin-bottom: 10px; width: 100%;">
-                <h3 style="margin: 0; flex: 1;">Editors</h3>
-            </div>
-
-            <div id="sbl-editors-container" style="width: 100%;">
-                <div class="sbl-row sbl-name-row">
-                    <div class="sbl-form-group sbl-col">
-                        <label>Editor 1 First Name(s)</label>
-                        <input type="text" class="sbl-editor-first" placeholder="e.g. Thomas">
-                    </div>
-                    <div class="sbl-form-group sbl-col">
-                        <label>Editor 1 Last Name</label>
-                        <input type="text" class="sbl-editor-last" placeholder="e.g. Williams">
+        <!-- TIER A: STANDARD PERSONAL AUTHORS WRAPPER -->
+        <div id="sbl-standard-authors-wrapper">
+            <div class="sbl-contributor-section" style="margin-bottom: 20px;">
+                <!-- IDs removed from internal inputs to prevent duplication bugs -->
+                <div id="sbl-authors-container">
+                    <div class="sbl-row sbl-name-row" style="display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end;">
+                        <div class="sbl-form-group sbl-col" style="flex: 1;">
+                            <label><span class="row-count">Author 1</span> First Name(s)</label>
+                            <input type="text" class="sbl-author-first" placeholder="e.g. Charles H.">
+                        </div>
+                        <div class="sbl-form-group sbl-col" style="flex: 1;">
+                            <label><span class="row-count">Author 1</span> Last Name</label>
+                            <input type="text" class="sbl-author-last" placeholder="e.g. Talbert">
+                        </div>
+                        <button type="button" class="sbl-btn-remove" style="display:none; height: 38px;">&times;</button>
                     </div>
                 </div>
+
+                <button type="button" class="sbl-btn-add" id="btn-add-author" data-target="sbl-authors-container" data-prefix="Author" style="margin-top: 10px;">
+                    + Add Another Author
+                </button>
             </div>
 
-            <button
-                type="button"
-                class="sbl-btn-add"
-                id="btn-add-editor"
-                style="margin-top: 10px;"
-            >
-                + Add Another Editor
-            </button>
-            <div id="sbl-et-al-editors-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
+            <div id="sbl-et-al-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
                 <label>
-                    <input type="checkbox" id="sbl-editors-et-al">
-                    <strong>Four or more editors</strong>
+                    <input type="checkbox" id="sbl-four-or-more">
+                    <strong>Four or more authors</strong>
                 </label>
             </div>
         </div>
 
-        <!-- DYNAMIC TRANSLATORS -->
-        <div class="sbl-row" id="row-translator" style="display: none; margin-bottom: 20px;">
-            <h3>Translators</h3>
-
-            <div id="sbl-translators-container">
-                <div class="sbl-row sbl-name-row">
-                    <div class="sbl-form-group sbl-col">
-                        <label>Translator 1 First Name(s)</label>
-                        <input type="text" class="sbl-translator-first" placeholder="e.g. Peter">
-                    </div>
-                    <div class="sbl-form-group sbl-col">
-                        <label>Translator 1 Last Name</label>
-                        <input type="text" class="sbl-translator-last" placeholder="e.g. Heinegg">
-                    </div>
+        <!-- TIER B: CORPORATE AUTHOR WRAPPER -->
+        <div id="sbl-corporate-authors-wrapper" style="display: none; margin-bottom: 20px;">
+            <div class="sbl-row">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-corporate-name">Corporate/Organization Author Name *</label>
+                    <input type="text" id="sbl-corporate-name" placeholder="e.g. Society of Biblical Literature">
                 </div>
-            </div>
-
-            <button
-                type="button"
-                class="sbl-btn-add"
-                id="btn-add-translator"
-                style="margin-top: 10px;"
-            >
-                + Add Another Translator
-            </button>
-            <div id="sbl-et-al-translators-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
-                <label>
-                    <input type="checkbox" id="sbl-translators-et-al">
-                    <strong>Four or more translators</strong>
-                </label>
             </div>
         </div>
 
-        <!-- DYNAMIC COMPILERS -->
-        <div class="sbl-row" id="row-compiler" style="display: none; margin-bottom: 20px;">
-            <h3>Compilers</h3>
+        <!-- CONTRIBUTOR CHECKBOX PANEL -->
+        <div id="grp-contributors" class="sbl-form-toggle-group" style="margin-bottom: 15px;">
+            <label><input type="checkbox" id="sbl-has-editor" onclick="document.getElementById('row-editor').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> Has Editor(s)</label>
+            <label><input type="checkbox" id="sbl-has-translator" onclick="document.getElementById('row-translator').style.setProperty('display', this.checked ? 'block' : 'none', 'important')"> Has Translator(s)</label>
+        </div>
 
-            <div id="sbl-compilers-container">
-                <div class="sbl-row sbl-name-row">
-                    <div class="sbl-form-group sbl-col">
-                        <label>Compiler 1 First Name(s)</label>
-                        <input type="text" class="sbl-compiler-first" placeholder="e.g. David">
-                    </div>
-                    <div class="sbl-form-group sbl-col">
-                        <label>Compiler 1 Last Name</label>
-                        <input type="text" class="sbl-compiler-last" placeholder="e.g. Tombs">
+        <!-- SEPARATE SUB-INPUT FIELDS DISPLAY ARRAYS -->
+        <div id="sbl-toggled-fields-wrapper">
+            <!-- DYNAMIC EDITORS -->
+            <div class="sbl-row" id="row-editor" style="display: none; margin-bottom: 20px;">
+                <div class="sbl-row" style="align-items: center; margin-bottom: 10px; width: 100%;">
+                    <h3 style="margin: 0; flex: 1;">Editors</h3>
+                </div>
+
+                <div id="sbl-editors-container" style="width: 100%;">
+                    <div class="sbl-row sbl-name-row" style="display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end;">
+                        <div class="sbl-form-group sbl-col" style="flex: 1;">
+                            <label><span class="row-count">Editor 1</span> First Name(s)</label>
+                            <input type="text" class="sbl-editor-first" placeholder="e.g. Thomas">
+                        </div>
+                        <div class="sbl-form-group sbl-col" style="flex: 1;">
+                            <label><span class="row-count">Editor 1</span> Last Name</label>
+                            <input type="text" class="sbl-editor-last" placeholder="e.g. Williams">
+                        </div>
+                        <button type="button" class="sbl-btn-remove" style="display:none; height: 38px;">&times;</button>
                     </div>
                 </div>
+
+                <button type="button" class="sbl-btn-add" id="btn-add-editor" data-target="sbl-editors-container" data-prefix="Editor" style="margin-top: 10px;">
+                    + Add Another Editor
+                </button>
             </div>
 
-            <button
-                type="button"
-                class="sbl-btn-add"
-                id="btn-add-compiler"
-                style="margin-top: 10px;"
-            >
-                + Add Another Compiler
-            </button>
-            <div id="sbl-et-al-compilers-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
-                <label>
-                    <input type="checkbox" id="sbl-compilers-et-al">
-                    <strong>Four or more compilers</strong>
-                </label>
+            <!-- DYNAMIC TRANSLATORS -->
+            <div class="sbl-row" id="row-translator" style="display: none; margin-bottom: 20px;">
+                <h3>Translators</h3>
+
+                <div id="sbl-translators-container">
+                    <div class="sbl-row sbl-name-row" style="display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end;">
+                        <div class="sbl-form-group sbl-col" style="flex: 1;">
+                            <label><span class="row-count">Translator 1</span> First Name(s)</label>
+                            <input type="text" class="sbl-translator-first" placeholder="e.g. Peter">
+                        </div>
+                        <div class="sbl-form-group sbl-col" style="flex: 1;">
+                            <label><span class="row-count">Translator 1</span> Last Name</label>
+                            <input type="text" class="sbl-translator-last" placeholder="e.g. Heinegg">
+                        </div>
+                        <button type="button" class="sbl-btn-remove" style="display:none; height: 38px;">&times;</button>
+                    </div>
+                </div>
+
+                <button type="button" class="sbl-btn-add" id="btn-add-translator" data-target="sbl-translators-container" data-prefix="Translator" style="margin-top: 10px;">
+                    + Add Another Translator
+                </button>
             </div>
         </div>
-    </div>
-</fieldset>
+    </fieldset>
+</div>
+
 
 <!-- ==========================================
      2A. BOOK TITLE FIELDS
@@ -1500,6 +1428,87 @@ document.addEventListener("DOMContentLoaded", function () {
     generateSBLCitation();
   });
 })();
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    
+    // 1. Hook an event listener to the entire document body (Event Delegation)
+    document.body.addEventListener("click", function (event) {
+        
+        // Handle "Add Another" button clicks
+        if (event.target && event.target.classList.contains("sbl-btn-add")) {
+            const button = event.target;
+            const containerId = button.getAttribute("data-target");
+            const container = document.getElementById(containerId);
+            const prefix = button.getAttribute("data-prefix");
+
+            if (!container) return;
+
+            // Grab the very first row inside the container to use as a blueprint template
+            const templateRow = container.querySelector(".sbl-name-row");
+            if (!templateRow) return;
+
+            // Deep clone the template element row
+            const newRow = templateRow.cloneNode(true);
+
+            // Clean values out of the newly cloned input components
+            const inputs = newRow.querySelectorAll("input[type='text']");
+            inputs.forEach(input => {
+                input.value = "";
+            });
+
+            // Make sure the remove button is visible on the newly added rows
+            const removeBtn = newRow.querySelector(".sbl-btn-remove");
+            if (removeBtn) {
+                removeBtn.style.display = "inline-block";
+            }
+
+            // Append our pristine new input block into the tracking container
+            container.appendChild(newRow);
+
+            // Dynamically recalculate field index positions (e.g., Author 1, Author 2)
+            updateRowIndexes(container, prefix);
+        }
+
+        // Handle "Remove" button clicks
+        if (event.target && event.target.classList.contains("sbl-btn-remove")) {
+            const removeBtn = event.target;
+            const rowToRemove = removeBtn.closest(".sbl-name-row");
+            const container = rowToRemove.closest("[id\$='container']");
+            
+            // Find out what section prefix this belongs to by looking at the nearest add button
+            const sectionWrapper = container.closest(".sbl-contributor-section, .sbl-row");
+            const addButton = sectionWrapper.querySelector(".sbl-btn-add");
+            const prefix = addButton ? addButton.getAttribute("data-prefix") : "Contributor";
+
+            // Remove row layout safely from DOM
+            rowToRemove.remove();
+
+            // Refresh sequence indexes so labels don't skip numbers
+            updateRowIndexes(container, prefix);
+        }
+    });
+
+    // Helper utility to update field numbers dynamically (e.g., 1, 2, 3...)
+    function updateRowIndexes(container, prefix) {
+        const rows = container.querySelectorAll(".sbl-name-row");
+        rows.forEach((row, index) => {
+            const displayIndex = index + 1;
+            
+            // Find labels that track count positions and rename them cleanly
+            const counterSpans = row.querySelectorAll(".row-count");
+            counterSpans.forEach(span => {
+                span.textContent = `${prefix} ${displayIndex}`;
+            });
+
+            // Keep the deletion option hidden if it is the only input item left standing
+            const removeBtn = row.querySelector(".sbl-btn-remove");
+            if (removeBtn) {
+                removeBtn.style.display = (rows.length === 1) ? "none" : "inline-block";
+            }
+        });
+    }
+});
 </script>
 
 </body>
