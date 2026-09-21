@@ -1119,8 +1119,17 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- Co-publication / Joint publication -->
 <div class="sbl-form-toggle-group" style="margin-top: 8px;">
     <label>
-        <input type="checkbox" id="sbl-co-publication">
-        Co-publication / Joint publication
+          <input
+              type="checkbox"
+              id="sbl-co-publication"
+              onchange="
+                  document.getElementById('sbl-co-publication-fields').style.display =
+                  this.checked ? 'block' : 'none';
+                  if (typeof generateSBLCitation === 'function') {
+                      generateSBLCitation();
+                  }
+              "
+          >        Co-publication / Joint publication
     </label>
 </div>
 
