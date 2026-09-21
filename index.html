@@ -506,30 +506,29 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 </script>
 
-    <h2>SBL Citation Generator</h2>
+      <!-- ==========================================
+         STEP 1: SOURCE TYPE SELECTION PANEL 
+         ========================================== -->
+    <div id="sbl-step-1" class="sbl-wizard-step">
+        <div class="sbl-form-group">
+            <label for="sbl-type" class="sbl-source-question">
+                What type of source are you citing?
+            </label>
 
-<!-- STEP 1: SOURCE TYPE SELECTION PANEL -->
-<div id="sbl-step-1" class="sbl-wizard-step">
-    <div class="sbl-form-group">
-        <label for="sbl-type" class="sbl-source-question">
-            What type of source are you citing?
-        </label>
+            <select id="sbl-type" class="sbl-source-select">
+                <option value="book">Book</option>
+                <option value="chapter">Chapter / Essay in a Book</option>
+                <option value="article">Journal Article</option>
+                <option value="commentary">Bible Commentary</option>
+                <option value="thesis">Dissertation / Thesis</option>
+                <option value="bible">Biblical Text</option>
+            </select>
+        </div>
 
-        <select id="sbl-type" class="sbl-source-select">
-            <option value="book">Book</option>
-            <option value="chapter">Chapter / Essay in a Book</option>
-            <option value="article">Journal Article</option>
-            <option value="commentary">Bible Commentary</option>
-            <option value="thesis">Dissertation / Thesis</option>
-            <option value="bible">Biblical Text</option>
-        </select>
+        <button type="button" id="sbl-btn-continue" class="sbl-primary-btn">
+            Select &amp; Continue →
+        </button>
     </div>
-
-    <button type="button" id="sbl-btn-continue" class="sbl-primary-btn">
-        Select &amp; Continue →
-    </button>
-</div>
-
 
 <!-- STEP 2: METADATA PANEL WORKSPACE WRAPPER -->
 <!-- Added inline style declaration alongside your class choice to guarantee concealment -->
