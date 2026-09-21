@@ -513,7 +513,7 @@
         <!-- ==========================================
            STEP 1: SOURCE TYPE SELECTION PANEL 
            ========================================== -->
-        <div id="sbl-step-1" class="sbl-wizard-step">
+        <div id="sbl-step-1" class="sbl-wizard-step is-hidden">
             <div class="sbl-form-group">
                 <label for="sbl-type" class="sbl-source-question">
                     What type of source are you citing?
@@ -528,14 +528,14 @@
                 </select>
             </div>
             <button type="button" id="sbl-btn-continue" class="sbl-primary-btn">
-                Select &amp; Continue →
+                Select →
             </button>
         </div>
 
         <!-- ==========================================
            STEP 2: METADATA PANEL WORKSPACE WRAPPER
            ========================================== -->
-       <div id="sbl-step-2" class="sbl-wizard-step is-hidden" style="display: none !important;">
+       <div id="sbl-step-2" class="sbl-wizard-step" style="display: none !important;">
 
         <button type="button" id="sbl-btn-back" class="sbl-back-link">
             ← Change Source Type
