@@ -1384,11 +1384,35 @@ const publicationInfo =
       coPublicationCity + ": " + coPublisher
     : city + ": " + publisher;
 
-const publicationInfo = isCoPublication && city2 && publisher2
-  ? city + ": " + publisher + "; " + city2 + ": " + publisher2
-  : city + ": " + publisher;
-    const year = q("#sbl-year")?.value.trim() || "[Year]";
-    const pages = q("#sbl-pages")?.value.trim() || "##";
+const city =
+  document.getElementById("sbl-city")?.value.trim() || "[City]";
+
+const publisher =
+  document.getElementById("sbl-publisher")?.value.trim() || "[Publisher]";
+
+const year =
+  document.getElementById("sbl-year")?.value.trim() || "[Year]";
+
+const pDisplay =
+  document.getElementById("sbl-pages")?.value.trim() || "##";
+
+const range =
+  document.getElementById("sbl-range")?.value.trim() || "##-##";
+
+const coPublicationEnabled =
+  document.getElementById("sbl-co-publication")?.checked || false;
+
+const coPublicationCity =
+  document.getElementById("sbl-city-2")?.value.trim() || "";
+
+const coPublisher =
+  document.getElementById("sbl-publisher-2")?.value.trim() || "";
+
+const publicationInfo =
+  coPublicationEnabled && coPublicationCity && coPublisher
+    ? city + ": " + publisher + "; " +
+      coPublicationCity + ": " + coPublisher
+    : city + ": " + publisher;
     const range = q("#sbl-range")?.value.trim() || "##-##";
 
     const editors = getAuthorNames("sbl-editor-first", "sbl-editor-last");
