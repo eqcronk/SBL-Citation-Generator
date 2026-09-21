@@ -1430,7 +1430,7 @@ const compilerName = formatContributors(compilers, "sbl-compilers-et-al");
       if (editorStr) noteCitation += " ed.";
       if (translatorStr) noteCitation += " trans.";
       if (compilerStr) noteCitation += " comp.";
-     noteCitation += " (" + publicationInfo + ", " + year + "), " + pDisplay + ".";
+          noteCitation += " (" + publicationInfo + ", " + year + "), " + pDisplay + ".";
          
       subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + "<em>" + shortT + "</em>, " + pDisplay + ".";
     }
@@ -1611,11 +1611,32 @@ const compilerName = formatContributors(compilers, "sbl-compilers-et-al");
       }
     }
 
-    const city = q("#sbl-city")?.value.trim() || "[City]";
-    const publisher = q("#sbl-publisher")?.value.trim() || "[Publisher]";
-     const isCoPublication = q("#sbl-co-publication")?.checked;
-     const city2 = q("#sbl-city-2")?.value.trim() || "";
-     const publisher2 = q("#sbl-publisher-2")?.value.trim() || "";
+   const city =
+  document.getElementById("sbl-city")?.value.trim() || "[City]";
+
+const publisher =
+  document.getElementById("sbl-publisher")?.value.trim() || "[Publisher]";
+
+const year =
+  document.getElementById("sbl-year")?.value.trim() || "[Year]";
+
+const pDisplay =
+  document.getElementById("sbl-pages")?.value.trim() || "##";
+
+const coPublicationEnabled =
+  document.getElementById("sbl-co-publication")?.checked;
+
+const coPublicationCity =
+  document.getElementById("sbl-city-2")?.value.trim() || "";
+
+const coPublisher =
+  document.getElementById("sbl-publisher-2")?.value.trim() || "";
+
+const publicationInfo =
+  coPublicationEnabled && coPublicationCity && coPublisher
+    ? city + ": " + publisher + "; " +
+      coPublicationCity + ": " + coPublisher
+    : city + ": " + publisher;
 
 const publicationInfo = isCoPublication && city2 && publisher2
   ? city + ": " + publisher + "; " + city2 + ": " + publisher2
