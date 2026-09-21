@@ -1375,7 +1375,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const city = document.getElementById("sbl-city")?.value.trim() || "[City]";
     const publisher = document.getElementById("sbl-publisher")?.value.trim() || "[Publisher]";
     const year = document.getElementById("sbl-year")?.value.trim() || "[Year]";
-    const pDisplay = document.getElementById("sbl-pages")?.value.trim() || "##";
+    const coPublicationEnabled =
+  document.getElementById("sbl-co-publication")?.checked;
+
+const coPublicationCity =
+  document.getElementById("sbl-city-2")?.value.trim() || "";
+
+const coPublisher =
+  document.getElementById("sbl-publisher-2")?.value.trim() || "";
+
+const publicationInfo =
+  coPublicationEnabled && coPublicationCity && coPublisher
+    ? `${city}: ${publisher}; ${coPublicationCity}: ${coPublisher}`
+    : `${city}: ${publisher}`;
+     const pDisplay = document.getElementById("sbl-pages")?.value.trim() || "##";
 
   function formatContributors(list, etAlId) {
     if (!list.length) return "";
@@ -1411,14 +1424,14 @@ const compilerName = formatContributors(compilers, "sbl-compilers-et-al");
       if (editorStr) bibCitation += " Edited by " + editorStr + ".";
       if (translatorStr) bibCitation += " Translated by " + translatorStr + ".";
       if (compilerStr) bibCitation += " Compiled by " + compilerStr + ".";
-      bibCitation += " " + city + ": " + publisher + ", " + year + ".";
+      bibCitation += " " + publicationInfo + ", " + year + ".";
 
       noteCitation = (noteAuthorStr ? noteAuthorStr + ", " : "") + "<em>" + fullT + "</em>";
       if (editorStr) noteCitation += " ed.";
       if (translatorStr) noteCitation += " trans.";
       if (compilerStr) noteCitation += " comp.";
-      noteCitation += " (" + city + ": " + publisher + ", " + year + "), " + pDisplay + ".";
-
+     noteCitation += " (" + publicationInfo + ", " + year + "), " + pDisplay + ".";
+         
       subCitation = (subAuthorStr ? subAuthorStr + ", " : "") + "<em>" + shortT + "</em>, " + pDisplay + ".";
     }
     else if (currentSourceType === "chapter") {
@@ -1488,29 +1501,40 @@ const compilerName = formatContributors(compilers, "sbl-compilers-et-al");
       }
     }
   };
-document.addEventListener("DOMContentLoaded", function () {
-    const widget = document.querySelector(".sbl-widget-container");
-    if (widget) {
-        widget.addEventListener("input", generateSBLCitation);
-        widget.addEventListener("change", generateSBLCitation);
-    }
 
-    const coPublicationToggle = document.getElementById("sbl-co-publication");
-    const coPublicationFields = document.getElementById("sbl-co-publication-fields");
-
-    if (coPublicationToggle && coPublicationFields) {
-        coPublicationToggle.addEventListener("change", function () {
-            coPublicationFields.style.display = this.checked ? "block" : "none";
-            generateSBLCitation();
-        });
-    }
-});
-    }
 
     if (typeof w.generateSBLCitation === "function") {
       w.generateSBLCitation();
     }
   });
+     document.addEventListener("DOMContentLoaded", function () {
+  const widget = document.querySelector(".sbl-widget-container");
+
+  if (!widget) return;
+
+  widget.addEventListener("input", function () {
+    w.generateSBLCitation();
+  });
+
+  widget.addEventListener("change", function () {
+    w.generateSBLCitation();
+  });
+
+  const coPublicationToggle =
+    document.getElementById("sbl-co-publication");
+
+  const coPublicationFields =
+    document.getElementById("sbl-co-publication-fields");
+
+  if (coPublicationToggle && coPublicationFields) {
+    coPublicationToggle.addEventListener("change", function () {
+      coPublicationFields.style.display =
+        this.checked ? "block" : "none";
+
+      w.generateSBLCitation();
+    });
+  }
+});
 })(window);
 </script>
 
