@@ -509,30 +509,31 @@ document.addEventListener("DOMContentLoaded", function () {
     <h2>SBL Citation Generator</h2>
 
 <!-- STEP 1: SOURCE TYPE SELECTION PANEL -->
-    <div id="sbl-step-1" class="sbl-wizard-step">
-        <div class="sbl-form-group">
-            <label for="sbl-type" class="sbl-source-question">
-                What type of source are you citing?
-            </label>
+<div id="sbl-step-1" class="sbl-wizard-step">
+    <div class="sbl-form-group">
+        <label for="sbl-type" class="sbl-source-question">
+            What type of source are you citing?
+        </label>
 
-            <select id="sbl-type" class="sbl-source-select">
-                <option value="book">Book</option>
-                <option value="chapter">Chapter / Essay in a Book</option>
-                <option value="article">Journal Article</option>
-                <option value="commentary">Bible Commentary</option>
-                <option value="thesis">Dissertation / Thesis</option>
-                <option value="bible">Biblical Text</option>
-            </select>
-        </div>
-
-        <button type="button" id="sbl-btn-continue" class="sbl-primary-btn">
-            Select &amp; Continue →
-        </button>
+        <select id="sbl-type" class="sbl-source-select">
+            <option value="book">Book</option>
+            <option value="chapter">Chapter / Essay in a Book</option>
+            <option value="article">Journal Article</option>
+            <option value="commentary">Bible Commentary</option>
+            <option value="thesis">Dissertation / Thesis</option>
+            <option value="bible">Biblical Text</option>
+        </select>
     </div>
+
+    <button type="button" id="sbl-btn-continue" class="sbl-primary-btn">
+        Select &amp; Continue →
+    </button>
+</div>
 
 
 <!-- STEP 2: METADATA PANEL WORKSPACE WRAPPER -->
-<div id="sbl-step-2" class="sbl-wizard-step is-hidden">
+<!-- Added inline style declaration alongside your class choice to guarantee concealment -->
+<div id="sbl-step-2" class="sbl-wizard-step is-hidden" style="display: none !important;">
 
     <button type="button" id="sbl-btn-back" class="sbl-back-link">
         ← Change Source Type
@@ -561,7 +562,6 @@ document.addEventListener("DOMContentLoaded", function () {
         <!-- TIER A: STANDARD PERSONAL AUTHORS WRAPPER -->
         <div id="sbl-standard-authors-wrapper">
             <div class="sbl-contributor-section" style="margin-bottom: 20px;">
-                <!-- IDs removed from internal inputs to prevent duplication bugs -->
                 <div id="sbl-authors-container">
                     <div class="sbl-row sbl-name-row" style="display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-end;">
                         <div class="sbl-form-group sbl-col" style="flex: 1;">
@@ -653,10 +653,10 @@ document.addEventListener("DOMContentLoaded", function () {
                 <button type="button" class="sbl-btn-add" id="btn-add-translator" data-target="sbl-translators-container" data-prefix="Translator" style="margin-top: 10px;">
                     + Add Another Translator
                 </button>
-            </div>
-        </div>
-    </fieldset>
-</div>
+            </div> <!-- Closed row-translator container -->
+        </div> <!-- Closed sbl-toggled-fields-wrapper -->
+    </fieldset> <!-- Closed sbl-fieldset -->
+</div> <!-- Closed sbl-step-2 container -->
 
 
 <!-- ==========================================
