@@ -6,10 +6,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SBL Citation Generator</title><style>
-    /* ==========================================================================
+    <title>SBL Citation Generator</title>
+/* ==========================================================================
        SBL PREMIUM ACADEMIC THEME CONFIGURATION
        ========================================================================== */
+     <style>
+    /* Hidden utility state */
+        .sbl-wizard-step.is-hidden {
+            display: none !important;
+      }
     body {
         background-color: #f1f5f9;
         margin: 0;
@@ -468,76 +473,74 @@
 #sbl-et-al-compilers-wrapper input {
     flex: 0 0 auto;
 }   
-              .sbl-wizard-step.is-hidden {
-    display: none !important;
-}
 
-</style>
-
-
-
+     </style>
 </head>
-     <body>
-          <div class="sbl-widget-container">
-          <script>
-document.addEventListener("DOMContentLoaded", function () {
-    const continueButton = document.getElementById("sbl-btn-continue");
-    const backButton = document.getElementById("sbl-btn-back");
-    const step1 = document.getElementById("sbl-step-1");
-    const step2 = document.getElementById("sbl-step-2");
+<body>
 
-    if (!continueButton || !step1 || !step2) {
-        return;
-    }
+     
+   <!-- Main UI Layout Container -->
+    <div class="sbl-widget-container">
+        
+        <!-- JavaScript Navigation Logic Engine -->
+        <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const continueButton = document.getElementById("sbl-btn-continue");
+            const backButton = document.getElementById("sbl-btn-back");
+            const step1 = document.getElementById("sbl-step-1");
+            const step2 = document.getElementById("sbl-step-2");
 
-    continueButton.addEventListener("click", function () {
-        step1.style.display = "none";
-        step2.classList.add("sbl-step-active");
-        step2.style.display = "block";
-    });
+            if (!continueButton || !step1 || !step2) {
+                return;
+            }
 
-    if (backButton) {
-        backButton.addEventListener("click", function () {
-            step2.classList.remove("sbl-step-active");
-            step2.style.display = "none";
-            step1.style.display = "block";
+            continueButton.addEventListener("click", function () {
+                step1.style.display = "none";
+                step2.classList.add("sbl-step-active");
+                step2.style.setProperty('display', 'block', 'important');
+            });
+
+            if (backButton) {
+                backButton.addEventListener("click", function () {
+                    step2.classList.remove("sbl-step-active");
+                    step2.style.setProperty('display', 'none', 'important');
+                    step1.style.display = "block";
+                });
+            }
         });
-    }
-});
-</script>
+        </script>
 
-      <!-- ==========================================
-         STEP 1: SOURCE TYPE SELECTION PANEL 
-         ========================================== -->
-    <div id="sbl-step-1" class="sbl-wizard-step">
-        <div class="sbl-form-group">
-            <label for="sbl-type" class="sbl-source-question">
-                What type of source are you citing?
-            </label>
-
-            <select id="sbl-type" class="sbl-source-select">
-                <option value="book">Book</option>
-                <option value="chapter">Chapter / Essay in a Book</option>
-                <option value="article">Journal Article</option>
-                <option value="commentary">Bible Commentary</option>
-                <option value="thesis">Dissertation / Thesis</option>
-                <option value="bible">Biblical Text</option>
-            </select>
+        <!-- ==========================================
+           STEP 1: SOURCE TYPE SELECTION PANEL 
+           ========================================== -->
+        <div id="sbl-step-1" class="sbl-wizard-step">
+            <div class="sbl-form-group">
+                <label for="sbl-type" class="sbl-source-question">
+                    What type of source are you citing?
+                </label>
+                <select id="sbl-type" class="sbl-source-select">
+                    <option value="book">Book</option>
+                    <option value="chapter">Chapter / Essay in a Book</option>
+                    <option value="article">Journal Article</option>
+                    <option value="commentary">Bible Commentary</option>
+                    <option value="thesis">Dissertation / Thesis</option>
+                    <option value="bible">Biblical Text</option>
+                </select>
+            </div>
+            <button type="button" id="sbl-btn-continue" class="sbl-primary-btn">
+                Select &amp; Continue →
+            </button>
         </div>
 
-        <button type="button" id="sbl-btn-continue" class="sbl-primary-btn">
-            Select &amp; Continue →
-        </button>
-    </div>
+        <!-- ==========================================
+           STEP 2: METADATA PANEL WORKSPACE WRAPPER
+           ========================================== -->
+        <div id="sbl-step-2" class="sbl-wizard-step is-hidden" style="display: none !important;">
+             <!-- Paste your full Step 2 HTML content right here... -->
+        </div>
 
-<!-- STEP 2: METADATA PANEL WORKSPACE WRAPPER -->
-<!-- Added inline style declaration alongside your class choice to guarantee concealment -->
-<div id="sbl-step-2" class="sbl-wizard-step is-hidden" style="display: none !important;">
-
-    <button type="button" id="sbl-btn-back" class="sbl-back-link">
-        ← Change Source Type
-    </button>
-
+    </div> <!-- THIS CLOSES SBL-WIDGET-CONTAINER AT THE VERY END OF YOUR FORMS -->
+</body>
     <!-- ==========================================
          1. AUTHORS & CONTRIBUTORS
          ========================================== -->
