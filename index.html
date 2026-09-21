@@ -1358,14 +1358,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const pages = q("#sbl-pages")?.value.trim() || "##";
     const range = q("#sbl-range")?.value.trim() || "##-##";
 
-    const coPublicationEnabled = q("#sbl-co-publication")?.checked || false;
-    const coPublicationCity = q("#sbl-city-2")?.value.trim() || "";
-    const coPublisher = q("#sbl-publisher-2")?.value.trim() || "";
+    const coPublicationEnabled =
+    document.getElementById("sbl-co-publication")?.checked || false;
 
-    const publicationInfo =
-      coPublicationEnabled && coPublicationCity && coPublisher
-        ? city + ": " + publisher + "; " + coPublicationCity + ": " + coPublisher
-        : city + ": " + publisher;
+     const coPublicationCity =
+         document.getElementById("sbl-city-2")?.value.trim() || "";
+     
+     const coPublisher =
+         document.getElementById("sbl-publisher-2")?.value.trim() || "";
+     
+     const publicationInfo =
+         coPublicationEnabled && coPublicationCity && coPublisher
+             ? city + ": " + publisher + "; " +
+               coPublicationCity + ": " + coPublisher
+             : city + ": " + publisher;
 
     const editors = getAuthorNames("sbl-editor-first", "sbl-editor-last");
     const translators = getAuthorNames("sbl-translator-first", "sbl-translator-last");
