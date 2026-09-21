@@ -1460,20 +1460,27 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   document.addEventListener("DOMContentLoaded", function () {
-    const widget = q(".sbl-widget-container");
+    const widget = document.querySelector(".sbl-widget-container");
 
     if (widget) {
       widget.addEventListener("input", generateSBLCitation);
       widget.addEventListener("change", generateSBLCitation);
     }
 
-    const coPublicationToggle = q("#sbl-co-publication");
-    const coPublicationFields = q("#sbl-co-publication-fields");
+    const coPublicationToggle =
+      document.getElementById("sbl-co-publication");
+
+    const coPublicationFields =
+      document.getElementById("sbl-co-publication-fields");
 
     if (coPublicationToggle && coPublicationFields) {
       coPublicationToggle.addEventListener("change", function () {
         coPublicationFields.style.display =
           this.checked ? "block" : "none";
+
+        generateSBLCitation();
+      });
+    }
 
     generateSBLCitation();
   });
