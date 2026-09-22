@@ -446,7 +446,21 @@
     display: block !important;
 }
 }
-                  /* Keep "Four or more..." checkbox labels on one line */
+                  /* Read-only type indicator — matches .sbl-back-link visually but is not interactive */
+    .sbl-selected-type {
+        text-align: center;
+        margin: -22px 0 28px 0;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #1e3a8a;
+    }
+
+    .sbl-selected-type-value {
+        font-weight: 600;
+        color: #1e3a8a;
+    }
+
+    /* Keep "Four or more..." checkbox labels on one line */
 #sbl-et-al-wrapper label,
 #sbl-et-al-editors-wrapper label,
 #sbl-et-al-translators-wrapper label,
@@ -480,28 +494,294 @@ document.addEventListener("DOMContentLoaded", function () {
     const backButton = document.getElementById("sbl-btn-back");
     const step1 = document.getElementById("sbl-step-1");
     const step2 = document.getElementById("sbl-step-2");
+    const typeSelect = document.getElementById("sbl-type");
+    const badge = document.getElementById("sbl-selected-type");
+    const badgeValue = document.getElementById("sbl-selected-type-value");
 
     if (!continueButton || !step1 || !step2) {
         return;
     }
 
+    // Copy the selected option's visible text into the badge under the title.
+    function refreshSelectedTypeBadge() {
+        if (!typeSelect || !badgeValue) {
+            return;
+        }
+        const option = typeSelect.options[typeSelect.selectedIndex];
+        badgeValue.textContent = option ? option.text.trim() : "";
+    }
+
     continueButton.addEventListener("click", function () {
+        updateMetadataContainers();
         step1.style.display = "none";
         step2.classList.add("sbl-step-active");
         step2.style.display = "block";
+
+        refreshSelectedTypeBadge();
+        if (badge) {
+            badge.style.display = "block";
+        }
     });
+
+    // If the type is changed later, keep the badge text in sync.
+    if (typeSelect) {
+        typeSelect.addEventListener("change", refreshSelectedTypeBadge);
+    }
+
+    // Show the metadata container that matches the selected source type, hide the rest
+    function updateMetadataContainers() {
+        var type = typeSelect ? typeSelect.value : "book";
+        var containerMap = {
+            "book":       "sbl-book-metadata-container",
+            "chapter":    "sbl-chapter-metadata-container",
+            "article":    "sbl-journal-metadata-container",
+            "commentary": "sbl-commentary-metadata-container",
+            "thesis":     "sbl-thesis-metadata-container",
+            "bible":      "sbl-bible-metadata-container"
+        };
+
+        // Hide every type-specific metadata container first
+        Object.keys(containerMap).forEach(function (key) {
+            var el = document.getElementById(containerMap[key]);
+            if (el) { el.style.display = "none"; }
+        });
+
+        // Show the matching one
+        var targetId = containerMap[type];
+        if (targetId) {
+            var target = document.getElementById(targetId);
+            if (target) { target.style.display = "block"; }
+        }
+
+        // ── Grab shared section references ──
+        var serialSection = document.getElementById("grp-serial-metadata");
+        var rowJournal    = document.getElementById("row-journal-meta");
+        var rowBook       = document.getElementById("row-book-series-meta");
+        var pubFieldset   = document.getElementById("sbl-publication-fieldset");
+        var rowImprint    = document.getElementById("row-imprint");
+        var rowJointPub   = document.getElementById("row-joint-pub");
+        var rowJointFlds  = document.getElementById("sbl-co-publication-fields");
+        var grpYear       = document.getElementById("grp-year-field");
+        var rowYearPages  = document.getElementById("row-year-pages");
+
+        // ── Authors fieldset, sub-type wrappers & output panel ──
+        var authorsFieldset  = document.getElementById("sbl-authors-fieldset");
+        var commWrapper      = document.getElementById("sbl-comm-subtype-wrapper");
+        var commContainer    = document.getElementById("sbl-commentary-metadata-container");
+        var thesisWrapper    = document.getElementById("sbl-thesis-subtype-wrapper");
+        var thesisContainer  = document.getElementById("sbl-thesis-metadata-container");
+        var outputWrapper    = document.getElementById("sbl-output-wrapper");
+
+        if (type === "thesis") {
+            // Show sub-type question; hide Authors, thesis container, output, shared sections
+            if (thesisWrapper)   { thesisWrapper.style.display   = "block"; }
+            if (authorsFieldset) { authorsFieldset.style.display = "none"; }
+            if (thesisContainer) { thesisContainer.style.display = "none"; }
+            if (commWrapper)     { commWrapper.style.display     = "none"; }
+            if (outputWrapper)   { outputWrapper.style.display   = "none"; }
+            if (serialSection)   { serialSection.style.display   = "none"; }
+            if (rowJournal)      { rowJournal.style.display      = "none"; }
+            if (rowBook)         { rowBook.style.display         = "none"; }
+            if (pubFieldset)     { pubFieldset.style.display     = "none"; }
+            if (rowImprint)      { rowImprint.style.display      = "none"; }
+            if (rowJointPub)     { rowJointPub.style.display     = "none"; }
+            if (rowJointFlds)    { rowJointFlds.style.display    = "none"; }
+            if (rowYearPages)    { rowYearPages.style.display    = "none"; }
+
+        } else if (type === "article") {
+            // Authors visible, commentary/thesis wrappers hidden, output visible
+            if (authorsFieldset) { authorsFieldset.style.display = ""; }
+            if (commWrapper)     { commWrapper.style.display     = "none"; }
+            if (thesisWrapper)   { thesisWrapper.style.display   = "none"; }
+            if (outputWrapper)   { outputWrapper.style.display   = ""; }
+            // Show journal serial fields; hide book serial fields
+            if (serialSection) { serialSection.style.display = ""; }
+            if (rowJournal)    { rowJournal.style.display    = "block"; }
+            if (rowBook)       { rowBook.style.display       = "none"; }
+            // Show publication section but hide fields not relevant to articles
+            if (pubFieldset)   { pubFieldset.style.display   = ""; }
+            if (rowImprint)    { rowImprint.style.display    = "none"; }
+            if (rowJointPub)   { rowJointPub.style.display   = "none"; }
+            if (rowJointFlds)  { rowJointFlds.style.display  = "none"; }
+            if (grpYear)       { grpYear.style.display       = "none"; }
+
+        } else if (type === "commentary") {
+            // Show the sub-type question ABOVE Authors; hide Authors, form, and output
+            if (commWrapper)     { commWrapper.style.display     = "block"; }
+            if (thesisWrapper)   { thesisWrapper.style.display   = "none"; }
+            if (authorsFieldset) { authorsFieldset.style.display = "none"; }
+            if (commContainer)   { commContainer.style.display   = "none"; }
+            if (outputWrapper)   { outputWrapper.style.display   = "none"; }
+            // Hide all shared sections (commentary has its own)
+            if (serialSection) { serialSection.style.display = "none"; }
+            if (rowJournal)    { rowJournal.style.display    = "none"; }
+            if (rowBook)       { rowBook.style.display       = "none"; }
+            if (pubFieldset)   { pubFieldset.style.display   = "none"; }
+            if (rowImprint)    { rowImprint.style.display    = "none"; }
+            if (rowJointPub)   { rowJointPub.style.display   = "none"; }
+            if (rowJointFlds)  { rowJointFlds.style.display  = "none"; }
+            if (rowYearPages)  { rowYearPages.style.display  = "none"; }
+
+        } else if (type === "bible") {
+            // No authors or shared publication sections for biblical text
+            if (authorsFieldset) { authorsFieldset.style.display = "none"; }
+            if (commWrapper)     { commWrapper.style.display     = "none"; }
+            if (thesisWrapper)   { thesisWrapper.style.display   = "none"; }
+            if (outputWrapper)   { outputWrapper.style.display   = ""; }
+            if (serialSection)   { serialSection.style.display   = "none"; }
+            if (rowJournal)      { rowJournal.style.display      = "none"; }
+            if (rowBook)         { rowBook.style.display         = "none"; }
+            if (pubFieldset)     { pubFieldset.style.display     = "none"; }
+            if (rowImprint)      { rowImprint.style.display      = "none"; }
+            if (rowJointPub)     { rowJointPub.style.display     = "none"; }
+            if (rowJointFlds)    { rowJointFlds.style.display    = "none"; }
+            if (rowYearPages)    { rowYearPages.style.display    = "none"; }
+
+        } else {
+            // book / chapter — Authors visible, restore all shared sections
+            if (authorsFieldset) { authorsFieldset.style.display = ""; }
+            if (commWrapper)     { commWrapper.style.display     = "none"; }
+            if (thesisWrapper)   { thesisWrapper.style.display   = "none"; }
+            if (outputWrapper)   { outputWrapper.style.display   = ""; }
+            if (serialSection) { serialSection.style.display = ""; }
+            if (rowJournal)    { rowJournal.style.display    = "none"; }
+            if (rowBook)       { rowBook.style.display       = ""; }
+            if (pubFieldset)   { pubFieldset.style.display   = ""; }
+            if (rowImprint)    { rowImprint.style.display    = ""; }
+            if (rowJointPub)   { rowJointPub.style.display   = ""; }
+            if (grpYear)       { grpYear.style.display       = ""; }
+            if (rowYearPages)  { rowYearPages.style.display  = ""; }
+        }
+    }
+
+    // Resets every input in step 2 back to a blank slate
+    function flushForm() {
+        // Clear all text inputs
+        step2.querySelectorAll("input[type='text']").forEach(function (inp) {
+            inp.value = "";
+        });
+
+        // Uncheck every checkbox
+        step2.querySelectorAll("input[type='checkbox']").forEach(function (cb) {
+            cb.checked = false;
+        });
+
+        // Reset selects (thesis type, bible book, etc.) to their first option
+        step2.querySelectorAll("select").forEach(function (sel) {
+            sel.selectedIndex = 0;
+        });
+
+        // Reset author-type radio back to "standard"
+        var standardRadio = document.getElementById("type-author-standard");
+        if (standardRadio) { standardRadio.checked = true; }
+
+        // Show standard author block, hide corporate block
+        var stdWrap = document.getElementById("sbl-standard-authors-wrapper");
+        var corpWrap = document.getElementById("sbl-corporate-authors-wrapper");
+        if (stdWrap)  { stdWrap.style.removeProperty("display"); }
+        if (corpWrap) { corpWrap.style.setProperty("display", "none", "important"); }
+
+        // Hide editor / translator / compiler sections
+        ["row-editor", "row-translator", "row-compiler"].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) { el.style.setProperty("display", "none", "important"); }
+        });
+
+        // Remove dynamically-added name rows — keep only the first row per container
+        ["sbl-authors-container", "sbl-editors-container",
+         "sbl-translators-container", "sbl-compilers-container",
+         "sbl-chap-authors-container"].forEach(function (cid) {
+            var container = document.getElementById(cid);
+            if (!container) { return; }
+            var rows = Array.from(container.querySelectorAll(".sbl-name-row"));
+            for (var i = 1; i < rows.length; i++) {
+                rows[i].parentNode.removeChild(rows[i]);
+            }
+        });
+
+        // Hide all "four or more" et-al wrappers
+        ["sbl-et-al-wrapper", "sbl-et-al-editors-wrapper",
+         "sbl-et-al-translators-wrapper", "sbl-et-al-compilers-wrapper",
+         "sbl-et-al-chap-wrapper"].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) { el.style.display = "none"; }
+        });
+
+        // Restore "Add Another" buttons (may have been hidden at the 3-row cap)
+        ["btn-add-author", "btn-add-editor",
+         "btn-add-translator", "btn-add-compiler",
+         "btn-add-chap-author"].forEach(function (id) {
+            var btn = document.getElementById(id);
+            if (btn) { btn.style.display = ""; }
+        });
+
+        // Hide the co-publication extra fields
+        var coPubFields = document.getElementById("sbl-co-publication-fields");
+        if (coPubFields) { coPubFields.style.display = "none"; }
+
+        // Hide all type-specific metadata containers — updateMetadataContainers()
+        // will show the right one the next time the user clicks Continue
+        ["sbl-book-metadata-container", "sbl-chapter-metadata-container",
+         "sbl-journal-metadata-container", "sbl-commentary-metadata-container",
+         "sbl-thesis-metadata-container", "sbl-bible-metadata-container"].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) { el.style.display = "none"; }
+        });
+
+        // Reset commentary: hide sub-panels and form container
+        var commWrapper = document.getElementById("sbl-comm-subtype-wrapper");
+        var commCont    = document.getElementById("sbl-commentary-metadata-container");
+        if (commWrapper) { commWrapper.style.display = "none"; }
+        if (commCont)    { commCont.style.display    = "none"; }
+        ["sbl-comm-single-panel", "sbl-comm-multi-panel", "sbl-comm-edited-panel"].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) { el.style.display = "none"; }
+        });
+
+        // Reset thesis: hide sub-panels and form container
+        var thesisWrapper = document.getElementById("sbl-thesis-subtype-wrapper");
+        var thesisCont    = document.getElementById("sbl-thesis-metadata-container");
+        if (thesisWrapper) { thesisWrapper.style.display = "none"; }
+        if (thesisCont)    { thesisCont.style.display    = "none"; }
+        ["sbl-thesis-pub-panel", "sbl-thesis-unpub-panel"].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) { el.style.display = "none"; }
+        });
+
+        // Restore shared Authors & Contributors
+        var authors = document.getElementById("sbl-authors-fieldset");
+        if (authors) { authors.style.display = ""; }
+
+        // Reset the live citation output panels
+        var placeholder = "<em>Awaiting input fields...</em>";
+        ["sbl-bib-output", "sbl-n1-output", "sbl-n2-output"].forEach(function (id) {
+            var el = document.getElementById(id);
+            if (el) { el.innerHTML = placeholder; }
+        });
+    }
 
     if (backButton) {
         backButton.addEventListener("click", function () {
+            flushForm();
             step2.classList.remove("sbl-step-active");
             step2.style.display = "none";
             step1.style.display = "block";
+
+            // Back on the picker, so the badge is redundant.
+            if (badge) {
+                badge.style.display = "none";
+            }
         });
     }
 });
 </script>
 
     <h2>SBL Citation Generator</h2>
+
+    <!-- READ-ONLY INDICATOR OF THE CHOSEN SOURCE TYPE -->
+    <div id="sbl-selected-type" style="display: none; text-align: center; margin: -22px 0 28px 0; font-size: 0.9rem; font-weight: 600; color: #1e3a8a;">
+        Citing: <span id="sbl-selected-type-value" style="font-weight: 600; color: #1e3a8a;"></span>
+    </div>
 
 <!-- STEP 1: SOURCE TYPE SELECTION PANEL -->
     <div id="sbl-step-1" class="sbl-wizard-step">
@@ -532,10 +812,44 @@ document.addEventListener("DOMContentLoaded", function () {
         <button type="button" id="sbl-btn-back" class="sbl-back-link">
             ← Change Source Type
         </button>
+
+    <!-- Thesis sub-type question — shown above Authors for thesis only -->
+    <div id="sbl-thesis-subtype-wrapper" style="display: none;">
+        <div class="sbl-form-group" style="margin-bottom: 16px;">
+            <label for="sbl-thesis-subtype" class="sbl-source-question" style="font-size: 1rem !important; margin-bottom: 12px; display: block;">
+                Is this dissertation / thesis published or unpublished?
+            </label>
+            <select id="sbl-thesis-subtype">
+                <option value="published">Published</option>
+                <option value="unpublished">Unpublished</option>
+            </select>
+        </div>
+        <button type="button" id="sbl-thesis-subtype-continue" class="sbl-primary-btn">
+            Continue →
+        </button>
+    </div>
+
+    <!-- Commentary sub-type question — shown above Authors for commentary only -->
+    <div id="sbl-comm-subtype-wrapper" style="display: none;">
+        <div class="sbl-form-group" style="margin-bottom: 16px;">
+            <label for="sbl-comm-subtype" class="sbl-source-question" style="font-size: 1rem !important; margin-bottom: 12px; display: block;">
+                What type of commentary is this?
+            </label>
+            <select id="sbl-comm-subtype">
+                <option value="single">Single-Volume Monograph (by one author)</option>
+                <option value="multi">Part of a Multi-Volume Set (by a single author)</option>
+                <option value="edited">Edited Commentary Series (individual volume authors)</option>
+            </select>
+        </div>
+        <button type="button" id="sbl-comm-subtype-continue" class="sbl-primary-btn">
+            Continue with this type →
+        </button>
+    </div>
+
 <!-- ==========================================
      1. AUTHORS & CONTRIBUTORS
      ========================================== -->
-<fieldset class="sbl-fieldset">
+<fieldset class="sbl-fieldset" id="sbl-authors-fieldset">
     <legend>Authors &amp; Contributors</legend>
 
     <!-- Author Type Control Toggle Tiers -->
@@ -756,11 +1070,43 @@ document.addEventListener("DOMContentLoaded", function () {
     <fieldset class="sbl-fieldset" style="margin-top: 20px;">
         <legend>Chapter &amp; Book Details</legend>
 
-        <!-- Chapter Title -->
+        <!-- Chapter / Essay Title & Subtitle -->
         <div class="sbl-row" style="margin-bottom: 10px;">
-            <div class="sbl-form-group sbl-col">
+            <div class="sbl-form-group sbl-col-60">
                 <label for="sbl-inner-title">Chapter / Essay Title *</label>
                 <input type="text" id="sbl-inner-title" placeholder=" Canonical Criticism">
+            </div>
+            <div class="sbl-form-group sbl-col">
+                <label for="sbl-chap-subtitle">Chapter / Essay Subtitle</label>
+                <input type="text" id="sbl-chap-subtitle" placeholder=" A New Approach">
+            </div>
+        </div>
+
+        <!-- Chapter / Essay Authors -->
+        <div class="sbl-form-group" style="margin-bottom: 16px;">
+            <label style="font-weight: 700; color: #1e3a8a; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; margin-bottom: 10px;">
+                Chapter / Essay Author(s) *
+            </label>
+            <div id="sbl-chap-authors-container">
+                <div class="sbl-row sbl-name-row">
+                    <div class="sbl-form-group sbl-col">
+                        <label>Author 1 First Name(s)</label>
+                        <input type="text" class="sbl-chap-author-first" placeholder="e.g. Charles H.">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label>Author 1 Last Name</label>
+                        <input type="text" class="sbl-chap-author-last" placeholder="e.g. Talbert">
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="sbl-btn-add" id="btn-add-chap-author" style="margin-top: 10px;">
+                + Add Another Author
+            </button>
+            <div id="sbl-et-al-chap-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
+                <label>
+                    <input type="checkbox" id="sbl-chap-four-or-more">
+                    <strong>Four or more authors</strong>
+                </label>
             </div>
         </div>
 
@@ -772,10 +1118,10 @@ document.addEventListener("DOMContentLoaded", function () {
             </div>
         </div>
 
-        <!-- Full Chapter Range Only (Omits the duplicate footnote pages box) -->
+        <!-- Chapter Page Range -->
         <div class="sbl-row">
             <div class="sbl-form-group sbl-col">
-                <label for="sbl-chapter-range">Full Chapter Page Range *</label>
+                <label for="sbl-chapter-range">Chapter / Section Page Range *</label>
                 <input type="text" id="sbl-chapter-range" placeholder=" 23-45">
             </div>
         </div>
@@ -785,93 +1131,449 @@ document.addEventListener("DOMContentLoaded", function () {
      2C. BIBLE COMMENTARY SPECIFIC FIELDS
      ========================================== -->
 <div id="sbl-commentary-metadata-container" style="display: none;">
-    <fieldset class="sbl-fieldset" style="margin-top: 20px;">
-        <legend>Commentary Series Info</legend>
-        <div class="sbl-row" style="margin-bottom: 10px;">
-            <div class="sbl-form-group sbl-col">
-                <label for="sbl-comm-title">Commentary Volume Title *</label>
-                <input type="text" id="sbl-comm-title" placeholder=" The Gospel according to John I-XII">
+
+    <!-- ─── SINGLE-VOLUME MONOGRAPH ─── -->
+    <div id="sbl-comm-single-panel" style="display: none;">
+        <button type="button" id="sbl-comm-back-btn" class="sbl-back-link">← Change Commentary Type</button>
+
+        <fieldset class="sbl-fieldset" style="margin-top: 10px;">
+            <legend>Source Title Info</legend>
+            <div class="sbl-row" style="margin-bottom: 10px;">
+                <div class="sbl-form-group sbl-col-60">
+                    <label for="sbl-comm-single-title">Book Title *</label>
+                    <input type="text" id="sbl-comm-single-title" placeholder=" The Gospel according to John">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-single-subtitle">Book Subtitle</label>
+                    <input type="text" id="sbl-comm-single-subtitle" placeholder=" A Commentary">
+                </div>
             </div>
-        </div>
-        <div class="sbl-row">
-            <div class="sbl-form-group sbl-col">
-                <label for="sbl-comm-series">Commentary Series Name *</label>
-                <input type="text" id="sbl-comm-series" placeholder=" Anchor Bible (or abbreviation like AB)">
+            <div class="sbl-row">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-single-edition">Edition Number</label>
+                    <input type="text" id="sbl-comm-single-edition" placeholder=" 2nd ed.">
+                </div>
             </div>
-            <div class="sbl-form-group sbl-col-short">
-                <label for="sbl-comm-vol">Volume # *</label>
-                <input type="text" id="sbl-comm-vol" placeholder=" 29A">
+        </fieldset>
+
+        <fieldset class="sbl-fieldset" style="margin-top: 20px;">
+            <legend>Publication Details &amp; Access</legend>
+            <div class="sbl-row" style="margin-bottom: 10px;">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-single-city">City of Publication *</label>
+                    <input type="text" id="sbl-comm-single-city" placeholder=" New York">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-single-publisher">Publisher Name *</label>
+                    <input type="text" id="sbl-comm-single-publisher" placeholder=" Doubleday">
+                </div>
             </div>
-        </div>
-    </fieldset>
+            <div class="sbl-row">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-single-year">Year of Publication *</label>
+                    <input type="text" id="sbl-comm-single-year" placeholder=" 2024">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-single-pages">Page Number</label>
+                    <input type="text" id="sbl-comm-single-pages" placeholder=" 127">
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <!-- ─── MULTI-VOLUME SET ─── -->
+    <div id="sbl-comm-multi-panel" style="display: none;">
+        <button type="button" id="sbl-comm-back-btn-multi" class="sbl-back-link">← Change Commentary Type</button>
+
+        <fieldset class="sbl-fieldset" style="margin-top: 10px;">
+            <legend>Source Title Info</legend>
+            <div class="sbl-row" style="margin-bottom: 10px;">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-multi-set-title">Overarching Set Title *</label>
+                    <input type="text" id="sbl-comm-multi-set-title" placeholder=" Word Biblical Commentary">
+                </div>
+            </div>
+            <div class="sbl-row">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-multi-vol-title">Individual Volume Title *</label>
+                    <input type="text" id="sbl-comm-multi-vol-title" placeholder=" Romans 1-8">
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="sbl-fieldset" style="margin-top: 20px;">
+            <legend>Volume &amp; Series Info</legend>
+            <div class="sbl-row">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-multi-vol-num">Specific Volume Number *</label>
+                    <input type="text" id="sbl-comm-multi-vol-num" placeholder=" 38A">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-multi-total-vols">Total Number of Volumes</label>
+                    <input type="text" id="sbl-comm-multi-total-vols" placeholder=" 52 vols.">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-multi-edition">Edition Number</label>
+                    <input type="text" id="sbl-comm-multi-edition" placeholder=" 2nd ed.">
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="sbl-fieldset" style="margin-top: 20px;">
+            <legend>Publication Details &amp; Access</legend>
+            <div class="sbl-row" style="margin-bottom: 10px;">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-multi-city">City of Publication *</label>
+                    <input type="text" id="sbl-comm-multi-city" placeholder=" Dallas">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-multi-publisher">Publisher Name *</label>
+                    <input type="text" id="sbl-comm-multi-publisher" placeholder=" Word Books">
+                </div>
+            </div>
+            <div class="sbl-row">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-multi-year">Year of Publication *</label>
+                    <input type="text" id="sbl-comm-multi-year" placeholder=" 2024">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-multi-pages">Page Number</label>
+                    <input type="text" id="sbl-comm-multi-pages" placeholder=" 45">
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
+    <!-- ─── EDITED COMMENTARY SERIES ─── -->
+    <div id="sbl-comm-edited-panel" style="display: none;">
+        <button type="button" id="sbl-comm-back-btn-edited" class="sbl-back-link">← Change Commentary Type</button>
+
+        <fieldset class="sbl-fieldset" style="margin-top: 10px;">
+            <legend>Source Title Info</legend>
+            <div class="sbl-row" style="margin-bottom: 10px;">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-edited-vol-title">Volume Title *</label>
+                    <input type="text" id="sbl-comm-edited-vol-title" placeholder=" The Gospel according to John I-XII">
+                </div>
+            </div>
+            <div class="sbl-row">
+                <div class="sbl-form-group sbl-col-60">
+                    <label for="sbl-comm-edited-series-full">Series Full Title *</label>
+                    <input type="text" id="sbl-comm-edited-series-full" placeholder=" Anchor Bible">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-edited-series-abbr">Series Abbreviation</label>
+                    <input type="text" id="sbl-comm-edited-series-abbr" placeholder=" AB">
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="sbl-fieldset" style="margin-top: 20px;">
+            <legend>Volume &amp; Series Info</legend>
+            <div class="sbl-row">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-edited-series-vol-num">Series Volume Number *</label>
+                    <input type="text" id="sbl-comm-edited-series-vol-num" placeholder=" 29A">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-edited-total-vols">Total Number of Volumes</label>
+                    <input type="text" id="sbl-comm-edited-total-vols" placeholder=" 4 vols.">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-edited-edition">Edition Number</label>
+                    <input type="text" id="sbl-comm-edited-edition" placeholder=" 2nd ed.">
+                </div>
+            </div>
+        </fieldset>
+
+        <fieldset class="sbl-fieldset" style="margin-top: 20px;">
+            <legend>Publication Details &amp; Access</legend>
+            <div class="sbl-row" style="margin-bottom: 10px;">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-edited-city">City of Publication *</label>
+                    <input type="text" id="sbl-comm-edited-city" placeholder=" New York">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-edited-publisher">Publisher Name *</label>
+                    <input type="text" id="sbl-comm-edited-publisher" placeholder=" Doubleday">
+                </div>
+            </div>
+            <div class="sbl-row">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-edited-year">Year of Publication *</label>
+                    <input type="text" id="sbl-comm-edited-year" placeholder=" 2024">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-comm-edited-pages">Page Number</label>
+                    <input type="text" id="sbl-comm-edited-pages" placeholder=" 127">
+                </div>
+            </div>
+        </fieldset>
+    </div>
+
 </div>
 
 <!-- ==========================================
      2D. DISSERTATION / THESIS SPECIFIC FIELDS
      ========================================== -->
 <div id="sbl-thesis-metadata-container" style="display: none;">
-    <fieldset class="sbl-fieldset" style="margin-top: 20px;">
-        <legend>Academic Thesis Info</legend>
+
+    <!-- SIMPLIFIED AUTHOR(S) — no Author Type toggle, no contributors -->
+    <fieldset class="sbl-fieldset" style="margin-bottom: 20px;">
+        <legend>Author(s)</legend>
+        <div id="sbl-thesis-authors-container">
+            <div class="sbl-row sbl-name-row">
+                <div class="sbl-form-group sbl-col">
+                    <label>Author 1 First Name(s)</label>
+                    <input type="text" class="sbl-thesis-author-first" placeholder="e.g. John">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label>Author 1 Last Name</label>
+                    <input type="text" class="sbl-thesis-author-last" placeholder="e.g. Smith">
+                </div>
+            </div>
+        </div>
+        <button type="button" class="sbl-btn-add" id="btn-add-thesis-author" style="margin-top: 10px;">
+            + Add Another Author
+        </button>
+        <div id="sbl-et-al-thesis-wrapper" class="sbl-form-toggle-group" style="display: none; margin-top: 15px; background: #fffaf0; padding: 10px; border-left: 3px solid #dd6b20;">
+            <label>
+                <input type="checkbox" id="sbl-thesis-four-or-more">
+                <strong>Four or more authors</strong>
+            </label>
+        </div>
+    </fieldset>
+
+    <!-- SOURCE TITLE INFO — shared by Published & Unpublished -->
+    <fieldset class="sbl-fieldset" style="margin-bottom: 20px;">
+        <legend>Source Title Info</legend>
         <div class="sbl-row" style="margin-bottom: 10px;">
+            <div class="sbl-form-group sbl-col-60">
+                <label for="sbl-thesis-main-title">Dissertation / Thesis Title *</label>
+                <input type="text" id="sbl-thesis-main-title" placeholder=" The Rhetoric of Righteousness in Paul">
+            </div>
             <div class="sbl-form-group sbl-col">
-                <label for="sbl-thesis-title">Dissertation/Thesis Title *</label>
-                <input type="text" id="sbl-thesis-title" placeholder=" The Rhetoric of Righteousness in Paul">
+                <label for="sbl-thesis-subtitle">Subtitle</label>
+                <input type="text" id="sbl-thesis-subtitle" placeholder=" A Study in Romans">
             </div>
         </div>
         <div class="sbl-row">
             <div class="sbl-form-group sbl-col">
-                <label for="sbl-thesis-type">Degree Type *</label>
-                <select id="sbl-thesis-type">
+                <label for="sbl-thesis-degree">Degree Type *</label>
+                <select id="sbl-thesis-degree">
                     <option value="PhD diss.">PhD Dissertation</option>
+                    <option value="ThD diss.">ThD Dissertation</option>
                     <option value="ThM thesis">ThM Thesis</option>
                     <option value="MA thesis">MA Thesis</option>
+                    <option value="MDiv thesis">MDiv Thesis</option>
                 </select>
             </div>
             <div class="sbl-form-group sbl-col">
-                <label for="sbl-thesis-school">Institution/University *</label>
-                <input type="text" id="sbl-thesis-school" placeholder=" Harvard University">
+                <label for="sbl-thesis-institution">Institution Name *</label>
+                <input type="text" id="sbl-thesis-institution" placeholder=" Harvard University">
             </div>
         </div>
     </fieldset>
+
+    <!-- ─── PUBLISHED ─── -->
+    <div id="sbl-thesis-pub-panel" style="display: none;">
+        <button type="button" id="sbl-thesis-back-btn" class="sbl-back-link">← Change Published / Unpublished</button>
+
+        <fieldset class="sbl-fieldset" style="margin-top: 10px;">
+            <legend>Publication Details &amp; Access</legend>
+            <div class="sbl-row" style="margin-bottom: 10px;">
+                <div class="sbl-form-group sbl-col-60">
+                    <label for="sbl-thesis-pub-series">Publication / Series Title</label>
+                    <input type="text" id="sbl-thesis-pub-series" placeholder=" SBL Dissertation Series">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-thesis-pub-series-vol">Series Volume Number</label>
+                    <input type="text" id="sbl-thesis-pub-series-vol" placeholder=" 50">
+                </div>
+            </div>
+            <div class="sbl-row" style="margin-bottom: 10px;">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-thesis-pub-city">City of Publication *</label>
+                    <input type="text" id="sbl-thesis-pub-city" placeholder=" Atlanta">
+                </div>
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-thesis-pub-publisher">Publisher *</label>
+                    <input type="text" id="sbl-thesis-pub-publisher" placeholder=" Scholars Press">
+                </div>
+            </div>
+            <div class="sbl-row" style="margin-bottom: 10px;">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-thesis-pub-year">Year *</label>
+                    <input type="text" id="sbl-thesis-pub-year" placeholder=" 1992">
+                </div>
+            </div>
+            <div class="sbl-form-group">
+                <label for="sbl-thesis-pub-url">DOI or URL <span style="font-weight:400; color:#64748b;">(Optional)</span></label>
+                <input type="text" id="sbl-thesis-pub-url" placeholder=" https://doi.org/...">
+            </div>
+        </fieldset>
+    </div>
+
+    <!-- ─── UNPUBLISHED ─── -->
+    <div id="sbl-thesis-unpub-panel" style="display: none;">
+        <button type="button" id="sbl-thesis-back-btn-unpub" class="sbl-back-link">← Change Published / Unpublished</button>
+
+        <fieldset class="sbl-fieldset" style="margin-top: 10px;">
+            <legend>Publication Details &amp; Access</legend>
+            <div class="sbl-row" style="margin-bottom: 10px;">
+                <div class="sbl-form-group sbl-col">
+                    <label for="sbl-thesis-unpub-year">Year *</label>
+                    <input type="text" id="sbl-thesis-unpub-year" placeholder=" 1992">
+                </div>
+            </div>
+            <div class="sbl-form-group">
+                <label for="sbl-thesis-unpub-url">DOI or URL <span style="font-weight:400; color:#64748b;">(Optional)</span></label>
+                <input type="text" id="sbl-thesis-unpub-url" placeholder=" https://doi.org/...">
+            </div>
+        </fieldset>
+    </div>
+
 </div>
 
 <!-- ==========================================
      2E. BIBLICAL TEXT CITATION FIELDS
      ========================================== -->
 <div id="sbl-bible-metadata-container" style="display: none;">
+
+    <!-- Scripture Reference -->
     <fieldset class="sbl-fieldset" style="margin-top: 20px;">
-        <legend>Scripture Citation Info</legend>
+        <legend>Scripture Reference</legend>
+
+        <div class="sbl-form-group" style="margin-bottom: 14px;">
+            <label for="sbl-bible-book">Biblical Book *</label>
+            <select id="sbl-bible-book">
+                <optgroup label="── Old Testament ──">
+                    <option value="Gen">Gen — Genesis</option>
+                    <option value="Exod">Exod — Exodus</option>
+                    <option value="Lev">Lev — Leviticus</option>
+                    <option value="Num">Num — Numbers</option>
+                    <option value="Deut">Deut — Deuteronomy</option>
+                    <option value="Josh">Josh — Joshua</option>
+                    <option value="Judg">Judg — Judges</option>
+                    <option value="Ruth">Ruth — Ruth</option>
+                    <option value="1 Sam">1 Sam — 1 Samuel</option>
+                    <option value="2 Sam">2 Sam — 2 Samuel</option>
+                    <option value="1 Kgs">1 Kgs — 1 Kings</option>
+                    <option value="2 Kgs">2 Kgs — 2 Kings</option>
+                    <option value="1 Chr">1 Chr — 1 Chronicles</option>
+                    <option value="2 Chr">2 Chr — 2 Chronicles</option>
+                    <option value="Ezra">Ezra — Ezra</option>
+                    <option value="Neh">Neh — Nehemiah</option>
+                    <option value="Esth">Esth — Esther</option>
+                    <option value="Job">Job — Job</option>
+                    <option value="Ps">Ps — Psalms</option>
+                    <option value="Prov">Prov — Proverbs</option>
+                    <option value="Eccl">Eccl — Ecclesiastes</option>
+                    <option value="Song">Song — Song of Songs</option>
+                    <option value="Isa">Isa — Isaiah</option>
+                    <option value="Jer">Jer — Jeremiah</option>
+                    <option value="Lam">Lam — Lamentations</option>
+                    <option value="Ezek">Ezek — Ezekiel</option>
+                    <option value="Dan">Dan — Daniel</option>
+                    <option value="Hos">Hos — Hosea</option>
+                    <option value="Joel">Joel — Joel</option>
+                    <option value="Amos">Amos — Amos</option>
+                    <option value="Obad">Obad — Obadiah</option>
+                    <option value="Jonah">Jonah — Jonah</option>
+                    <option value="Mic">Mic — Micah</option>
+                    <option value="Nah">Nah — Nahum</option>
+                    <option value="Hab">Hab — Habakkuk</option>
+                    <option value="Zeph">Zeph — Zephaniah</option>
+                    <option value="Hag">Hag — Haggai</option>
+                    <option value="Zech">Zech — Zechariah</option>
+                    <option value="Mal">Mal — Malachi</option>
+                </optgroup>
+                <optgroup label="── New Testament ──">
+                    <option value="Matt">Matt — Matthew</option>
+                    <option value="Mark">Mark — Mark</option>
+                    <option value="Luke">Luke — Luke</option>
+                    <option value="John">John — John</option>
+                    <option value="Acts">Acts — Acts</option>
+                    <option value="Rom">Rom — Romans</option>
+                    <option value="1 Cor">1 Cor — 1 Corinthians</option>
+                    <option value="2 Cor">2 Cor — 2 Corinthians</option>
+                    <option value="Gal">Gal — Galatians</option>
+                    <option value="Eph">Eph — Ephesians</option>
+                    <option value="Phil">Phil — Philippians</option>
+                    <option value="Col">Col — Colossians</option>
+                    <option value="1 Thess">1 Thess — 1 Thessalonians</option>
+                    <option value="2 Thess">2 Thess — 2 Thessalonians</option>
+                    <option value="1 Tim">1 Tim — 1 Timothy</option>
+                    <option value="2 Tim">2 Tim — 2 Timothy</option>
+                    <option value="Titus">Titus — Titus</option>
+                    <option value="Phlm">Phlm — Philemon</option>
+                    <option value="Heb">Heb — Hebrews</option>
+                    <option value="Jas">Jas — James</option>
+                    <option value="1 Pet">1 Pet — 1 Peter</option>
+                    <option value="2 Pet">2 Pet — 2 Peter</option>
+                    <option value="1 John">1 John — 1 John</option>
+                    <option value="2 John">2 John — 2 John</option>
+                    <option value="3 John">3 John — 3 John</option>
+                    <option value="Jude">Jude — Jude</option>
+                    <option value="Rev">Rev — Revelation</option>
+                </optgroup>
+            </select>
+        </div>
+
         <div class="sbl-row">
             <div class="sbl-form-group sbl-col">
-                <label for="sbl-bible-book">Bible Book *</label>
-                <select id="sbl-bible-book">
-                    <option value="Gen">Genesis (Gen)</option>
-                    <option value="Exod">Exodus (Exod)</option>
-                    <option value="Lev">Leviticus (Lev)</option>
-                    <option value="Num">Numbers (Num)</option>
-                    <option value="Deut">Deuteronomy (Deut)</option>
-                    <option value="Ps">Psalms (Ps)</option>
-                    <option value="Isa">Isaiah (Isa)</option>
-                    <option value="Matt">Matthew (Matt)</option>
-                    <option value="Mark">Mark (Mark)</option>
-                    <option value="Luke">Luke (Luke)</option>
-                    <option value="John">John (John)</option>
-                    <option value="Acts">Acts (Acts)</option>
-                    <option value="Rom">Romans (Rom)</option>
-                    <option value="1 Cor">1 Corinthians (1 Cor)</option>
-                    <option value="Rev">Revelation (Rev)</option>
-                </select>
+                <label for="sbl-bible-chapter">Chapter Number *</label>
+                <input type="text" id="sbl-bible-chapter" placeholder=" 3">
             </div>
             <div class="sbl-form-group sbl-col">
-                <label for="sbl-bible-passage">Chapter &amp; Verse *</label>
-                <input type="text" id="sbl-bible-passage" placeholder=" 3:16">
-            </div>
-            <div class="sbl-form-group sbl-col-short">
-                <label for="sbl-bible-version">Version *</label>
-                <input type="text" id="sbl-bible-version" placeholder=" NRSV">
+                <label for="sbl-bible-verse">Verse Number(s) *</label>
+                <input type="text" id="sbl-bible-verse" placeholder=" 16  or  16–18">
             </div>
         </div>
     </fieldset>
+
+    <!-- Bible Version -->
+    <fieldset class="sbl-fieldset" style="margin-top: 20px;">
+        <legend>Bible Version</legend>
+        <div class="sbl-form-group">
+            <label for="sbl-bible-version">Version Abbreviation *</label>
+            <input type="text" id="sbl-bible-version" list="sbl-bible-versions-list"
+                   placeholder=" Type or select — ESV, NRSV, NIV…" autocomplete="off">
+            <datalist id="sbl-bible-versions-list">
+                <option value="KJV">
+                <option value="NKJV">
+                <option value="ESV">
+                <option value="NIV">
+                <option value="NIV84">
+                <option value="NRSV">
+                <option value="NRSVue">
+                <option value="NASB">
+                <option value="NASB95">
+                <option value="CSB">
+                <option value="HCSB">
+                <option value="NLT">
+                <option value="NET">
+                <option value="RSV">
+                <option value="ASV">
+                <option value="CEB">
+                <option value="MSG">
+                <option value="AMP">
+                <option value="AMPC">
+                <option value="GNT">
+                <option value="GW">
+                <option value="ISV">
+                <option value="WEB">
+                <option value="YLT">
+                <option value="VOICE">
+                <option value="NCV">
+                <option value="ERV">
+                <option value="Darby">
+                <option value="RV">
+                <option value="Geneva">
+            </datalist>
+        </div>
+    </fieldset>
+
 </div>
 <!-- ==========================================
      2F. JOURNAL ARTICLE SPECIFIC FIELDS
@@ -879,10 +1581,28 @@ document.addEventListener("DOMContentLoaded", function () {
 <div id="sbl-journal-metadata-container" style="display: none;">
     <fieldset class="sbl-fieldset" style="margin-top: 20px;">
         <legend>Journal Article Info</legend>
-        <div class="sbl-row">
-            <div class="sbl-form-group sbl-col">
+
+        <!-- Article Title & Subtitle -->
+        <div class="sbl-row" style="margin-bottom: 10px;">
+            <div class="sbl-form-group sbl-col-60">
                 <label for="sbl-article-title">Article Title *</label>
                 <input type="text" id="sbl-article-title" placeholder=" Gnosticism and the Fourth Gospel">
+            </div>
+            <div class="sbl-form-group sbl-col">
+                <label for="sbl-article-subtitle">Article Subtitle</label>
+                <input type="text" id="sbl-article-subtitle" placeholder=" A Reassessment">
+            </div>
+        </div>
+
+        <!-- Journal Titles -->
+        <div class="sbl-row">
+            <div class="sbl-form-group sbl-col-60">
+                <label for="sbl-journal-full">Full Journal Title *</label>
+                <input type="text" id="sbl-journal-full" placeholder=" Journal of Early Christian Studies">
+            </div>
+            <div class="sbl-form-group sbl-col">
+                <label for="sbl-journal-abbr">Journal Title Abbreviation</label>
+                <input type="text" id="sbl-journal-abbr" placeholder=" JECS">
             </div>
         </div>
     </fieldset>
@@ -899,56 +1619,39 @@ document.addEventListener("DOMContentLoaded", function () {
             </legend>
 
 
-            <!-- JOURNAL INFORMATION -->
-            <div
-                class="sbl-row"
-                id="row-journal-meta"
-                style="display: none;"
-            >
+            <!-- JOURNAL INFORMATION (article type only) -->
+            <div id="row-journal-meta" style="display: none;">
 
-                <div class="sbl-form-group sbl-col-60">
-
-                    <label for="sbl-journal">
-                        Journal Title
-                    </label>
-
-                    <input
-                        type="text"
-                        id="sbl-journal"
-                        placeholder=" JECS or Journal of Early Christian Studies"
-                    >
-
+                <!-- Volume & Issue -->
+                <div class="sbl-row" style="margin-bottom: 10px;">
+                    <div class="sbl-form-group sbl-col">
+                        <label for="sbl-volume">Volume Number *</label>
+                        <input type="text" id="sbl-volume" placeholder=" 42">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label for="sbl-issue">Issue Number</label>
+                        <input type="text" id="sbl-issue" placeholder=" 3">
+                    </div>
                 </div>
 
-                <div class="sbl-form-group sbl-col">
-
-                    <label for="sbl-volume">
-                        Volume
-                    </label>
-
-                    <input
-                        type="text"
-                        id="sbl-volume"
-                        placeholder=" 42"
-                    >
-
+                <!-- Month/Season & Year -->
+                <div class="sbl-row" style="margin-bottom: 10px;">
+                    <div class="sbl-form-group sbl-col">
+                        <label for="sbl-article-month">Month or Season</label>
+                        <input type="text" id="sbl-article-month" placeholder=" January or Spring">
+                    </div>
+                    <div class="sbl-form-group sbl-col">
+                        <label for="sbl-article-year">Year *</label>
+                        <input type="text" id="sbl-article-year" placeholder=" 2024">
+                    </div>
                 </div>
 
-                <div class="sbl-form-group sbl-col">
-
-                    <label for="sbl-issue">
-                        Issue
-                        <span class="sbl-optional">
-                            Optional
-                        </span>
-                    </label>
-
-                    <input
-                        type="text"
-                        id="sbl-issue"
-                        placeholder=" 3"
-                    >
-
+                <!-- Page Range (full range for bibliography) -->
+                <div class="sbl-row">
+                    <div class="sbl-form-group sbl-col">
+                        <label for="sbl-article-page-range">Page Range *</label>
+                        <input type="text" id="sbl-article-page-range" placeholder=" 45-67">
+                    </div>
                 </div>
 
             </div>
@@ -1078,7 +1781,7 @@ document.addEventListener("DOMContentLoaded", function () {
              4. PUBLICATION & ACCESS
              ========================================== -->
 
-        <fieldset class="sbl-fieldset">
+        <fieldset class="sbl-fieldset" id="sbl-publication-fieldset">
 
             <legend>Publication Details &amp; Access</legend>
 
@@ -1117,7 +1820,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
             </div>
 <!-- Joint publication -->
-<div class="sbl-form-toggle-group" style="margin-top: 8px;">
+<div id="row-joint-pub" class="sbl-form-toggle-group" style="margin-top: 8px;">
     <label>
           <input
               type="checkbox"
@@ -1160,9 +1863,9 @@ document.addEventListener("DOMContentLoaded", function () {
 </div>
 
             <!-- Year / Pages Cited -->
-            <div class="sbl-row">
+            <div class="sbl-row" id="row-year-pages">
 
-                <div class="sbl-form-group sbl-col">
+                <div class="sbl-form-group sbl-col" id="grp-year-field">
 
                     <label for="sbl-year">
                         Year Published
@@ -1249,7 +1952,7 @@ document.addEventListener("DOMContentLoaded", function () {
 <!-- ==========================================
      SBL THREE-WAY LIVE PREVIEW OUTPUT SECTION
      ========================================== -->
-<div class="sbl-output-wrapper" style="margin-top: 35px; padding: 20px; border-left: 5px solid #1a365d; background-color: #f7fafc; border-radius: 4px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);">
+<div id="sbl-output-wrapper" class="sbl-output-wrapper" style="margin-top: 35px; padding: 20px; border-left: 5px solid #1a365d; background-color: #f7fafc; border-radius: 4px; box-shadow: inset 0 1px 3px rgba(0,0,0,0.05);">
     
     <!-- Bibliography Layout Display -->
     <div style="margin-bottom: 20px;">
@@ -1344,7 +2047,24 @@ document.addEventListener("DOMContentLoaded", function () {
           bibAuthor = a[0].last + ", " + a[0].first + ", et al.";
           noteAuthor = a[0].first + " " + a[0].last + " et al.";
           subAuthor = a[0].last + " et al.";
+        } else if (a.length === 3) {
+          // Three authors — all named in full
+          bibAuthor = a[0].last + ", " + a[0].first + ", "
+                    + a[1].first + " " + a[1].last + ", and "
+                    + a[2].first + " " + a[2].last + ".";
+          noteAuthor = a[0].first + " " + a[0].last + ", "
+                     + a[1].first + " " + a[1].last + ", and "
+                     + a[2].first + " " + a[2].last;
+          subAuthor = a[0].last + ", " + a[1].last + ", and " + a[2].last;
+        } else if (a.length === 2) {
+          // Two authors
+          bibAuthor = a[0].last + ", " + a[0].first + ", and "
+                    + a[1].first + " " + a[1].last + ".";
+          noteAuthor = a[0].first + " " + a[0].last + " and "
+                     + a[1].first + " " + a[1].last;
+          subAuthor = a[0].last + " and " + a[1].last;
         } else {
+          // Single author
           bibAuthor = a[0].last + ", " + a[0].first + ".";
           noteAuthor = a[0].first + " " + a[0].last;
           subAuthor = a[0].last;
@@ -1414,54 +2134,228 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     if (sourceType === "chapter") {
-      const chapterTitle = q("#sbl-inner-title")?.value.trim() || "[Chapter Title]";
-      const bookTitle = q("#sbl-title-chap")?.value.trim() || "[Book Title]";
-      const chapRange = q("#sbl-chapter-range")?.value.trim() || "##-##";
+      const chapTitleBase = q("#sbl-inner-title")?.value.trim() || "[Chapter Title]";
+      const chapSubtitle  = q("#sbl-chap-subtitle")?.value.trim();
+      const fullChapTitle = chapSubtitle ? chapTitleBase + ": " + chapSubtitle : chapTitleBase;
+      const bookTitle     = q("#sbl-title-chap")?.value.trim() || "[Book Title]";
+      const chapRange     = q("#sbl-chapter-range")?.value.trim() || "##-##";
 
-      bib = (bibAuthor ? bibAuthor + " " : "") + '"' + chapterTitle + '." In <em>' + bookTitle + "</em>, " + chapRange + ". " + publicationInfo + ", " + year + ".";
-      note = (noteAuthor ? noteAuthor + ", " : "") + '"' + chapterTitle + '," in <em>' + bookTitle + "</em> (" + publicationInfo + ", " + year + "), " + pages + ".";
-      short = (subAuthor ? subAuthor + ", " : "") + '"' + chapterTitle + '," ' + pages + ".";
+      // Build chapter-specific author strings from the chapter author fields
+      const chapFirstFields = qa(".sbl-chap-author-first");
+      const chapLastFields  = qa(".sbl-chap-author-last");
+      const chapAuthors = [];
+      chapFirstFields.forEach(function (inp, i) {
+        const first = inp.value.trim();
+        const last  = chapLastFields[i] ? chapLastFields[i].value.trim() : "";
+        if (first || last) { chapAuthors.push({ first: first, last: last }); }
+      });
+
+      const forceChapEtAl = q("#sbl-chap-four-or-more")?.checked;
+      let chapBib = "", chapNote = "", chapShort = "";
+
+      if (chapAuthors.length) {
+        const a = chapAuthors;
+        if (forceChapEtAl || a.length >= 4) {
+          chapBib   = a[0].last + ", " + a[0].first + ", et al.";
+          chapNote  = a[0].first + " " + a[0].last + " et al.";
+          chapShort = a[0].last + " et al.";
+        } else if (a.length === 3) {
+          chapBib   = a[0].last + ", " + a[0].first + ", "
+                    + a[1].first + " " + a[1].last + ", and "
+                    + a[2].first + " " + a[2].last + ".";
+          chapNote  = a[0].first + " " + a[0].last + ", "
+                    + a[1].first + " " + a[1].last + ", and "
+                    + a[2].first + " " + a[2].last;
+          chapShort = a[0].last + ", " + a[1].last + ", and " + a[2].last;
+        } else if (a.length === 2) {
+          chapBib   = a[0].last + ", " + a[0].first + ", and "
+                    + a[1].first + " " + a[1].last + ".";
+          chapNote  = a[0].first + " " + a[0].last + " and "
+                    + a[1].first + " " + a[1].last;
+          chapShort = a[0].last + " and " + a[1].last;
+        } else {
+          chapBib   = a[0].last + ", " + a[0].first + ".";
+          chapNote  = a[0].first + " " + a[0].last;
+          chapShort = a[0].last;
+        }
+      }
+
+      bib   = (chapBib   ? chapBib   + " " : "") + '"' + fullChapTitle + '." In <em>' + bookTitle + "</em>, " + chapRange + ". " + publicationInfo + ", " + year + ".";
+      note  = (chapNote  ? chapNote  + ", " : "") + '"' + fullChapTitle + '," in <em>' + bookTitle + "</em> (" + publicationInfo + ", " + year + "), " + pages + ".";
+      short = (chapShort ? chapShort + ", " : "") + '"' + fullChapTitle + '," ' + pages + ".";
     }
 
     if (sourceType === "article") {
-      const articleTitle = q("#sbl-article-title")?.value.trim() || "[Article Title]";
-      const journalName = q("#sbl-journal")?.value.trim() || "[Journal Name]";
-      const volume = q("#sbl-volume")?.value.trim() || "##";
-      const issue = q("#sbl-issue")?.value.trim() || "";
-      const volumeInfo = issue ? " " + volume + ", no. " + issue : " " + volume;
+      const artTitleBase   = q("#sbl-article-title")?.value.trim()      || "[Article Title]";
+      const artSubtitle    = q("#sbl-article-subtitle")?.value.trim();
+      const fullArtTitle   = artSubtitle ? artTitleBase + ": " + artSubtitle : artTitleBase;
 
-      bib = (bibAuthor ? bibAuthor + " " : "") + '"' + articleTitle + '." <em>' + journalName + "</em>" + volumeInfo + " (" + year + "): " + range + ".";
-      note = (noteAuthor ? noteAuthor + ", " : "") + '"' + articleTitle + '," <em>' + journalName + "</em>" + volumeInfo + " (" + year + "): " + pages + ".";
-      short = (subAuthor ? subAuthor + ", " : "") + '"' + articleTitle + '," ' + pages + ".";
+      const journalFull    = q("#sbl-journal-full")?.value.trim()        || "[Journal Name]";
+      const journalAbbr    = q("#sbl-journal-abbr")?.value.trim();
+      const journalForNote = journalAbbr || journalFull;
+
+      const artVolume      = q("#sbl-volume")?.value.trim()              || "##";
+      const artIssue       = q("#sbl-issue")?.value.trim()               || "";
+      const artMonth       = q("#sbl-article-month")?.value.trim()       || "";
+      const artYear        = q("#sbl-article-year")?.value.trim()        || "[Year]";
+      const artPageRange   = q("#sbl-article-page-range")?.value.trim()  || "##-##";
+      const artPagesCited  = q("#sbl-pages")?.value.trim()               || "##";
+
+      const volumeInfo = artIssue ? " " + artVolume + ", no. " + artIssue : " " + artVolume;
+      // Month or season is included in parentheses if provided: "(January 2024)" or "(2024)"
+      const dateInfo = artMonth ? "(" + artMonth + " " + artYear + ")" : "(" + artYear + ")";
+
+      // Bibliography: full journal title, full page range
+      bib   = (bibAuthor  ? bibAuthor  + " " : "") + '"' + fullArtTitle + '." <em>' + journalFull    + "</em>" + volumeInfo + " " + dateInfo + ": " + artPageRange + ".";
+      // First footnote: abbreviation, pages cited
+      note  = (noteAuthor ? noteAuthor + ", " : "") + '"' + fullArtTitle + '," <em>' + journalForNote + "</em>" + volumeInfo + " " + dateInfo + ": " + artPagesCited + ".";
+      // Subsequent footnote
+      short = (subAuthor  ? subAuthor  + ", " : "") + '"' + artTitleBase + '," ' + artPagesCited + ".";
     }
 
     if (sourceType === "commentary") {
-      const title = q("#sbl-comm-title")?.value.trim() || "[Commentary Title]";
-      const series = q("#sbl-comm-series")?.value.trim() || "[Series]";
-      const vol = q("#sbl-comm-vol")?.value.trim() || "##";
+      // Detect which commentary sub-panel is visible
+      var commSubtype = "";
+      var commPanelCheck = { single: "sbl-comm-single-panel", multi: "sbl-comm-multi-panel", edited: "sbl-comm-edited-panel" };
+      Object.keys(commPanelCheck).forEach(function (k) {
+        var el = q("#" + commPanelCheck[k]);
+        if (el && el.style.display === "block") { commSubtype = k; }
+      });
 
-      bib = (bibAuthor ? bibAuthor + " " : "") + "<em>" + title + "</em>. " + series + " " + vol + ". " + publicationInfo + ", " + year + ".";
-      note = (noteAuthor ? noteAuthor + ", " : "") + "<em>" + title + "</em>, " + series + " " + vol + " (" + publicationInfo + ", " + year + "), " + pages + ".";
-      short = (subAuthor ? subAuthor + ", " : "") + "<em>" + title + "</em>, " + pages + ".";
+      if (commSubtype === "single") {
+        const title    = q("#sbl-comm-single-title")?.value.trim()     || "[Title]";
+        const sub      = q("#sbl-comm-single-subtitle")?.value.trim();
+        const fullT    = sub ? title + ": " + sub : title;
+        const edition  = q("#sbl-comm-single-edition")?.value.trim();
+        const city     = q("#sbl-comm-single-city")?.value.trim()      || "[City]";
+        const pub      = q("#sbl-comm-single-publisher")?.value.trim() || "[Publisher]";
+        const yr       = q("#sbl-comm-single-year")?.value.trim()      || "[Year]";
+        const pg       = q("#sbl-comm-single-pages")?.value.trim()     || "##";
+        const edBib    = edition ? " " + edition + "." : "";
+        const edNote   = edition ? ", " + edition : "";
+        const pInfo    = city + ": " + pub;
+        bib   = (bibAuthor  ? bibAuthor  + " " : "") + "<em>" + fullT + "</em>." + edBib + " " + pInfo + ", " + yr + ".";
+        note  = (noteAuthor ? noteAuthor + ", " : "") + "<em>" + fullT + "</em>" + edNote + " (" + pInfo + ", " + yr + "), " + pg + ".";
+        short = (subAuthor  ? subAuthor  + ", " : "") + "<em>" + title + "</em>, " + pg + ".";
+      }
+
+      if (commSubtype === "multi") {
+        const setTitle = q("#sbl-comm-multi-set-title")?.value.trim()  || "[Set Title]";
+        const volTitle = q("#sbl-comm-multi-vol-title")?.value.trim()  || "[Volume Title]";
+        const volNum   = q("#sbl-comm-multi-vol-num")?.value.trim()    || "##";
+        const edition  = q("#sbl-comm-multi-edition")?.value.trim();
+        const city     = q("#sbl-comm-multi-city")?.value.trim()       || "[City]";
+        const pub      = q("#sbl-comm-multi-publisher")?.value.trim()  || "[Publisher]";
+        const yr       = q("#sbl-comm-multi-year")?.value.trim()       || "[Year]";
+        const pg       = q("#sbl-comm-multi-pages")?.value.trim()      || "##";
+        const edBib    = edition ? " " + edition + "." : "";
+        const edNote   = edition ? ", " + edition : "";
+        const pInfo    = city + ": " + pub;
+        bib   = (bibAuthor  ? bibAuthor  + " " : "") + "<em>" + volTitle + "</em>. Vol. " + volNum + " of <em>" + setTitle + "</em>." + edBib + " " + pInfo + ", " + yr + ".";
+        note  = (noteAuthor ? noteAuthor + ", " : "") + "<em>" + volTitle + "</em>, vol. " + volNum + " of <em>" + setTitle + "</em>" + edNote + " (" + pInfo + ", " + yr + "), " + pg + ".";
+        short = (subAuthor  ? subAuthor  + ", " : "") + "<em>" + volTitle + "</em>, " + pg + ".";
+      }
+
+      if (commSubtype === "edited") {
+        const volTitle   = q("#sbl-comm-edited-vol-title")?.value.trim()      || "[Volume Title]";
+        const seriesFull = q("#sbl-comm-edited-series-full")?.value.trim()    || "[Series]";
+        const seriesAbbr = q("#sbl-comm-edited-series-abbr")?.value.trim();
+        const seriesDisp = seriesAbbr || seriesFull;
+        const seriesVol  = q("#sbl-comm-edited-series-vol-num")?.value.trim() || "##";
+        const edition    = q("#sbl-comm-edited-edition")?.value.trim();
+        const city       = q("#sbl-comm-edited-city")?.value.trim()           || "[City]";
+        const pub        = q("#sbl-comm-edited-publisher")?.value.trim()      || "[Publisher]";
+        const yr         = q("#sbl-comm-edited-year")?.value.trim()           || "[Year]";
+        const pg         = q("#sbl-comm-edited-pages")?.value.trim()          || "##";
+        const edBib      = edition ? " " + edition + "." : "";
+        const edNote     = edition ? ", " + edition : "";
+        const pInfo      = city + ": " + pub;
+        bib   = (bibAuthor  ? bibAuthor  + " " : "") + "<em>" + volTitle + "</em>. " + seriesFull + " " + seriesVol + "." + edBib + " " + pInfo + ", " + yr + ".";
+        note  = (noteAuthor ? noteAuthor + ", " : "") + "<em>" + volTitle + "</em>, " + seriesDisp + " " + seriesVol + edNote + " (" + pInfo + ", " + yr + "), " + pg + ".";
+        short = (subAuthor  ? subAuthor  + ", " : "") + "<em>" + volTitle + "</em>, " + pg + ".";
+      }
     }
 
     if (sourceType === "thesis") {
-      const title = q("#sbl-thesis-title")?.value.trim() || "[Thesis Title]";
-      const degree = q("#sbl-thesis-type")?.value || "PhD diss.";
-      const school = q("#sbl-thesis-school")?.value.trim() || "[Institution]";
+      // Build thesis-specific author strings from the embedded author fields
+      const thFirsts = qa(".sbl-thesis-author-first");
+      const thLasts  = qa(".sbl-thesis-author-last");
+      const thAuthors = [];
+      thFirsts.forEach(function (inp, i) {
+        const f = inp.value.trim(), l = thLasts[i] ? thLasts[i].value.trim() : "";
+        if (f || l) { thAuthors.push({ first: f, last: l }); }
+      });
+      const forceThEtAl = q("#sbl-thesis-four-or-more")?.checked;
+      let thBib = "", thNote = "", thShort = "";
+      if (thAuthors.length) {
+        const a = thAuthors;
+        if (forceThEtAl || a.length >= 4) {
+          thBib   = a[0].last + ", " + a[0].first + ", et al.";
+          thNote  = a[0].first + " " + a[0].last + " et al.";
+          thShort = a[0].last + " et al.";
+        } else if (a.length === 3) {
+          thBib   = a[0].last + ", " + a[0].first + ", " + a[1].first + " " + a[1].last + ", and " + a[2].first + " " + a[2].last + ".";
+          thNote  = a[0].first + " " + a[0].last + ", " + a[1].first + " " + a[1].last + ", and " + a[2].first + " " + a[2].last;
+          thShort = a[0].last + ", " + a[1].last + ", and " + a[2].last;
+        } else if (a.length === 2) {
+          thBib   = a[0].last + ", " + a[0].first + ", and " + a[1].first + " " + a[1].last + ".";
+          thNote  = a[0].first + " " + a[0].last + " and " + a[1].first + " " + a[1].last;
+          thShort = a[0].last + " and " + a[1].last;
+        } else {
+          thBib   = a[0].last + ", " + a[0].first + ".";
+          thNote  = a[0].first + " " + a[0].last;
+          thShort = a[0].last;
+        }
+      }
 
-      bib = (bibAuthor ? bibAuthor + " " : "") + '"' + title + '." ' + degree + ", " + school + ", " + year + ".";
-      note = (noteAuthor ? noteAuthor + ", " : "") + '"' + title + '" (' + degree + ", " + school + ", " + year + "), " + pages + ".";
-      short = (subAuthor ? subAuthor + ", " : "") + '"' + title + '," ' + pages + ".";
+      const thTitle    = q("#sbl-thesis-main-title")?.value.trim() || "[Title]";
+      const thSub      = q("#sbl-thesis-subtitle")?.value.trim();
+      const fullThTitle = thSub ? thTitle + ": " + thSub : thTitle;
+      const degree     = q("#sbl-thesis-degree")?.value            || "PhD diss.";
+      const institution = q("#sbl-thesis-institution")?.value.trim() || "[Institution]";
+
+      // Detect published vs unpublished
+      var thesisPubPanel   = q("#sbl-thesis-pub-panel");
+      var thesisUnpubPanel = q("#sbl-thesis-unpub-panel");
+      var thesisVariant    = "";
+      if (thesisPubPanel   && thesisPubPanel.style.display   === "block") { thesisVariant = "published"; }
+      if (thesisUnpubPanel && thesisUnpubPanel.style.display === "block") { thesisVariant = "unpublished"; }
+
+      if (thesisVariant === "published") {
+        const series    = q("#sbl-thesis-pub-series")?.value.trim();
+        const seriesVol = q("#sbl-thesis-pub-series-vol")?.value.trim();
+        const city      = q("#sbl-thesis-pub-city")?.value.trim()      || "[City]";
+        const pub       = q("#sbl-thesis-pub-publisher")?.value.trim() || "[Publisher]";
+        const yr        = q("#sbl-thesis-pub-year")?.value.trim()      || "[Year]";
+        const url       = q("#sbl-thesis-pub-url")?.value.trim();
+        const seriesStr  = series ? (seriesVol ? series + " " + seriesVol + ". " : series + ". ") : "";
+        const seriesNote = series ? ", " + (seriesVol ? series + " " + seriesVol : series) : "";
+        const pubInfo    = city + ": " + pub;
+        const urlSuffix  = url ? " " + url + "." : "";
+        bib   = (thBib   ? thBib   + " " : "") + "<em>" + fullThTitle + "</em>. " + seriesStr + pubInfo + ", " + yr + "." + urlSuffix;
+        note  = (thNote  ? thNote  + ", " : "") + "<em>" + fullThTitle + "</em>" + seriesNote + " (" + pubInfo + ", " + yr + ")." + urlSuffix;
+        short = (thShort ? thShort + ", " : "") + "<em>" + thTitle + "</em>.";
+      }
+
+      if (thesisVariant === "unpublished") {
+        const yr        = q("#sbl-thesis-unpub-year")?.value.trim() || "[Year]";
+        const url       = q("#sbl-thesis-unpub-url")?.value.trim();
+        const urlSuffix = url ? " " + url + "." : "";
+        bib   = (thBib   ? thBib   + " " : "") + '"' + fullThTitle + '." ' + degree + ", " + institution + ", " + yr + "." + urlSuffix;
+        note  = (thNote  ? thNote  + ", " : "") + '"' + fullThTitle + '" (' + degree + ", " + institution + ", " + yr + ")." + urlSuffix;
+        short = (thShort ? thShort + ", " : "") + '"' + thTitle + '."';
+      }
     }
 
     if (sourceType === "bible") {
-      const book = q("#sbl-bible-book")?.value || "[Book]";
-      const passage = q("#sbl-bible-passage")?.value.trim() || "##:##";
-      const version = q("#sbl-bible-version")?.value.trim() || "[Version]";
+      const book    = q("#sbl-bible-book")?.value              || "[Book]";
+      const chapter = q("#sbl-bible-chapter")?.value.trim()    || "##";
+      const verse   = q("#sbl-bible-verse")?.value.trim()      || "##";
+      const version = q("#sbl-bible-version")?.value.trim()    || "[Version]";
+      const passage = chapter + ":" + verse;
 
-      bib = "<em>Biblical texts are omitted from an SBL bibliography section unless required by your instructor.</em>";
-      note = book + " " + passage + " (" + version + ").";
+      bib   = "<em>Biblical texts are omitted from an SBL bibliography section unless required by your instructor.</em>";
+      note  = book + " " + passage + " (" + version + ").";
       short = book + " " + passage + ".";
     }
 
@@ -1496,6 +2390,216 @@ document.addEventListener("DOMContentLoaded", function () {
         generateSBLCitation();
       });
     }
+
+    // ── "Add Another" contributor button handlers ──────────────────────────
+    function showEtAlWrapper(wrapperId) {
+      var w = document.getElementById(wrapperId);
+      if (w) { w.style.display = "flex"; }
+    }
+
+    function setupAddContributor(cfg) {
+      // cfg: { btnId, containerId, etAlWrapperId, firstClass, lastClass, label }
+      var btn = document.getElementById(cfg.btnId);
+      if (!btn) { return; }
+
+      btn.addEventListener("click", function () {
+        var container = document.getElementById(cfg.containerId);
+        if (!container) { return; }
+
+        var rows = container.querySelectorAll(".sbl-name-row");
+
+        // Already at the 3-row cap — surface et-al option and stop
+        if (rows.length >= 3) {
+          showEtAlWrapper(cfg.etAlWrapperId);
+          btn.style.display = "none";
+          return;
+        }
+
+        // Build and append the new name row
+        var rowNum = rows.length + 1; // 2 or 3 (first row is already in DOM)
+        var row = document.createElement("div");
+        row.className = "sbl-row sbl-name-row";
+        row.style.marginTop = "10px";
+        row.innerHTML =
+          '<div class="sbl-form-group sbl-col">' +
+            '<label>' + cfg.label + ' ' + rowNum + ' First Name(s)</label>' +
+            '<input type="text" class="' + cfg.firstClass + '" placeholder="">' +
+          '</div>' +
+          '<div class="sbl-form-group sbl-col">' +
+            '<label>' + cfg.label + ' ' + rowNum + ' Last Name</label>' +
+            '<input type="text" class="' + cfg.lastClass + '" placeholder="">' +
+          '</div>';
+        container.appendChild(row);
+
+        // At the cap now: hide button, reveal the "four or more" checkbox
+        if (container.querySelectorAll(".sbl-name-row").length >= 3) {
+          showEtAlWrapper(cfg.etAlWrapperId);
+          btn.style.display = "none";
+        }
+
+        generateSBLCitation();
+      });
+    }
+
+    setupAddContributor({
+      btnId: "btn-add-author",
+      containerId: "sbl-authors-container",
+      etAlWrapperId: "sbl-et-al-wrapper",
+      firstClass: "sbl-author-first",
+      lastClass: "sbl-author-last",
+      label: "Author"
+    });
+
+    setupAddContributor({
+      btnId: "btn-add-editor",
+      containerId: "sbl-editors-container",
+      etAlWrapperId: "sbl-et-al-editors-wrapper",
+      firstClass: "sbl-editor-first",
+      lastClass: "sbl-editor-last",
+      label: "Editor"
+    });
+
+    setupAddContributor({
+      btnId: "btn-add-translator",
+      containerId: "sbl-translators-container",
+      etAlWrapperId: "sbl-et-al-translators-wrapper",
+      firstClass: "sbl-translator-first",
+      lastClass: "sbl-translator-last",
+      label: "Translator"
+    });
+
+    setupAddContributor({
+      btnId: "btn-add-compiler",
+      containerId: "sbl-compilers-container",
+      etAlWrapperId: "sbl-et-al-compilers-wrapper",
+      firstClass: "sbl-compiler-first",
+      lastClass: "sbl-compiler-last",
+      label: "Compiler"
+    });
+
+    setupAddContributor({
+      btnId: "btn-add-chap-author",
+      containerId: "sbl-chap-authors-container",
+      etAlWrapperId: "sbl-et-al-chap-wrapper",
+      firstClass: "sbl-chap-author-first",
+      lastClass: "sbl-chap-author-last",
+      label: "Author"
+    });
+
+    // ── Thesis author add-another ─────────────────────────────────────────
+    setupAddContributor({
+      btnId: "btn-add-thesis-author",
+      containerId: "sbl-thesis-authors-container",
+      etAlWrapperId: "sbl-et-al-thesis-wrapper",
+      firstClass: "sbl-thesis-author-first",
+      lastClass: "sbl-thesis-author-last",
+      label: "Author"
+    });
+
+    // ── Thesis sub-type panel navigation ─────────────────────────────────
+    var thesisSubPanelIds = ["sbl-thesis-pub-panel", "sbl-thesis-unpub-panel"];
+
+    function showThesisSubPanel(subPanelId) {
+      var wrapper       = document.getElementById("sbl-thesis-subtype-wrapper");
+      var thesisCont    = document.getElementById("sbl-thesis-metadata-container");
+      var outputWrapper = document.getElementById("sbl-output-wrapper");
+
+      if (subPanelId === null) {
+        // Back to sub-type question
+        if (wrapper)       { wrapper.style.display       = "block"; }
+        if (thesisCont)    { thesisCont.style.display    = "none"; }
+        if (outputWrapper) { outputWrapper.style.display = "none"; }
+        thesisSubPanelIds.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) { el.style.display = "none"; }
+        });
+      } else {
+        // Sub-type chosen: hide question, show container + selected panel + output
+        if (wrapper)       { wrapper.style.display       = "none"; }
+        if (thesisCont)    { thesisCont.style.display    = "block"; }
+        if (outputWrapper) { outputWrapper.style.display = ""; }
+        thesisSubPanelIds.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) { el.style.display = id === subPanelId ? "block" : "none"; }
+        });
+      }
+    }
+
+    var thesisContinue = document.getElementById("sbl-thesis-subtype-continue");
+    if (thesisContinue) {
+      thesisContinue.addEventListener("click", function () {
+        var subtype  = document.getElementById("sbl-thesis-subtype")?.value || "published";
+        var panelMap = { published: "sbl-thesis-pub-panel", unpublished: "sbl-thesis-unpub-panel" };
+        showThesisSubPanel(panelMap[subtype] || null);
+        generateSBLCitation();
+      });
+    }
+
+    ["sbl-thesis-back-btn", "sbl-thesis-back-btn-unpub"].forEach(function (id) {
+      var btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener("click", function () {
+          showThesisSubPanel(null);
+          generateSBLCitation();
+        });
+      }
+    });
+    // ─────────────────────────────────────────────────────────────────────
+
+    // ── Commentary sub-type panel navigation ─────────────────────────────
+    var commSubPanelIds = ["sbl-comm-single-panel", "sbl-comm-multi-panel", "sbl-comm-edited-panel"];
+
+    // null → show sub-type question (above Authors); "sbl-comm-*-panel" → show that sub-panel
+    function showCommSubPanel(subPanelId) {
+      var wrapper       = document.getElementById("sbl-comm-subtype-wrapper");
+      var authors       = document.getElementById("sbl-authors-fieldset");
+      var commCont      = document.getElementById("sbl-commentary-metadata-container");
+      var outputWrapper = document.getElementById("sbl-output-wrapper");
+
+      if (subPanelId === null) {
+        // Back to sub-type selection: show question, hide Authors, form, and output
+        if (wrapper)       { wrapper.style.display       = "block"; }
+        if (authors)       { authors.style.display       = "none"; }
+        if (commCont)      { commCont.style.display      = "none"; }
+        if (outputWrapper) { outputWrapper.style.display = "none"; }
+        commSubPanelIds.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) { el.style.display = "none"; }
+        });
+      } else {
+        // Sub-type chosen: hide question, show Authors, form, and output
+        if (wrapper)       { wrapper.style.display       = "none"; }
+        if (authors)       { authors.style.display       = ""; }
+        if (commCont)      { commCont.style.display      = "block"; }
+        if (outputWrapper) { outputWrapper.style.display = ""; }
+        commSubPanelIds.forEach(function (id) {
+          var el = document.getElementById(id);
+          if (el) { el.style.display = id === subPanelId ? "block" : "none"; }
+        });
+      }
+    }
+
+    var commContinue = document.getElementById("sbl-comm-subtype-continue");
+    if (commContinue) {
+      commContinue.addEventListener("click", function () {
+        var subtype  = document.getElementById("sbl-comm-subtype")?.value || "single";
+        var panelMap = { single: "sbl-comm-single-panel", multi: "sbl-comm-multi-panel", edited: "sbl-comm-edited-panel" };
+        showCommSubPanel(panelMap[subtype] || null);
+        generateSBLCitation();
+      });
+    }
+
+    ["sbl-comm-back-btn", "sbl-comm-back-btn-multi", "sbl-comm-back-btn-edited"].forEach(function (id) {
+      var btn = document.getElementById(id);
+      if (btn) {
+        btn.addEventListener("click", function () {
+          showCommSubPanel(null);
+          generateSBLCitation();
+        });
+      }
+    });
+    // ─────────────────────────────────────────────────────────────────────
+    // ───────────────────────────────────────────────────────────────────────
 
     generateSBLCitation();
   });
